@@ -57,6 +57,7 @@ $(document).on("ready", function() {
     $(container).removeClass('gu-highlight');
   });
 
+  // Trigger change on item removal
   drake.on("remove", function(el, container, source) {
     if ($(source).hasClass('ds-dropzone')) {
       $(source).trigger("change");
