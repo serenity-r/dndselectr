@@ -77,7 +77,8 @@ $.extend(dropZoneBinding, {
     return $('#' + el.id + ' > .ds-dropoption').map(function() { return this.dataset.value }).get();
   },
   setValue: function(el, value) {
-    // Tricky one
+    // "This is not currently used, but in the future we anticipate adding features that will require the server to push input values to the client."
+    // https://shiny.rstudio.com/articles/building-inputs.html
   },
   subscribe: function(el, callback) {
     $(el).on("change.dropZoneBinding", function(e) {

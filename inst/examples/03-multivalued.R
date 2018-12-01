@@ -11,7 +11,8 @@ shinyApp(
              dropZoneInput("dropzone", choices = list(one = "1",
                                                       two = "2",
                                                       three = "3",
-                                                      four = "4"))
+                                                      four = "4"),
+                           multivalued = TRUE)
       )
     ),
     fluidRow(
