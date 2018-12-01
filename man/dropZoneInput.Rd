@@ -32,3 +32,6 @@ dropZoneInput("dropzone", choices = list(one = "1",
                                          four = "4"))
 
 }
+\seealso{
+\code{\link{dragulaSelectR}}
+}

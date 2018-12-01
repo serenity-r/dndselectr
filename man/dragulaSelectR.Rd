@@ -39,3 +39,6 @@ shinyApp(
 }
 
 }
+\seealso{
+\code{\link{dragZone}}, \code{\link{dropZoneInput}}
+}

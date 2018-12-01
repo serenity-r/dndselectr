@@ -21,3 +21,6 @@ dragZone("dragzone", choices = list(one = "One",
                                     four = "Four"))
 
 }
+\seealso{
+\code{\link{dragulaSelectR}}
+}

@@ -38,6 +38,8 @@
 #'
 #' @name dragulaSelectR
 #'
+#' @seealso \code{\link{dragZone}}, \code{\link{dropZoneInput}}
+#'
 NULL
 
 #' Create a Dragula dragzone container
@@ -52,6 +54,8 @@ NULL
 #'                                     two = "Two",
 #'                                     three = "Three",
 #'                                     four = "Four"))
+#'
+#' @seealso \code{\link{dragulaSelectR}}
 #'
 dragZone <- function(id, choices) {
   inputTag <- div(
@@ -87,6 +91,8 @@ dragZone <- function(id, choices) {
 #'                                          three = "3",
 #'                                          four = "4"))
 #'
+#' @seealso \code{\link{dragulaSelectR}}
+#'
 dropZoneInput <- function(inputId, label, choices, hidden=FALSE, highlight=FALSE, multivalued=FALSE) {
   inputTag <- div(
     id = inputId,
@@ -107,7 +113,69 @@ dropZoneInput <- function(inputId, label, choices, hidden=FALSE, highlight=FALSE
   attachDependencies(inputTag)
 }
 
-# UTILS ----
+#' Run dragulaSelectR Example Applications
+#'
+#' Launch dragulaSelectR example applications, and optionally, your system's web browser.
+#'
+#' @param example The name of the example to run, or \code{NA} (the default) to
+#'   list the available examples.
+#' @param port The TCP port that the application should listen on. Defaults to
+#'   choosing a random port.
+#' @param launch.browser If true, the system's default web browser will be
+#'   launched automatically after the app is started. Defaults to true in
+#'   interactive sessions only.
+#' @param host The IPv4 address that the application should listen on. Defaults
+#'   to the \code{shiny.host} option, if set, or \code{"127.0.0.1"} if not.
+#' @param display.mode The mode in which to display the example. Defaults to
+#'   \code{showcase}, but may be set to \code{normal} to see the example without
+#'   code or commentary.
+#'
+#' @examples
+#' ## Only run this example in interactive R sessions
+#' if (interactive()) {
+#'   # List all available examples
+#'   runExample()
+#'
+#'   # Run one of the examples
+#'   runExample("01_basic")
+#'
+#'   # Print the directory containing the code for all examples
+#'   system.file("examples", package="dragulaSelectR")
+#' }
+#' @export
+#'
+#' @references \code{\link[shiny]{runExample}}
+#'
+runExample <- function(example=NA,
+                       port=NULL,
+                       launch.browser=getOption('shiny.launch.browser',
+                                                interactive()),
+                       host=getOption('shiny.host', '127.0.0.1'),
+                       display.mode=c("auto", "normal", "showcase")) {
+  examplesDir <- system.file('examples', package='dragulaSelectR')
+  dir <- resolve(examplesDir, example)
+  if (is.null(dir)) {
+    if (is.na(example)) {
+      errFun <- message
+      errMsg <- ''
+    }
+    else {
+      errFun <- stop
+      errMsg <- paste('Example', example, 'does not exist. ')
+    }
+
+    errFun(errMsg,
+           'Valid examples are "',
+           paste(list.files(examplesDir), collapse='", "'),
+           '"')
+  }
+  else {
+    runApp(dir, port = port, host = host, launch.browser = launch.browser,
+           display.mode = display.mode)
+  }
+}
+
+# HELPERS ----
 
 #' Attach javascript dependencies
 #'
@@ -165,6 +233,3 @@ createContainerChoices <- function(type, value, label=NULL) {
     label %||% value
   )
 }
-
-# Defaults for NULL values
-`%||%` <- function(a, b) if (is.null(a)) b else a
