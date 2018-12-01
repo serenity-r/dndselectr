@@ -39,7 +39,7 @@ $(document).on("ready", function() {
         el.parentNode.replaceChild($newItem[0], el);
 
         // Raise an event to signal that the value changed
-        $(el).trigger("change");
+        $(target).trigger("change");
       } else {
         // Always remove element coming from source
         this.remove();
@@ -68,7 +68,7 @@ $.extend(dropZoneBinding, {
     drake.containers.push(el);
   },
   getValue: function(el) {
-    return $(el.id + ' > .ds-dropoption').map(function() { return this.dataset.value });
+    return $('#' + el.id + ' > .ds-dropoption').map(function() { return this.dataset.value }).toArray();
   },
   setValue: function(el, value) {
     // Tricky one
