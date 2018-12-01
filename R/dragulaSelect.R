@@ -23,7 +23,8 @@
 #'       dropZoneInput("dropzone", choices = list(one = "1",
 #'                                                two = "2",
 #'                                                three = "3",
-#'                                                four = "4"))
+#'                                                four = "4"),
+#'                                 highlight = TRUE)
 #'       )
 #'   ),
 #'   server = function(input, output) {
@@ -116,16 +117,17 @@ dropZoneInput <- function(inputId, label, choices, hidden=FALSE, highlight=FALSE
 #'
 attachDependencies <- function(...) {
   deps <- list(
-    htmltools::htmlDependency(name = "dragula-select", version = "0.0.0.9000",
-                              package = "dragulaSelectR",
-                              src = "www",
-                              stylesheet = "dragula-select.css"
-    ),
     htmltools::htmlDependency(name = "dragula", version = "3.7.2",
                               package = "dragulaSelectR",
                               src = "www/dragula-3.7.2",
                               script = "dragula.min.js",
                               stylesheet = "dragula.min.css"
+    ),
+    htmltools::htmlDependency(name = "dragula-select", version = "0.0.0.9000",
+                              package = "dragulaSelectR",
+                              src = "www",
+                              script = "dragula-select.js",
+                              stylesheet = "dragula-select.css"
     )
   )
   htmltools::attachDependencies(..., deps)
@@ -160,7 +162,7 @@ createContainerChoices <- function(type, value, label=NULL) {
   div(
     "data-value" = value,
     class = paste0('ds-', ifelse(type=='drop', 'dropoption', 'dragitem')),
-    label
+    label %||% value
   )
 }
 
