@@ -5,7 +5,7 @@ $(document).on("ready", function() {
     },
     copy: function(el, source) {
       // Source -> Target only
-      return [...document.getElementsByClassName('ds-dragzone')].includes(source)
+      return [...document.getElementsByClassName('ds-dragzone')].includes(source);
     },
     accepts: function(el, target) {
       // Make sure option exists within dropzone
@@ -13,7 +13,7 @@ $(document).on("ready", function() {
 
       // Source -> Target only AND valid available option in dropzone
       return ((![...document.getElementsByClassName('ds-dragzone')].includes(target)) &&
-              (dropoption.length > 0))
+              (dropoption.length > 0));
     },
     revertOnSpill: true, // Always revert to source container on spill
     removeOnSpill: true  // Always remove drag item on spill
@@ -37,14 +37,14 @@ $(document).on("ready", function() {
           $(target).append($newItem);
         }
         el.parentNode.replaceChild($newItem[0], el);
-
-        // Raise an event to signal that the value changed
-        $(target).trigger("change");
       } else {
         // Always remove element coming from source
         this.remove();
       }
     }
+
+    // Raise an event to signal that the value changed
+    $(target).trigger("change");
   });
 
   // Highlighting
@@ -55,6 +55,12 @@ $(document).on("ready", function() {
   });
   drake.on("out", function(el, container, source) {
     $(container).removeClass('gu-highlight');
+  });
+
+  drake.on("remove", function(el, container, source) {
+    if ($(source).hasClass('ds-dropzone')) {
+      $(source).trigger("change");
+    }
   });
 });
 
@@ -68,7 +74,7 @@ $.extend(dropZoneBinding, {
     drake.containers.push(el);
   },
   getValue: function(el) {
-    return $('#' + el.id + ' > .ds-dropoption').map(function() { return this.dataset.value }).toArray();
+    return $('#' + el.id + ' > .ds-dropoption').map(function() { return this.dataset.value }).get();
   },
   setValue: function(el, value) {
     // Tricky one
