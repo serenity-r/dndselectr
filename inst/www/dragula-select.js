@@ -1,5 +1,5 @@
 $(document).on("ready", function() {
-  var drake = dragula({
+  drake = dragula({
     isContainer: function(el) {
       return el.classList.contains('ds-dragzone');
     },
@@ -37,6 +37,9 @@ $(document).on("ready", function() {
           $(target).append($newItem);
         }
         el.parentNode.replaceChild($newItem[0], el);
+
+        // Raise an event to signal that the value changed
+        $(el).trigger("change");
       } else {
         // Always remove element coming from source
         this.remove();
@@ -53,6 +56,31 @@ $(document).on("ready", function() {
   drake.on("out", function(el, container, source) {
     $(container).removeClass('gu-highlight');
   });
-
-  drake.containers.push(document.querySelector('#dropzone'));
 });
+
+var dropZoneBinding = new Shiny.InputBinding();
+
+$.extend(dropZoneBinding, {
+  find: function(scope) {
+    return $(scope).find(".ds-dropzone");
+  },
+  initialize: function(el) {
+    drake.containers.push(el);
+  },
+  getValue: function(el) {
+    return $(el.id + ' > .ds-dropoption').map(function() { return this.dataset.value });
+  },
+  setValue: function(el, value) {
+    // Tricky one
+  },
+  subscribe: function(el, callback) {
+    $(el).on("change.dropZoneBinding", function(e) {
+      callback();
+    });
+  },
+  unsubscribe: function(el) {
+    $(el).off(".dropZoneBinding");
+  }
+});
+
+Shiny.inputBindings.register(dropZoneBinding);
