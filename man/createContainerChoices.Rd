@@ -4,14 +4,14 @@
 \alias{createContainerChoices}
 \title{Create options for dragzones/dropzones}
 \usage{
-createContainerChoices(value, label, type)
+createContainerChoices(type, value, label = NULL)
 }
 \arguments{
+\item{type}{Container type: either \code{drop} or \code{drag}}
+
 \item{value}{Value for allowable item/option (unique identifier)}
 
 \item{label}{Label for allowable item/option (what the user sees)}
-
-\item{class}{One of 'ds-dropoption' or 'ds-dragitem'}
 }
 \value{
 div element

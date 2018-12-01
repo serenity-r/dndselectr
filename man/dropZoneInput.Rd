@@ -26,9 +26,9 @@ a reactive or event trigger.}
 Create a Dragula dropzone input
 }
 \examples{
-dropZoneInput("drake", choices = list(one = "1",
-                                      two = "2",
-                                      three = "3",
-                                      four = "4"))
+dropZoneInput("dropzone", choices = list(one = "1",
+                                         two = "2",
+                                         three = "3",
+                                         four = "4"))
 
 }

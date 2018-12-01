@@ -1,0 +1,27 @@
+.ds-dragzone,
+.ds-dropzone {
+  border-style: solid;
+  min-height: 40px;
+}
+
+.ds-dragitem,
+.ds-dropoption {
+  border-style: solid;
+  margin: 4px;
+  padding: 2px 4px;
+}
+
+.ds-dropzone.gu-highlight {
+  border-color: red;
+}
+
+.ds-dragitem,
+.ds-dropzone .ds-dropoption {
+  cursor: move;
+}
+
+.ds-dropzone .ds-dropzone-options,
+.ds-dropzone.ds-hidden .ds-dropoption,
+.ds-dropzone.ds-hidden .ds-dragitem {
+  display: none;
+}

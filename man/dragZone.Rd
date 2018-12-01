@@ -14,3 +14,10 @@ dragZone(id, choices)
 \description{
 Create a Dragula dragzone container
 }
+\examples{
+dragZone("dragzone", choices = list(one = "One",
+                                    two = "Two",
+                                    three = "Three",
+                                    four = "Four"))
+
+}

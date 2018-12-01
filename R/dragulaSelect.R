@@ -1,3 +1,44 @@
+#' dragulaSelectR: Utilizes Dragula JS library to implement a drag-and-drop Shiny select input.
+#'
+#' Utilizes Dragula JS library to implement a drag-and-drop Shiny select input.
+#' Dragula is a drag-and-drop javascript library that is very lightweight and robust.
+#' This implementation creates a Shiny input that replicates much of the functionality of
+#' selectInput. Multiple zones for dragging and dropping are allowed. See the Dragula JS
+#' library for more information (https://github.com/bevacqua/dragula).
+#'
+#' @examples
+#' ## Only run examples in interactive R sessions
+#' if (interactive()) {
+#'
+#' # basic example
+#' shinyApp(
+#'   ui = fluidPage(
+#'     column(6,
+#'       dragZone("dragzone", choices = list(one = "One",
+#'                                           two = "Two",
+#'                                           three = "Three",
+#'                                           four = "Four"))
+#'       ),
+#'     column(6,
+#'       dropZoneInput("dropzone", choices = list(one = "1",
+#'                                                two = "2",
+#'                                                three = "3",
+#'                                                four = "4"))
+#'       )
+#'   ),
+#'   server = function(input, output) {
+#'   }
+#' )
+#' }
+#'
+#' @docType package
+#'
+#' @import shiny
+#'
+#' @name dragulaSelectR
+#'
+NULL
+
 #' Create a Dragula dragzone container
 #'
 #' @param id The container id.
@@ -6,6 +47,11 @@
 #' @export
 #'
 #' @examples
+#' dragZone("dragzone", choices = list(one = "One",
+#'                                     two = "Two",
+#'                                     three = "Three",
+#'                                     four = "Four"))
+#'
 dragZone <- function(id, choices) {
   inputTag <- div(
     id = id,
@@ -13,7 +59,7 @@ dragZone <- function(id, choices) {
     tagList(
       purrr::map2(names(choices),
                   choices,
-                  ~ createContainerChoices(.x, .y, 'drag')
+                  ~ createContainerChoices('drag', .x, .y)
       )
     )
   )
@@ -35,12 +81,11 @@ dragZone <- function(id, choices) {
 #' @export
 #'
 #' @examples
-#' dropZoneInput("drake", choices = list(one = "1",
-#'                                       two = "2",
-#'                                       three = "3",
-#'                                       four = "4"))
+#' dropZoneInput("dropzone", choices = list(one = "1",
+#'                                          two = "2",
+#'                                          three = "3",
+#'                                          four = "4"))
 #'
-#' @import shiny
 dropZoneInput <- function(inputId, label, choices, hidden=FALSE, highlight=FALSE, multivalued=FALSE) {
   inputTag <- div(
     id = inputId,
@@ -52,7 +97,7 @@ dropZoneInput <- function(inputId, label, choices, hidden=FALSE, highlight=FALSE
       tagList(
         purrr::map2(names(choices),
                     choices,
-                    ~ createContainerChoices(.x, .y, 'drop')
+                    ~ createContainerChoices('drop', .x, .y)
         )
       )
     )
@@ -68,9 +113,16 @@ dropZoneInput <- function(inputId, label, choices, hidden=FALSE, highlight=FALSE
 #' \code{attachDependencies} attaches the javascript dependencies.Specifically,
 #' the Dragula JS package is attached, as well as the javascript wrapper and
 #' input bindings.
+#'
 attachDependencies <- function(...) {
   deps <- list(
+    htmltools::htmlDependency(name = "dragula-select", version = "0.0.0.9000",
+                              package = "dragulaSelectR",
+                              src = "www",
+                              stylesheet = "dragula-select.css"
+    ),
     htmltools::htmlDependency(name = "dragula", version = "3.7.2",
+                              package = "dragulaSelectR",
                               src = "www/dragula-3.7.2",
                               script = "dragula.min.js",
                               stylesheet = "dragula.min.css"
@@ -95,13 +147,13 @@ opts2class <- function(varArgs) {
 #' In Dragula, the drag and drop areas are called "containers". This function
 #' creates the individual draggable items in these containers.
 #'
+#' @param type  Container type: either \code{drop} or \code{drag}
 #' @param value Value for allowable item/option (unique identifier)
 #' @param label Label for allowable item/option (what the user sees)
-#' @param class One of 'ds-dropoption' or 'ds-dragitem'
 #'
 #' @return div element
 #'
-createContainerChoices <- function(value, label, type) {
+createContainerChoices <- function(type, value, label=NULL) {
   if (!(type %in% c('drag', 'drop'))) {
     stop(type, " is not a valid container type. Dragula container type must be either 'drag' or 'drop'")
   }
@@ -111,3 +163,6 @@ createContainerChoices <- function(value, label, type) {
     label
   )
 }
+
+# Defaults for NULL values
+`%||%` <- function(a, b) if (is.null(a)) b else a
