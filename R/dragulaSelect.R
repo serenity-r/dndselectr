@@ -58,13 +58,17 @@ NULL
 #' @seealso \code{\link{dragulaSelectR}}
 #'
 dragZone <- function(id, choices) {
+
+  # Resolve names
+  choices <- choicesWithNames(choices)
+
   inputTag <- div(
     id = id,
     class = 'ds-dragzone',
     tagList(
       purrr::map2(names(choices),
                   choices,
-                  ~ createContainerChoices('drag', .x, .y)
+                  ~ dragulaZoneOptions('drag', .x, .y)
       )
     )
   )
@@ -75,11 +79,11 @@ dragZone <- function(id, choices) {
 #' Create a Dragula dropzone input
 #'
 #' @param inputId The \code{input} slot that will be used to acces the value.
-#' @param label Display label for the control, or \code{NULL} for no label.
 #' @param choices List of acceptable values with their associated labels. Note that
 #'   the labels can be arbitrary HTML, as long as they are wrapped in a \code{tagList}.
 #' @param hidden Should the selected items be hidden? This is useful to represent
 #'   a reactive or event trigger.
+#' @param placeholder If hidden is true, insert placeholder text.
 #' @param highlight Highlights the container on dragover. Useful when \code{hidden} is active.
 #' @param multivalued Allow multiple items with the same value?
 #'
@@ -93,9 +97,15 @@ dragZone <- function(id, choices) {
 #'
 #' @seealso \code{\link{dragulaSelectR}}
 #'
-dropZoneInput <- function(inputId, label, choices, hidden=FALSE, highlight=FALSE, multivalued=FALSE) {
+dropZoneInput <- function(inputId, choices, hidden=FALSE, placeholder=NULL,
+                          highlight=FALSE, multivalued=FALSE) {
+
+  # Resolve names
+  choices <- choicesWithNames(choices)
+
   inputTag <- div(
     id = inputId,
+    insertPlaceholder(inputId, ifelse(hidden, placeholder, NA)),
     class = trimws(paste('ds-dropzone', opts2class(list(hidden = hidden,
                                                         highlight = highlight,
                                                         multivalued = multivalued))), "right"),
@@ -104,7 +114,7 @@ dropZoneInput <- function(inputId, label, choices, hidden=FALSE, highlight=FALSE
       tagList(
         purrr::map2(names(choices),
                     choices,
-                    ~ createContainerChoices('drop', .x, .y)
+                    ~ dragulaZoneOptions('drop', .x, .y)
         )
       )
     )
@@ -223,7 +233,7 @@ opts2class <- function(varArgs) {
 #'
 #' @return div element
 #'
-createContainerChoices <- function(type, value, label=NULL) {
+dragulaZoneOptions <- function(type, value, label=NULL) {
   if (!(type %in% c('drag', 'drop'))) {
     stop(type, " is not a valid container type. Dragula container type must be either 'drag' or 'drop'")
   }

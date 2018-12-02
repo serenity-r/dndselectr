@@ -13,6 +13,7 @@ shinyApp(
                                                       three = "3",
                                                       four = "4"),
                            hidden = TRUE,
+                           placeholder = "Drop items here!",
                            highlight = TRUE)
       )
     ),
