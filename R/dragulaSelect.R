@@ -66,9 +66,10 @@ dragZone <- function(id, choices) {
     id = id,
     class = 'ds-dragzone',
     tagList(
-      purrr::map2(names(choices),
-                  choices,
-                  ~ dragulaZoneOptions('drag', .x, .y)
+      mapply(names(choices),
+             choices,
+             FUN = function(name, choice) { dragulaZoneOptions('drag', name, choice) },
+             SIMPLIFY = FALSE, USE.NAMES = FALSE
       )
     )
   )
@@ -112,9 +113,10 @@ dropZoneInput <- function(inputId, choices, hidden=FALSE, placeholder=NULL,
     div(
       class = 'ds-dropzone-options',
       tagList(
-        purrr::map2(names(choices),
-                    choices,
-                    ~ dragulaZoneOptions('drop', .x, .y)
+        mapply(names(choices),
+               choices,
+               FUN = function(name, choice) { dragulaZoneOptions('drop', name, choice) },
+               SIMPLIFY = FALSE, USE.NAMES = FALSE
         )
       )
     )
@@ -219,7 +221,7 @@ attachDependencies <- function(...) {
 #'
 opts2class <- function(varArgs) {
   varArgsNames <- names(varArgs)[vapply(varArgs, isTRUE, logical(1))]
-  paste(purrr::map(varArgsNames, ~ paste0('ds-', .)), collapse = ' ')
+  paste(lapply(varArgsNames, function(opt) { paste0('ds-', opt) }), collapse = ' ')
 }
 
 #' Create options for dragzones/dropzones
