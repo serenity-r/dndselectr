@@ -5,14 +5,17 @@ $(document).on("ready", function() {
     },
     copy: function(el, source) {
       // Source -> Target only
-      return [...document.getElementsByClassName('ds-dragzone')].includes(source);
+      return source.classList.contains('ds-dragzone');
     },
-    accepts: function(el, target) {
+    accepts: function(el, target, source, sibling) {
       // Make sure option exists within dropzone
       var dropoption = $(target).children(".ds-dropzone-options").children('.ds-dropoption[data-value="' + $(el).data('value') + '"]');
 
-      // Source -> Target only AND valid available option in dropzone
-      return ((![...document.getElementsByClassName('ds-dragzone')].includes(target)) &&
+      // Source -> Target only AND
+      //   no dropzone to different dropzone AND (note: caused issue when drop triggered before remove - might change in future)
+      //   valid available option in dropzone
+      return ((!target.classList.contains('ds-dragzone')) &&
+              !(source.classList.contains('ds-dropzone') && (source.id !== target.id)) &&
               (dropoption.length > 0));
     },
     revertOnSpill: true, // Always revert to source container on spill
