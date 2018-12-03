@@ -9,7 +9,7 @@ $(document).on("ready", function() {
     },
     accepts: function(el, target) {
       // Make sure option exists within dropzone
-      var dropoption = $(target).children(".ds-dropzone-options").children(".ds-dropoption[data-value=" + $(el).data('value') + "]");
+      var dropoption = $(target).children(".ds-dropzone-options").children('.ds-dropoption[data-value="' + $(el).data('value') + '"]');
 
       // Source -> Target only AND valid available option in dropzone
       return ((![...document.getElementsByClassName('ds-dragzone')].includes(target)) &&
@@ -23,13 +23,13 @@ $(document).on("ready", function() {
     // Coming in from source - otherwise, do nothing
     if ($(el).hasClass('ds-dragitem')) {
       // Capture number of existing items with this value
-      var numitems = $(target).children("[data-value=" + $(el).data('value') + "]").length;
+      var numitems = $(target).children('[data-value="' + $(el).data('value') + '"]').length;
 
       // If set to only one per value
       var multivalued = $(target).hasClass('ds-multivalued');
       if (multivalued || ((!multivalued) && (numitems === 1))) {
         // Clone option with corresponding value
-        var dropoption = $(target).children(".ds-dropzone-options").children(".ds-dropoption[data-value=" + $(el).data('value') + "]");
+        var dropoption = $(target).children(".ds-dropzone-options").children('.ds-dropoption[data-value="' + $(el).data('value') + '"]');
         var $newItem = dropoption.clone();
         if (sibling) {
           $newItem.insertBefore(sibling);
