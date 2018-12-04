@@ -51,7 +51,7 @@ isWindows <- function() .Platform$OS.type == 'windows'
 # See shiny/input-utils.R
 
 insertPlaceholder <- function(zoneId, placeholder) {
-  placeholder %AND% tags$span(class = ".ds-placeholder", placeholder)
+  placeholder %AND% tags$span(class = "ds-placeholder", placeholder)
 }
 
 # Takes a vector or list, and adds names (same as the value) to any entries

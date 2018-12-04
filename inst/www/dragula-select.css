@@ -11,6 +11,11 @@
   padding: 2px 4px;
 }
 
+span.ds-placeholder {
+  position: absolute;
+  padding: 6px 4px;
+}
+
 .ds-dropzone.gu-highlight {
   border-color: red;
 }

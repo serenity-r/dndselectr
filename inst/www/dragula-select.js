@@ -41,16 +41,16 @@ $(document).on("ready", function() {
         // Set instance id for new item (only used for multivalued)
         $newItem.attr('data-instance', multivalued ? $(target).data('counter') : '');
 
-        if (sibling) {
+        var hidden = $(target).hasClass('ds-hidden');
+        if (!hidden && sibling) {
           $newItem.insertBefore(sibling);
         } else {
           $(target).append($newItem);
         }
-        el.parentNode.replaceChild($newItem[0], el);
-      } else {
-        // Always remove element coming from source
-        this.remove();
       }
+
+      // Always remove element coming from source
+      el.remove();
     }
 
     // Raise an event to signal that the value changed
