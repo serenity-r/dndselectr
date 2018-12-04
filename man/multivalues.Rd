@@ -2,7 +2,7 @@
 % Please edit documentation in R/dragulaSelect.R
 \name{multivalues}
 \alias{multivalues}
-\title{Convert multivalued inputs to values}
+\title{Convert unique values to multivalues}
 \usage{
 multivalues(uniqueIds)
 }

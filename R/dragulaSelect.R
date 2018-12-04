@@ -65,13 +65,7 @@ dragZone <- function(id, choices) {
   inputTag <- div(
     id = id,
     class = 'ds-dragzone',
-    tagList(
-      mapply(names(choices),
-             choices,
-             FUN = function(name, choice) { dragulaZoneOptions('drag', name, choice) },
-             SIMPLIFY = FALSE, USE.NAMES = FALSE
-      )
-    )
+    dragulaZoneItems('drag', 'options', choices)
   )
 
   attachDependencies(inputTag)
@@ -82,6 +76,7 @@ dragZone <- function(id, choices) {
 #' @param inputId The \code{input} slot that will be used to acces the value.
 #' @param choices List of acceptable values with their associated labels. Note that
 #'   the labels can be arbitrary HTML, as long as they are wrapped in a \code{tagList}.
+#' @param presets Array of preset values.
 #' @param hidden Should the selected items be hidden? This is useful to represent
 #'   a reactive or event trigger.
 #' @param placeholder If hidden is true, insert placeholder text.
@@ -98,11 +93,12 @@ dragZone <- function(id, choices) {
 #'
 #' @seealso \code{\link{dragulaSelectR}}
 #'
-dropZoneInput <- function(inputId, choices, hidden=FALSE, placeholder=NULL,
+dropZoneInput <- function(inputId, choices, presets=NULL, hidden=FALSE, placeholder=NULL,
                           highlight=FALSE, multivalued=FALSE) {
 
   # Resolve names
   choices <- choicesWithNames(choices)
+  presets <- dropNulls(choices[presets])
 
   inputTag <- div(
     id = inputId,
@@ -110,17 +106,13 @@ dropZoneInput <- function(inputId, choices, hidden=FALSE, placeholder=NULL,
                                                         highlight = highlight,
                                                         multivalued = multivalued))), "right"),
     insertPlaceholder(inputId, ifelse(hidden, placeholder, NA)),
+    dragulaZoneItems('drop', 'presets', presets, multivalued),
     div(
       class = 'ds-dropzone-options',
-      tagList(
-        mapply(names(choices),
-               choices,
-               FUN = function(name, choice) { dragulaZoneOptions('drop', name, choice) },
-               SIMPLIFY = FALSE, USE.NAMES = FALSE
-        )
+      dragulaZoneItems('drop', 'options', choices)
       )
     )
-  )
+
 
   attachDependencies(inputTag)
 }
@@ -224,25 +216,37 @@ opts2class <- function(varArgs) {
   paste(lapply(varArgsNames, function(opt) { paste0('ds-', opt) }), collapse = ' ')
 }
 
-#' Create options for dragzones/dropzones
+#' Create items for dragzones/dropzones
 #'
 #' In Dragula, the drag and drop areas are called "containers". This function
-#' creates the individual draggable items in these containers.
+#' creates the individual draggable items and options in these containers.
 #'
-#' @param type  Container type: either \code{drop} or \code{drag}
-#' @param value Value for allowable item/option (unique identifier)
-#' @param label Label for allowable item/option (what the user sees)
+#' @param zone  Container zone type: either \code{drop} or \code{drag}
+#' @param type  Are these \code{options} or \code{presets}?
+#' @param items List of item labels, with names corresponding to values
+#' @param multivalued Multivalued? Only useful when \code{zone} is \code{drop}
 #'
 #' @return div element
 #'
-dragulaZoneOptions <- function(type, value, label=NULL) {
-  if (!(type %in% c('drag', 'drop'))) {
-    stop(type, " is not a valid container type. Dragula container type must be either 'drag' or 'drop'")
+dragulaZoneItems <- function(zone, type, items, multivalued=FALSE) {
+  if (!(zone %in% c('drag', 'drop'))) {
+    stop(zone, " is not a valid container type. Dragula container type must be either 'drag' or 'drop'")
   }
-  div(
-    "data-value" = value,
-    class = paste0('ds-', ifelse(type=='drop', 'dropoption', 'dragitem')),
-    label %||% value
+  if (!(type %in% c('options', 'presets'))) {
+    stop(type, " is not a valid item type. Item type must be either 'options' or 'presets'")
+  }
+  values <- names(items)
+  tagList(
+    lapply(seq_along(items),
+           FUN = function(values, labels, i) {
+             div(
+               "data-value" = values[[i]],
+               "data-instance" = ifelse(zone == 'drop' && multivalued && type=='presets', i, NA),
+               class = paste0('ds-', ifelse(zone=='drop', 'dropoption', 'dragitem')),
+               labels[[i]] %||% values[[i]]
+             )
+           }, values = values, labels = items
+    )
   )
 }
 

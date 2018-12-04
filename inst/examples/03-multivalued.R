@@ -12,7 +12,8 @@ shinyApp(
                                                       two = "2",
                                                       three = "3",
                                                       four = "4"),
-                           multivalued = TRUE)
+                           multivalued = TRUE,
+                           presets = c("one"))
       )
     ),
     fluidRow(

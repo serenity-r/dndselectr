@@ -83,7 +83,7 @@ $.extend(dropZoneBinding, {
   },
   initialize: function(el) {
     drake.containers.push(el);
-    $(el).data('counter', 0);
+    $(el).data('counter', $('#' + el.id + ' > .ds-dropoption').length);
   },
   getValue: function(el) {
     return $('#' + el.id + ' > .ds-dropoption').map(function() { return [this.dataset.value, this.dataset.instance].filter(Boolean).join('-') }).get();

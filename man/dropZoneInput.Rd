@@ -4,14 +4,16 @@
 \alias{dropZoneInput}
 \title{Create a Dragula dropzone input}
 \usage{
-dropZoneInput(inputId, choices, hidden = FALSE, placeholder = NULL,
-  highlight = FALSE, multivalued = FALSE)
+dropZoneInput(inputId, choices, presets = NULL, hidden = FALSE,
+  placeholder = NULL, highlight = FALSE, multivalued = FALSE)
 }
 \arguments{
 \item{inputId}{The \code{input} slot that will be used to acces the value.}
 
 \item{choices}{List of acceptable values with their associated labels. Note that
 the labels can be arbitrary HTML, as long as they are wrapped in a \code{tagList}.}
+
+\item{presets}{Array of preset values.}
 
 \item{hidden}{Should the selected items be hidden? This is useful to represent
 a reactive or event trigger.}
