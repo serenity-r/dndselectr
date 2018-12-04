@@ -34,6 +34,13 @@ $(document).on("ready", function() {
         // Clone option with corresponding value
         var dropoption = $(target).children(".ds-dropzone-options").children('.ds-dropoption[data-value="' + $(el).data('value') + '"]');
         var $newItem = dropoption.clone();
+
+        // Update dropzone counter
+        $(target).data('counter', $(target).data('counter') + 1);
+
+        // Set instance id for new item (only used for multivalued)
+        $newItem.attr('data-instance', multivalued ? $(target).data('counter') : '');
+
         if (sibling) {
           $newItem.insertBefore(sibling);
         } else {
@@ -76,9 +83,10 @@ $.extend(dropZoneBinding, {
   },
   initialize: function(el) {
     drake.containers.push(el);
+    $(el).data('counter', 0);
   },
   getValue: function(el) {
-    return $('#' + el.id + ' > .ds-dropoption').map(function() { return this.dataset.value }).get();
+    return $('#' + el.id + ' > .ds-dropoption').map(function() { return [this.dataset.value, this.dataset.instance].filter(Boolean).join('-') }).get();
   },
   setValue: function(el, value) {
     // "This is not currently used, but in the future we anticipate adding features that will require the server to push input values to the client."

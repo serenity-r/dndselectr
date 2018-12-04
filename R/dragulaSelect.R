@@ -106,10 +106,10 @@ dropZoneInput <- function(inputId, choices, hidden=FALSE, placeholder=NULL,
 
   inputTag <- div(
     id = inputId,
-    insertPlaceholder(inputId, ifelse(hidden, placeholder, NA)),
     class = trimws(paste('ds-dropzone', opts2class(list(hidden = hidden,
                                                         highlight = highlight,
                                                         multivalued = multivalued))), "right"),
+    insertPlaceholder(inputId, ifelse(hidden, placeholder, NA)),
     div(
       class = 'ds-dropzone-options',
       tagList(
