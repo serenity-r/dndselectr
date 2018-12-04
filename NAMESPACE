@@ -2,5 +2,6 @@
 
 export(dragZone)
 export(dropZoneInput)
+export(multivalues)
 export(runExample)
 import(shiny)

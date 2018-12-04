@@ -245,3 +245,24 @@ dragulaZoneOptions <- function(type, value, label=NULL) {
     label %||% value
   )
 }
+
+#' Convert unique values to multivalues
+#'
+#' (Multivalued dropzones only) This will drop the added unique counter ids
+#' to multivalued inputs.
+#'
+#' @param uniqueIds Values returned by dropzone input
+#'
+#' @return Multivalues with unique id stripped away.
+#'
+#' @export
+multivalues <- function(uniqueIds) {
+  if (is.null(uniqueIds)) {
+    return(NULL)
+  } else {
+    sapply(strsplit(uniqueIds, '-'),
+           FUN = function(x) {
+             paste(x[-length(x)], collapse = '-')
+           }, simplify = "array")
+  }
+}
