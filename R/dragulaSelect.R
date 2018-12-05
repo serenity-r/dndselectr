@@ -253,20 +253,20 @@ dragulaZoneItems <- function(zone, type, items, multivalued=FALSE) {
 #' Convert unique values to multivalues
 #'
 #' (Multivalued dropzones only) This will drop the added unique counter ids
-#' to multivalued inputs.
+#' and convert to multivalued inputs.
 #'
 #' @param uniqueIds Values returned by dropzone input
 #'
 #' @return Multivalues with unique id stripped away.
 #'
 #' @export
-multivalues <- function(uniqueIds) {
-  if (is.null(uniqueIds)) {
+multivalues <- function(uniqueVals) {
+  if (is.null(uniqueVals)) {
     return(NULL)
   } else {
-    sapply(strsplit(uniqueIds, '-'),
+    sapply(strsplit(uniqueVals, '-ds-'),
            FUN = function(x) {
-             paste(x[-length(x)], collapse = '-')
+             paste(x[-length(x)], collapse = '-ds-')
            }, simplify = "array")
   }
 }

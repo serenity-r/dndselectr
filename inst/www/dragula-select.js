@@ -86,7 +86,7 @@ $.extend(dropZoneBinding, {
     $(el).data('counter', $('#' + el.id + ' > .ds-dropoption').length);
   },
   getValue: function(el) {
-    return $('#' + el.id + ' > .ds-dropoption').map(function() { return [this.dataset.value, this.dataset.instance].filter(Boolean).join('-') }).get();
+    return $('#' + el.id + ' > .ds-dropoption').map(function() { return [this.dataset.value, this.dataset.instance].filter(Boolean).join('-ds-') }).get();
   },
   setValue: function(el, value) {
     // "This is not currently used, but in the future we anticipate adding features that will require the server to push input values to the client."
