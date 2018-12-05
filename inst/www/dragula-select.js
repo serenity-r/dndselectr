@@ -83,7 +83,9 @@ $.extend(dropZoneBinding, {
   },
   initialize: function(el) {
     drake.containers.push(el);
-    $(el).data('counter', $('#' + el.id + ' > .ds-dropoption').length);
+
+    // Set multivalued counter to max instance value
+    $(el).data('counter', Math.max(0, ...$('#' + el.id + ' > .ds-dropoption').map(function() { return this.dataset.instance })));
   },
   getValue: function(el) {
     return $('#' + el.id + ' > .ds-dropoption').map(function() { return [this.dataset.value, this.dataset.instance].filter(Boolean).join('-ds-') }).get();

@@ -13,15 +13,19 @@ shinyApp(
                                                       three = "3",
                                                       four = "4"),
                            multivalued = TRUE,
-                           presets = c("one"))
+                           presets = c("one", "two"))
       )
     ),
     fluidRow(
-      verbatimTextOutput("showme")
+      h3("Values"),
+      verbatimTextOutput("showme"),
+      h3("Multivalues"),
+      verbatimTextOutput("showmeMultivalues")
     )
   ),
   server = function(input, output) {
     output$showme <- renderPrint({ input$dropzone })
+    output$showmeMultivalues <- renderPrint({ multivalues( input$dropzone ) })
   }
 )
 

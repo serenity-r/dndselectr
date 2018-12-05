@@ -98,7 +98,9 @@ dropZoneInput <- function(inputId, choices, presets=NULL, hidden=FALSE, placehol
 
   # Resolve names
   choices <- choicesWithNames(choices)
-  presets <- dropNulls(choices[presets])
+
+  # Manage presets
+  presets <- presetsWithIds(presets, choices, multivalued)
 
   inputTag <- div(
     id = inputId,
@@ -106,13 +108,12 @@ dropZoneInput <- function(inputId, choices, presets=NULL, hidden=FALSE, placehol
                                                         highlight = highlight,
                                                         multivalued = multivalued))), "right"),
     insertPlaceholder(inputId, ifelse(hidden, placeholder, NA)),
-    dragulaZoneItems('drop', 'presets', presets, multivalued),
+    dragulaZoneItems('drop', 'presets', presets$values, presets$ids),
     div(
       class = 'ds-dropzone-options',
       dragulaZoneItems('drop', 'options', choices)
       )
     )
-
 
   attachDependencies(inputTag)
 }
@@ -224,11 +225,11 @@ opts2class <- function(varArgs) {
 #' @param zone  Container zone type: either \code{drop} or \code{drag}
 #' @param type  Are these \code{options} or \code{presets}?
 #' @param items List of item labels, with names corresponding to values
-#' @param multivalued Multivalued? Only useful when \code{zone} is \code{drop}
+#' @param ids If multivalued, these will be unique ids
 #'
 #' @return div element
 #'
-dragulaZoneItems <- function(zone, type, items, multivalued=FALSE) {
+dragulaZoneItems <- function(zone, type, items, ids=rep(NA, length(items))) {
   if (!(zone %in% c('drag', 'drop'))) {
     stop(zone, " is not a valid container type. Dragula container type must be either 'drag' or 'drop'")
   }
@@ -238,16 +239,44 @@ dragulaZoneItems <- function(zone, type, items, multivalued=FALSE) {
   values <- names(items)
   tagList(
     lapply(seq_along(items),
-           FUN = function(values, labels, i) {
+           FUN = function(values, labels, ids, i) {
              div(
                "data-value" = values[[i]],
-               "data-instance" = ifelse(zone == 'drop' && multivalued && type=='presets', i, NA),
+               "data-instance" = ids[[i]],
                class = paste0('ds-', ifelse(zone=='drop', 'dropoption', 'dragitem')),
                labels[[i]] %||% values[[i]]
              )
-           }, values = values, labels = items
+           }, values = values, labels = items, ids = ids
     )
   )
+}
+
+#' Input is set of possible unique ids from multivalued inputs
+#'
+#' @param values Values returned by dropzone input
+#'
+#' @return logical
+#'
+#' @export
+isMultivalued <- function(values) {
+  nvals <- length(values)
+  if (is.null(values))
+    return(FALSE)
+
+  # Not unique values
+  if (length(unique(values)) != nvals)
+    return(FALSE)
+
+  # Doesn't have the -ds- separator in all entries
+  if (length(grep('-ds-', values)) != nvals)
+    return(FALSE)
+
+  # Check individual id entries - are they integers when casted?
+  ids <- multivalues(values, ids=TRUE)
+  if (anyNAOrFalse(isWholeNum(suppressWarnings(as.double(ids)))))
+    return(FALSE)
+
+  return(TRUE)
 }
 
 #' Convert unique values to multivalues
@@ -255,18 +284,21 @@ dragulaZoneItems <- function(zone, type, items, multivalued=FALSE) {
 #' (Multivalued dropzones only) This will drop the added unique counter ids
 #' and convert to multivalued inputs.
 #'
-#' @param uniqueIds Values returned by dropzone input
+#' @param uniqueVals Values returned by dropzone input
+#' @param ids Return unique ids rather than multivalues?
 #'
 #' @return Multivalues with unique id stripped away.
 #'
 #' @export
-multivalues <- function(uniqueVals) {
-  if (is.null(uniqueVals)) {
-    return(NULL)
-  } else {
-    sapply(strsplit(uniqueVals, '-ds-'),
+multivalues <- function(values, ids=FALSE) {
+  if (!is.null(values)) {
+    sapply(strsplit(values, '-ds-'),
            FUN = function(x) {
-             paste(x[-length(x)], collapse = '-ds-')
+             if (length(x) == 1) {
+               return(ifelse(ids, NA, x))
+             } else {
+               return(ifelse(ids, x[length(x)], paste(x[-length(x)], collapse = '-ds-')))
+             }
            }, simplify = "array")
   }
 }

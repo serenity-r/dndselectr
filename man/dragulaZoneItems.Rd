@@ -4,7 +4,7 @@
 \alias{dragulaZoneItems}
 \title{Create items for dragzones/dropzones}
 \usage{
-dragulaZoneItems(zone, type, items, multivalued = FALSE)
+dragulaZoneItems(zone, type, items, ids = rep(NA, length(items)))
 }
 \arguments{
 \item{zone}{Container zone type: either \code{drop} or \code{drag}}
@@ -13,7 +13,7 @@ dragulaZoneItems(zone, type, items, multivalued = FALSE)
 
 \item{items}{List of item labels, with names corresponding to values}
 
-\item{multivalued}{Multivalued? Only useful when \code{zone} is \code{drop}}
+\item{ids}{If multivalued, these will be unique ids}
 }
 \value{
 div element

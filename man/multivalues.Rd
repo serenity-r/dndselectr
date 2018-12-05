@@ -4,15 +4,17 @@
 \alias{multivalues}
 \title{Convert unique values to multivalues}
 \usage{
-multivalues(uniqueIds)
+multivalues(values, ids = FALSE)
 }
 \arguments{
-\item{uniqueIds}{Values returned by dropzone input}
+\item{ids}{Return unique ids rather than multivalues?}
+
+\item{uniqueVals}{Values returned by dropzone input}
 }
 \value{
 Multivalues with unique id stripped away.
 }
 \description{
 (Multivalued dropzones only) This will drop the added unique counter ids
-to multivalued inputs.
+and convert to multivalued inputs.
 }

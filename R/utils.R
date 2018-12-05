@@ -8,9 +8,26 @@
   return(NULL)
 }
 
+nullOrEmpty <- function(x) {
+  is.null(x) || length(x) == 0
+}
+# Given a vector or list, drop all the NULL items in it
+dropNullsOrEmpty <- function(x) {
+  x[!vapply(x, nullOrEmpty, FUN.VALUE=logical(1))]
+}
+
 # Given a vector or list, drop all the NULL items in it
 dropNulls <- function(x) {
   x[!vapply(x, is.null, FUN.VALUE=logical(1))]
+}
+
+# Useful for multivalued check
+isWholeNum <- function(x, tol = .Machine$double.eps^0.5) {
+  abs(x - round(x)) < tol
+}
+
+anyNAOrFalse <- function(x) {
+  any(is.na(x) | !x)
 }
 
 # Used in runExample ----
@@ -94,4 +111,28 @@ choicesWithNames <- function(choices) {
   names(choices)[missing] <- as.character(choices)[missing]
 
   choices
+}
+
+presetsWithIds <- function(presets, choices, multivalued=FALSE) {
+  ids <- NULL
+  if (!nullOrEmpty(presets)) {
+    if (multivalued) {
+      if (isMultivalued(presets)) {
+        ids <- multivalues(presets, ids=TRUE)
+        presets <- multivalues(presets)
+      } else {
+        ids <- seq(1, length(presets))
+      }
+    } else {
+      ids <- rep(NA, length(presets))
+    }
+    # Make sure they are valid choices
+    ids <- ids[presets %in% names(choices)]
+    presets <- dropNulls(choices[presets])
+  }
+
+  list(
+    values = presets,
+    ids = ids
+  )
 }
