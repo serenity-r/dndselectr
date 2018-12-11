@@ -7,9 +7,9 @@
 multivalues(values, ids = FALSE)
 }
 \arguments{
-\item{ids}{Return unique ids rather than multivalues?}
+\item{values}{Values returned by dropzone input}
 
-\item{uniqueVals}{Values returned by dropzone input}
+\item{ids}{Return unique ids rather than multivalues?}
 }
 \value{
 Multivalues with unique id stripped away.

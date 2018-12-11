@@ -188,6 +188,7 @@ runExample <- function(example=NA,
 #' the Dragula JS package is attached, as well as the javascript wrapper and
 #' input bindings.
 #'
+#' @param ... Shiny tag object
 attachDependencies <- function(...) {
   deps <- list(
     htmltools::htmlDependency(name = "dragula", version = "3.7.2",
@@ -284,7 +285,7 @@ isMultivalued <- function(values) {
 #' (Multivalued dropzones only) This will drop the added unique counter ids
 #' and convert to multivalued inputs.
 #'
-#' @param uniqueVals Values returned by dropzone input
+#' @param values Values returned by dropzone input
 #' @param ids Return unique ids rather than multivalues?
 #'
 #' @return Multivalues with unique id stripped away.

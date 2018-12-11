@@ -6,6 +6,9 @@
 \usage{
 attachDependencies(...)
 }
+\arguments{
+\item{...}{Shiny tag object}
+}
 \description{
 \code{attachDependencies} attaches the javascript dependencies.Specifically,
 the Dragula JS package is attached, as well as the javascript wrapper and
