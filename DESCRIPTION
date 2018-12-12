@@ -11,8 +11,9 @@ Depends: R (>= 3.5.0)
 Imports:
     shiny (>= 1.1.0),
     htmltools (>= 0.3.6)
-Suggests: 
-    testthat
+Suggests:
+    testthat,
+    covr
 URL: https://github.com/serenity-r/dragulaSelectR
 BugReports: https://github.com/serenity-r/dragulaSelectR/issues
 License: GPL-3
