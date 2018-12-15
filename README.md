@@ -1,9 +1,10 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
+<!-- --rmarkdown v1-- -->
 dragulaSelectR
 ==============
 
-[![Travis-CI Build Status](https://travis-ci.org/serenity-r/dragulaSelectR.svg?branch=master)](https://travis-ci.org/serenity-r/dragulaSelectR) [![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/github/serenity-r/dragulaSelectR?branch=master&svg=true)](https://ci.appveyor.com/project/serenity-r/dragulaSelectR) [![Coverage Status](https://img.shields.io/codecov/c/github/serenity-r/dragulaSelectR/master.svg)](https://codecov.io/github/serenity-r/dragulaSelectR?branch=master)
+[![Travis-CI Build Status](https://travis-ci.org/serenity-r/dragulaSelectR.svg?branch=master)](https://travis-ci.org/serenity-r/dragulaSelectR) [![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/github/serenity-r/dragulaSelectR?branch=master&svg=true)](https://ci.appveyor.com/project/mdlama/dragulaSelectR) [![Coverage Status](https://img.shields.io/codecov/c/github/serenity-r/dragulaSelectR/master.svg)](https://codecov.io/github/serenity-r/dragulaSelectR?branch=master)
 
 Overview
 --------
