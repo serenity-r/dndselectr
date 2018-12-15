@@ -59,6 +59,15 @@ NULL
 #'
 dragZone <- function(id, choices) {
 
+  if (missing(id)) {
+    warning("Using generic 'dragzone' as id. HTML element may not be unique!")
+    id <- "dragzone"
+  }
+
+  if (missing(choices)) {
+    stop("You must specify choices for this dragZone. ")
+  }
+
   # Resolve names
   choices <- choicesWithNames(choices)
 
@@ -242,7 +251,7 @@ dragulaZoneItems <- function(zone, type, items, ids=rep(NA, length(items))) {
     lapply(seq_along(items),
            FUN = function(values, labels, ids, i) {
              div(
-               "data-value" = values[[i]],
+               "data-value" = values[[i]] %||% labels[[i]],
                "data-instance" = ids[[i]],
                class = paste0('ds-', ifelse(zone=='drop', 'dropoption', 'dragitem')),
                labels[[i]] %||% values[[i]]
