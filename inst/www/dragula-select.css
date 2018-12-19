@@ -25,6 +25,11 @@ span.ds-placeholder {
   cursor: move;
 }
 
+.ds-dragitem.selected,
+.ds-dropoption.selected {
+  background-color: rgba(0.3, 0.3, 0.3, 0.3);
+}
+
 .ds-dropzone .ds-dropzone-options,
 .ds-dropzone.ds-hidden .ds-dropoption,
 .ds-dropzone.ds-hidden .ds-dragitem {

@@ -4,7 +4,8 @@
 \alias{dragulaZoneItems}
 \title{Create items for dragzones/dropzones}
 \usage{
-dragulaZoneItems(zone, type, items, ids = rep(NA, length(items)))
+dragulaZoneItems(zone, type, items, ids = rep(NA, length(items)),
+  selected = NULL)
 }
 \arguments{
 \item{zone}{Container zone type: either \code{drop} or \code{drag}}
@@ -14,6 +15,8 @@ dragulaZoneItems(zone, type, items, ids = rep(NA, length(items)))
 \item{items}{List of item labels, with names corresponding to values}
 
 \item{ids}{If multivalued, these will be unique ids}
+
+\item{selected}{Unique values (of form <value>-ds-<id> if multivalued).}
 }
 \value{
 div element

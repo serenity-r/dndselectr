@@ -5,7 +5,8 @@
 \title{Create a Dragula dropzone input}
 \usage{
 dropZoneInput(inputId, choices, presets = NULL, hidden = FALSE,
-  placeholder = NULL, highlight = FALSE, multivalued = FALSE)
+  placeholder = NULL, highlight = FALSE, multivalued = FALSE,
+  selectable = FALSE, selected = NULL)
 }
 \arguments{
 \item{inputId}{The \code{input} slot that will be used to acces the value.}
@@ -23,6 +24,10 @@ a reactive or event trigger.}
 \item{highlight}{Highlights the container on dragover. Useful when \code{hidden} is active.}
 
 \item{multivalued}{Allow multiple items with the same value?}
+
+\item{selectable}{Are the items in this dropzone selectable?}
+
+\item{selected}{Unique values (of form <value>-ds-<id> if multivalued).}
 }
 \description{
 Create a Dragula dropzone input

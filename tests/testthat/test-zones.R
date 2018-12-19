@@ -21,7 +21,7 @@ test_that("Dragula zone items are formatted correctly", {
   )
   # ids working
   expect_match(
-    as.character(dragulaZoneItems('drop', 'presets', list(foo = "Foo"), ids = c(42))),
+    as.character(dragulaZoneItems('drop', 'presets', list(foo = "Foo"), c(42))),
     "<div data-value=\"foo\" data-instance=\"42\" class=\"ds-dropoption\">Foo</div>"
   )
   # Non-list for items
@@ -29,4 +29,12 @@ test_that("Dragula zone items are formatted correctly", {
     as.character(dragulaZoneItems('drop', 'options', c("foo"))),
     "<div data-value=\"foo\" data-instance class=\"ds-dropoption\">foo</div>"
   )
+})
+
+test_that("Dropzone selections are doing their thing", {
+  expect_equal(parseSelected(selected = NULL, presets = "foo"), NULL)
+  expect_equal(parseSelected(selected = "foo", presets = NULL), NULL)
+  expect_warning(parseSelected(selected = "foo", presets = "bar"), NULL)
+  expect_error(parseSelected(selected = c("foo", "bar"), presets = "bar"), "Only one selected value allowed!")
+  expect_equal(parseSelected(selected = "bar", presets = c("foo", "bar")), c(NA, "selected"))
 })

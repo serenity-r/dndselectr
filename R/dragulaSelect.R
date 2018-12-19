@@ -91,6 +91,8 @@ dragZone <- function(id, choices) {
 #' @param placeholder If hidden is true, insert placeholder text.
 #' @param highlight Highlights the container on dragover. Useful when \code{hidden} is active.
 #' @param multivalued Allow multiple items with the same value?
+#' @param selectable Are the items in this dropzone selectable?
+#' @param selected  Unique values (of form <value>-ds-<id> if multivalued).
 #'
 #' @export
 #'
@@ -103,21 +105,29 @@ dragZone <- function(id, choices) {
 #' @seealso \code{\link{dragulaSelectR}}
 #'
 dropZoneInput <- function(inputId, choices, presets=NULL, hidden=FALSE, placeholder=NULL,
-                          highlight=FALSE, multivalued=FALSE) {
+                          highlight=FALSE, multivalued=FALSE, selectable=FALSE,
+                          selected=NULL) {
 
   # Resolve names
   choices <- choicesWithNames(choices)
 
   # Manage presets
-  presets <- presetsWithIds(presets, choices, multivalued)
+  presets <- splitPresets(presets, choices, multivalued)
+
+  # Manage selected
+  selected <- parseSelected(selected, combinePresets(presets))
 
   inputTag <- div(
     id = inputId,
     class = trimws(paste('ds-dropzone', opts2class(list(hidden = hidden,
                                                         highlight = highlight,
-                                                        multivalued = multivalued))), "right"),
+                                                        multivalued = multivalued,
+                                                        selectable = selectable))), "right"),
     insertPlaceholder(inputId, ifelse(hidden, placeholder, NA)),
-    dragulaZoneItems('drop', 'presets', presets$values, presets$ids),
+    dragulaZoneItems('drop', 'presets',
+                     items = presets$values,
+                     ids = presets$ids,
+                     selected = selected),
     div(
       class = 'ds-dropzone-options',
       dragulaZoneItems('drop', 'options', choices)
@@ -236,10 +246,11 @@ opts2class <- function(varArgs) {
 #' @param type  Are these \code{options} or \code{presets}?
 #' @param items List of item labels, with names corresponding to values
 #' @param ids If multivalued, these will be unique ids
+#' @param selected  Unique values (of form <value>-ds-<id> if multivalued).
 #'
 #' @return div element
 #'
-dragulaZoneItems <- function(zone, type, items, ids=rep(NA, length(items))) {
+dragulaZoneItems <- function(zone, type, items, ids=rep(NA, length(items)), selected=NULL) {
   if (!(zone %in% c('drag', 'drop'))) {
     stop(zone, " is not a valid container type. Dragula container type must be either 'drag' or 'drop'")
   }
@@ -249,14 +260,15 @@ dragulaZoneItems <- function(zone, type, items, ids=rep(NA, length(items))) {
   values <- names(items)
   tagList(
     lapply(seq_along(items),
-           FUN = function(values, labels, ids, i) {
+           FUN = function(values, labels, ids, selected, i) {
              div(
                "data-value" = values[[i]] %||% labels[[i]],
                "data-instance" = ids[[i]],
-               class = paste0('ds-', ifelse(zone=='drop', 'dropoption', 'dragitem')),
+               class = paste(c(paste0('ds-', ifelse(zone=='drop', 'dropoption', 'dragitem')),
+                             selected[[i]] %AND% selected[[i]]), collapse = ' '),
                labels[[i]] %||% values[[i]]
              )
-           }, values = values, labels = items, ids = ids
+           }, values = values, labels = items, ids = ids, selected = selected
     )
   )
 }

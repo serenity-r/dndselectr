@@ -113,7 +113,9 @@ choicesWithNames <- function(choices) {
   choices
 }
 
-presetsWithIds <- function(presets, choices, multivalued=FALSE) {
+# This does a little more than just splitting preset ids. It also
+# assigns the label of the corresponding option.
+splitPresets <- function(presets, choices, multivalued=FALSE) {
   ids <- NULL
   if (!nullOrEmpty(presets)) {
     if (multivalued) {
@@ -126,7 +128,12 @@ presetsWithIds <- function(presets, choices, multivalued=FALSE) {
     } else {
       ids <- rep(NA, length(presets))
     }
+
     # Make sure they are valid choices
+    if (anyNAOrFalse(presets %in% names(choices))) {
+      warning("Preset value(s) ", paste(presets[!(presets %in% names(choices))], sep=", "), " not allowed for this dropzone.")
+    }
+    # Subset accordingly
     ids <- ids[presets %in% names(choices)]
     presets <- dropNulls(choices[presets])
   }
@@ -135,4 +142,33 @@ presetsWithIds <- function(presets, choices, multivalued=FALSE) {
     values = presets,
     ids = ids
   )
+}
+
+# Given the result of splitPresets, reconstruct the id'd unique value.
+# Throws away the label for the preset.
+# Note: Consider refactoring and making this an inverse function of multivalues
+#       The function multivalues could also return a list of values and ids,
+#       like what splitPresets is doing.
+combinePresets <- function(presets) {
+  sapply(seq_along(names(presets$values)),
+         FUN = function(value, id, i) {
+           ifelse(is.na(id[i]), value[i], paste0(value[i], '-ds-', id[i]))
+         }, value = names(presets$values), id = presets$ids)
+}
+
+# If valid selected item present, will return array of NAs for non-selected items,
+# and string "selected" for the selected item.
+parseSelected <- function(selected, presets) {
+  if (is.null(presets) || is.null(selected)) {
+    return(NULL)
+  }
+  if (length(selected) > 1) {
+    stop("Only one selected value allowed!")
+  }
+  if (anyNAOrFalse(selected %in% presets)) {
+    warning("Selected value ", paste(selected[!(selected %in% presets)], sep=", "), " not in presets.")
+  }
+  selections <- rep(NA, length(presets))
+  selections[presets == selected] <- "selected"
+  return(selections)
 }

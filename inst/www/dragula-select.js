@@ -1,3 +1,38 @@
+var dropZoneBinding = new Shiny.InputBinding();
+
+function optionValue(el) {
+  return [el.dataset.value, el.dataset.instance].filter(Boolean).join('-ds-');
+}
+
+$.extend(dropZoneBinding, {
+  find: function(scope) {
+    return $(scope).find(".ds-dropzone");
+  },
+  initialize: function(el) {
+    drake.containers.push(el);
+
+    // Set multivalued counter to max instance value
+    $(el).data('counter', Math.max(0, ...$('#' + el.id + ' > .ds-dropoption').map(function() { return this.dataset.instance })));
+  },
+  getValue: function(el) {
+    return $('#' + el.id + ' > .ds-dropoption').map(function() { return optionValue(this) }).get();
+  },
+  setValue: function(el, value) {
+    // "This is not currently used, but in the future we anticipate adding features that will require the server to push input values to the client."
+    // https://shiny.rstudio.com/articles/building-inputs.html
+  },
+  subscribe: function(el, callback) {
+    $(el).on("change.dropZoneBinding", function(e) {
+      callback();
+    });
+  },
+  unsubscribe: function(el) {
+    $(el).off(".dropZoneBinding");
+  }
+});
+
+Shiny.inputBindings.register(dropZoneBinding);
+
 $(document).on("ready", function() {
   drake = dragula({
     isContainer: function(el) {
@@ -15,8 +50,8 @@ $(document).on("ready", function() {
       //   no dropzone to different dropzone AND (note: caused issue when drop triggered before remove - might change in future)
       //   valid available option in dropzone
       return ((!target.classList.contains('ds-dragzone')) &&
-              !(source.classList.contains('ds-dropzone') && (source.id !== target.id)) &&
-              (dropoption.length > 0));
+                !(source.classList.contains('ds-dropzone') && (source.id !== target.id)) &&
+                (dropoption.length > 0));
     },
     revertOnSpill: true, // Always revert to source container on spill
     removeOnSpill: true  // Always remove drag item on spill
@@ -72,36 +107,29 @@ $(document).on("ready", function() {
     if ($(source).hasClass('ds-dropzone')) {
       $(source).trigger("change");
     }
+
+    if (($(source).hasClass('ds-selectable')) &&
+        ($(el).hasClass('selected'))) {
+      let dzId = $(source).attr('id');
+      Shiny.onInputChange(dzId + "_selected", null);
+    }
   });
 });
 
-var dropZoneBinding = new Shiny.InputBinding();
+// need to bind on inserted to work with insertUI; $(document).ready doesn't work!
+$(document).bind('DOMNodeInserted', function() {
+  // Selection is being made on a selectable zone
+  $(".ds-dropzone.ds-selectable, .ds-dragzone.ds-selectable").on("click", ".ds-dropoption", function(ev) {
+    let clicked = event.target;
+    let dzId = clicked.parentElement.id;
+    let newValue = optionValue(clicked);
 
-$.extend(dropZoneBinding, {
-  find: function(scope) {
-    return $(scope).find(".ds-dropzone");
-  },
-  initialize: function(el) {
-    drake.containers.push(el);
+    // Get currently selected - right now only one allowed
+    let $selected = $("#"+dzId).children(".selected");
+    let currValue = ($selected.length ? optionValue($selected.get(0)) : null);
 
-    // Set multivalued counter to max instance value
-    $(el).data('counter', Math.max(0, ...$('#' + el.id + ' > .ds-dropoption').map(function() { return this.dataset.instance })));
-  },
-  getValue: function(el) {
-    return $('#' + el.id + ' > .ds-dropoption').map(function() { return [this.dataset.value, this.dataset.instance].filter(Boolean).join('-ds-') }).get();
-  },
-  setValue: function(el, value) {
-    // "This is not currently used, but in the future we anticipate adding features that will require the server to push input values to the client."
-    // https://shiny.rstudio.com/articles/building-inputs.html
-  },
-  subscribe: function(el, callback) {
-    $(el).on("change.dropZoneBinding", function(e) {
-      callback();
-    });
-  },
-  unsubscribe: function(el) {
-    $(el).off(".dropZoneBinding");
-  }
+    $selected.removeClass("selected");
+    $(clicked).addClass("selected");
+    Shiny.onInputChange(dzId + "_selected", newValue);
+  });
 });
-
-Shiny.inputBindings.register(dropZoneBinding);
