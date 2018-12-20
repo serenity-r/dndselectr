@@ -25,5 +25,5 @@ Examples
 
 ``` r
 dragulaSelectR::runExample()
-#> Valid examples are "01-basic.R", "02-hidden.R", "03-multivalued.R", "04-renderUI.R", "05-multivalued-renderUI.R"
+#> Valid examples are "01-basic.R", "02-hidden.R", "03-multivalued.R", "04-renderUI.R", "05-multivalued-renderUI.R", "06-selectable.R", "07-renderUI-selectable.R", "08-hidden-entangled.R"
 ```
