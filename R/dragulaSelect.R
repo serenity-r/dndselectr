@@ -324,3 +324,43 @@ multivalues <- function(values, ids=FALSE) {
            }, simplify = "array")
   }
 }
+
+#' Entangle two dropzones
+#'
+#' Create observe events that entangle two Shiny dropzones. Useful for
+#' hidden dropzones that take drops but display options elsewhere.
+#'
+#' @param session The \code{session} object passed to function given to \code{shinyServer}.
+#' @param dropZoneOneId  The \code{id} of the first dropzone.
+#' @param dropZoneTwoId  The \code{id} of the second dropzone.
+#'
+#' @return Expression including the two observe events.
+#' @export
+entangle <- function(session, dropZoneOneId, dropZoneTwoId) {
+  return({
+    observeEvent(session$input[[dropZoneOneId]], {
+      if (!isTruthy(session$input[[dropZoneTwoId]]) ||
+          !isTRUE(all.equal(session$input[[dropZoneOneId]], session$input[[dropZoneTwoId]]))) {
+        entangleSourceToTarget(session, sourceId = dropZoneOneId, targetId = dropZoneTwoId)
+      }
+    })
+
+    observeEvent(session$input[[dropZoneTwoId]], {
+      if (!isTruthy(session$input[[dropZoneOneId]]) ||
+          !isTRUE(all.equal(session$input[[dropZoneOneId]], session$input[[dropZoneTwoId]]))) {
+        entangleSourceToTarget(session, sourceId = dropZoneTwoId, targetId = dropZoneOneId)
+      }
+    })
+  })
+}
+
+#' Update target dropzone entangled with source dropzone
+#'
+#' @param session The \code{session} object passed to function given to \code{shinyServer}.
+#' @param sourceId  The \code{id} of the source dropzone.
+#' @param targetId  The \code{id} of the target dropzone.
+#'
+entangleSourceToTarget <- function(session, sourceId, targetId) {
+  message <- dropNulls(list(action = "entangle", sourceId = sourceId))
+  session$sendInputMessage(targetId, message)
+}

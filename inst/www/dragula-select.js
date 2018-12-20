@@ -17,9 +17,7 @@ $.extend(dropZoneBinding, {
   getValue: function(el) {
     return $('#' + el.id + ' > .ds-dropoption').map(function() { return optionValue(this) }).get();
   },
-  setValue: function(el, value) {
-    // "This is not currently used, but in the future we anticipate adding features that will require the server to push input values to the client."
-    // https://shiny.rstudio.com/articles/building-inputs.html
+  setValue: function(el, options) {
   },
   subscribe: function(el, callback) {
     $(el).on("change.dropZoneBinding", function(e) {
@@ -28,6 +26,20 @@ $.extend(dropZoneBinding, {
   },
   unsubscribe: function(el) {
     $(el).off(".dropZoneBinding");
+  },
+  receiveMessage: function(el, data) {
+    if (data.hasOwnProperty('action')) {
+      if (data.action === "entangle") {
+        // Replace drop options
+        $('#' + el.id).children('.ds-dropoption').remove();
+        $('#' + data.sourceId).children('.ds-dropoption').clone().appendTo('#' + el.id);
+
+        // Copy counter information
+        $('#' + el.id).data('counter', $('#' + data.sourceId).data('counter'));
+
+        $(el).trigger("change");
+      }
+    }
   }
 });
 
