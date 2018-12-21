@@ -6,7 +6,8 @@
 \usage{
 dropZoneInput(inputId, choices, presets = NULL, hidden = FALSE,
   placeholder = NULL, highlight = FALSE, multivalued = FALSE,
-  selectable = FALSE, selected = NULL, togglevis = FALSE)
+  selectable = FALSE, selected = NULL, togglevis = FALSE,
+  lockable = FALSE)
 }
 \arguments{
 \item{inputId}{The \code{input} slot that will be used to acces the value.}
@@ -30,6 +31,8 @@ a reactive or event trigger.}
 \item{selected}{Unique values (of form <value>-ds-<id> if multivalued).}
 
 \item{togglevis}{Add an icon to make items inactive.}
+
+\item{lockable}{Add an icon to make items non-draggable (i.e. lockable)}
 }
 \description{
 Create a Dragula dropzone input

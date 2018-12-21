@@ -38,11 +38,11 @@ span.ds-placeholder {
 }
 
 /* Visibility */
-.visible {
-  position: absolute;
+.ds-visible,
+.ds-lock {
   color: #000;
-  top: 0px;
-  right: 5px;
+  margin-left: 5px;
+  float: right;
 }
 
 .ds-dropoption i {
@@ -53,35 +53,38 @@ span.ds-placeholder {
   visibility: visible;
 }
 
-.inactive {
+.ds-inactive {
   opacity: 0.3;
 }
 
-.visible > i {
+.ds-locked {
+  background: repeating-linear-gradient(
+  45deg,
+  #eee,
+  #eee 10px,
+  #999 10px,
+  #999 20px
+);
+}
+
+.ds-visible > i,
+.ds-lock > i {
   cursor: pointer;
   z-index: 1;
 }
 
-.fa-eye {
-  opacity: 1;
-}
-
-.fa-eye:hover {
-  opacity: 0.3;
-}
-
 .fa-eye:hover:before {
-    content: "\f070";
-}
-
-.fa-eye-slash {
-  opacity: 0.3;
-}
-
-.fa-eye-slash:hover {
-  opacity: 1.0;
+  content: "\f070";
 }
 
 .fa-eye-slash:hover:before {
   content: "\f06e";
+}
+
+.fa-lock-open:hover:before {
+  content: "\f023";
+}
+
+.fa-lock:hover:before {
+  content: "\f3c1";
 }

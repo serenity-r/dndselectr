@@ -32,15 +32,22 @@ $.extend(dropZoneBinding, {
     }
 
     // Toggle visibility
-    $(el).on("click", ".ds-dropoption > .visible i", function(ev) {
+    $(el).on("click", ".ds-dropoption > .ds-visible i", function(ev) {
       ev.stopPropagation(); // Avoid selecting
       $(this).toggleClass("fa-eye fa-eye-slash");
-      $(this).closest(".ds-dropoption").toggleClass("inactive");
+      $(this).closest(".ds-dropoption").toggleClass("ds-inactive");
       $(this).closest(".ds-dropzone").trigger("change");
+    });
+
+    // Toggle draggability
+    $(el).on("click", ".ds-dropoption > .ds-lock i", function(ev) {
+      ev.stopPropagation(); // Avoid selecting
+      $(this).toggleClass("fa-lock fa-lock-open");
+      $(this).closest(".ds-dropoption").toggleClass("ds-locked");
     });
   },
   getValue: function(el) {
-    return $('#' + el.id + ' > .ds-dropoption:not(.inactive)').map(function() { return optionValue(this) }).get();
+    return $('#' + el.id + ' > .ds-dropoption:not(.ds-inactive)').map(function() { return optionValue(this) }).get();
   },
   setValue: function(el, options) {
   },
@@ -78,6 +85,9 @@ $(document).on("ready", function() {
     copy: function(el, source) {
       // Source -> Target only
       return source.classList.contains('ds-dragzone');
+    },
+    invalid: function (el, handle) {
+      return $(el).hasClass('ds-locked');
     },
     accepts: function(el, target, source, sibling) {
       // Make sure option exists within dropzone
