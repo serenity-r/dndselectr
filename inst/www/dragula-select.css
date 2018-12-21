@@ -6,6 +6,7 @@
 
 .ds-dragitem,
 .ds-dropoption {
+  position: relative;
   border-style: solid;
   margin: 4px;
   padding: 2px 4px;
@@ -34,4 +35,53 @@ span.ds-placeholder {
 .ds-dropzone.ds-hidden .ds-dropoption,
 .ds-dropzone.ds-hidden .ds-dragitem {
   display: none;
+}
+
+/* Visibility */
+.visible {
+  position: absolute;
+  color: #000;
+  top: 0px;
+  right: 5px;
+}
+
+.ds-dropoption i {
+  visibility: hidden;
+}
+
+.ds-dropoption:hover i {
+  visibility: visible;
+}
+
+.inactive {
+  opacity: 0.3;
+}
+
+.visible > i {
+  cursor: pointer;
+  z-index: 1;
+}
+
+.fa-eye {
+  opacity: 1;
+}
+
+.fa-eye:hover {
+  opacity: 0.3;
+}
+
+.fa-eye:hover:before {
+    content: "\f070";
+}
+
+.fa-eye-slash {
+  opacity: 0.3;
+}
+
+.fa-eye-slash:hover {
+  opacity: 1.0;
+}
+
+.fa-eye-slash:hover:before {
+  content: "\f06e";
 }

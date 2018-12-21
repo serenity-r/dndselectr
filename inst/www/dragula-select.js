@@ -13,9 +13,34 @@ $.extend(dropZoneBinding, {
 
     // Set multivalued counter to max instance value
     $(el).data('counter', Math.max(0, ...$('#' + el.id + ' > .ds-dropoption').map(function() { return this.dataset.instance })));
+
+    // Selection is being made on a selectable zone
+    if ($(el).hasClass('ds-selectable')) {
+      $(el).on("click", ".ds-dropoption", function() {
+        let $clicked = $(this);
+        let dzId = $clicked.parent().attr('id');
+        let newValue = optionValue($clicked.get(0));
+
+        // Get currently selected - right now only one allowed
+        let $selected = $clicked.siblings(".selected");
+        let currValue = ($selected.length ? optionValue($selected.get(0)) : null);
+
+        $selected.removeClass("selected");
+        $clicked.addClass("selected");
+        Shiny.onInputChange(dzId + "_selected", newValue);
+      });
+    }
+
+    // Toggle visibility
+    $(el).on("click", ".ds-dropoption > .visible i", function(ev) {
+      ev.stopPropagation(); // Avoid selecting
+      $(this).toggleClass("fa-eye fa-eye-slash");
+      $(this).closest(".ds-dropoption").toggleClass("inactive");
+      $(this).closest(".ds-dropzone").trigger("change");
+    });
   },
   getValue: function(el) {
-    return $('#' + el.id + ' > .ds-dropoption').map(function() { return optionValue(this) }).get();
+    return $('#' + el.id + ' > .ds-dropoption:not(.inactive)').map(function() { return optionValue(this) }).get();
   },
   setValue: function(el, options) {
   },
@@ -125,23 +150,5 @@ $(document).on("ready", function() {
       let dzId = $(source).attr('id');
       Shiny.onInputChange(dzId + "_selected", null);
     }
-  });
-});
-
-// need to bind on inserted to work with insertUI; $(document).ready doesn't work!
-$(document).bind('DOMNodeInserted', function() {
-  // Selection is being made on a selectable zone
-  $(".ds-dropzone.ds-selectable, .ds-dragzone.ds-selectable").on("click", ".ds-dropoption", function(ev) {
-    let clicked = event.target;
-    let dzId = clicked.parentElement.id;
-    let newValue = optionValue(clicked);
-
-    // Get currently selected - right now only one allowed
-    let $selected = $("#"+dzId).children(".selected");
-    let currValue = ($selected.length ? optionValue($selected.get(0)) : null);
-
-    $selected.removeClass("selected");
-    $(clicked).addClass("selected");
-    Shiny.onInputChange(dzId + "_selected", newValue);
   });
 });
