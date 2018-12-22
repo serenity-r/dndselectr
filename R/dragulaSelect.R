@@ -85,16 +85,15 @@ dragZone <- function(id, choices) {
 #' @param inputId The \code{input} slot that will be used to acces the value.
 #' @param choices List of acceptable values with their associated labels. Note that
 #'   the labels can be arbitrary HTML, as long as they are wrapped in a \code{tagList}.
-#' @param presets Array of preset values.
+#' @param presets Array or list of preset values.
 #' @param hidden Should the selected items be hidden? This is useful to represent
 #'   a reactive or event trigger.
 #' @param placeholder If hidden is true, insert placeholder text.
 #' @param highlight Highlights the container on dragover. Useful when \code{hidden} is active.
 #' @param multivalued Allow multiple items with the same value?
 #' @param selectable Are the items in this dropzone selectable?
-#' @param selected  Unique values (of form <value>-ds-<id> if multivalued).
-#' @param togglevis Add an icon to make items inactive/invisible.
-#' @param togglelock Add an icon to make items non-draggable (i.e. lockable)
+#' @param togglevis Add an icon to allow toggling items between visible/invisible.
+#' @param togglelock Add an icon to allow toggling items between locked/unlocked.
 #'
 #' @export
 #'
@@ -108,16 +107,13 @@ dragZone <- function(id, choices) {
 #'
 dropZoneInput <- function(inputId, choices, presets=NULL, hidden=FALSE, placeholder=NULL,
                           highlight=FALSE, multivalued=FALSE, selectable=FALSE,
-                          selected=NULL, togglevis=FALSE, togglelock=FALSE) {
+                          togglevis=FALSE, togglelock=FALSE) {
 
   # Resolve names
   choices <- choicesWithNames(choices)
 
   # Manage presets
-  presets <- splitPresets(presets, choices, multivalued)
-
-  # Manage selected
-  selected <- parseSelected(selected, combinePresets(presets))
+  presets <- presetsWithOptions(presets, choices, multivalued)
 
   inputTag <- div(
     id = inputId,
@@ -129,7 +125,9 @@ dropZoneInput <- function(inputId, choices, presets=NULL, hidden=FALSE, placehol
     dragulaZoneItems('drop', 'presets',
                      items = presets$values,
                      ids = presets$ids,
-                     selected = selected,
+                     selected = presets$selected,
+                     invisible = presets$invisible,
+                     locked = presets$locked,
                      togglevis = togglevis,
                      togglelock = togglelock),
     div(
@@ -141,6 +139,56 @@ dropZoneInput <- function(inputId, choices, presets=NULL, hidden=FALSE, placehol
     )
 
   attachDependencies(inputTag)
+}
+
+#' Create items for dragzones/dropzones
+#'
+#' In Dragula, the drag and drop areas are called "containers". This function
+#' creates the individual draggable items and options in these containers.
+#'
+#' @param zone  Container zone type: either \code{drop} or \code{drag}
+#' @param type  Are these \code{options} or \code{presets}?
+#' @param items List of item labels, with names corresponding to values
+#' @param ids If multivalued, these will be unique ids
+#' @param selected  Selected items (array length of items - either NA or ds-selected)
+#' @param invisible Invisible items (array length of items - either NA or ds-invisible)
+#' @param locked  Locked items (array length of items - either NA or ds-locked)
+#' @param togglevis Add an icon to allow toggling items between visible/invisible.
+#' @param togglelock Add an icon to allow toggling items between locked/unlocked.
+#'
+#' @return div element
+#'
+dragulaZoneItems <- function(zone, type, items, ids=rep(NA, length(items)), selected=NULL,
+                             invisible=NULL, locked=NULL, togglevis=FALSE, togglelock=FALSE) {
+  if (!(zone %in% c('drag', 'drop'))) {
+    stop(zone, " is not a valid container type. Dragula container type must be either 'drag' or 'drop'")
+  }
+  if (!(type %in% c('options', 'presets'))) {
+    stop(type, " is not a valid item type. Item type must be either 'options' or 'presets'")
+  }
+  values <- names(items)
+  tagList(
+    lapply(seq_along(items),
+           FUN = function(values, labels, ids, selected, invisible, locked, togglevis, togglelock, i) {
+             div(
+               "data-value" = values[[i]] %||% labels[[i]],
+               "data-instance" = ids[[i]],
+               class = trimws(paste(paste0('ds-', ifelse(zone=='drop', 'dropoption', 'dragitem')),
+                                    keepTruthy(c(selected[[i]], invisible[[i]], locked[[i]])),
+                                    collapse = ' ')),
+               labels[[i]] %||% values[[i]],
+               switch(togglevis && (zone == 'drop'),
+                      div(class = "ds-toggle-visible",
+                          ifelse(isTruthy(invisible[[i]]), tagList(icon("eye-slash")), tagList(icon("eye")))),
+                      NULL),
+               switch(togglelock && (zone == 'drop'),
+                      div(class = "ds-toggle-lock",
+                          ifelse(isTruthy(locked[[i]]), tagList(icon("lock")), tagList(icon("lock-open")))),
+                      NULL)
+             )
+           }, values = values, labels = items, ids = ids, selected = selected, invisible = invisible, locked = locked, togglevis = togglevis, togglelock = togglelock
+    )
+  )
 }
 
 #' Run dragulaSelectR Example Applications
@@ -241,47 +289,6 @@ attachDependencies <- function(...) {
 opts2class <- function(varArgs) {
   varArgsNames <- names(varArgs)[vapply(varArgs, isTRUE, logical(1))]
   paste(lapply(varArgsNames, function(opt) { paste0('ds-', opt) }), collapse = ' ')
-}
-
-#' Create items for dragzones/dropzones
-#'
-#' In Dragula, the drag and drop areas are called "containers". This function
-#' creates the individual draggable items and options in these containers.
-#'
-#' @param zone  Container zone type: either \code{drop} or \code{drag}
-#' @param type  Are these \code{options} or \code{presets}?
-#' @param items List of item labels, with names corresponding to values
-#' @param ids If multivalued, these will be unique ids
-#' @param selected  Unique values (of form <value>-ds-<id> if multivalued).
-#' @param togglevis Add an icon to make items inactive.
-#' @param togglelock Add an icon to make items non-draggable (i.e. lockable)
-#'
-#' @return div element
-#'
-dragulaZoneItems <- function(zone, type, items, ids=rep(NA, length(items)), selected=NULL,
-                             togglevis=FALSE, togglelock=FALSE) {
-  if (!(zone %in% c('drag', 'drop'))) {
-    stop(zone, " is not a valid container type. Dragula container type must be either 'drag' or 'drop'")
-  }
-  if (!(type %in% c('options', 'presets'))) {
-    stop(type, " is not a valid item type. Item type must be either 'options' or 'presets'")
-  }
-  values <- names(items)
-  tagList(
-    lapply(seq_along(items),
-           FUN = function(values, labels, ids, selected, togglevis, togglelock, i) {
-             div(
-               "data-value" = values[[i]] %||% labels[[i]],
-               "data-instance" = ids[[i]],
-               class = paste(c(paste0('ds-', ifelse(zone=='drop', 'dropoption', 'dragitem')),
-                             selected[[i]] %AND% selected[[i]]), collapse = ' '),
-               labels[[i]] %||% values[[i]],
-               switch(togglevis && (zone == 'drop'), div(class = "ds-toggle-visible", icon("eye")), NULL),
-               switch(togglelock && (zone == 'drop'), div(class = "ds-toggle-lock", icon("lock-open")), NULL)
-             )
-           }, values = values, labels = items, ids = ids, selected = selected, togglevis = togglevis, togglelock = togglelock
-    )
-  )
 }
 
 #' Input is set of possible unique ids from multivalued inputs

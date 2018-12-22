@@ -6,8 +6,7 @@
 \usage{
 dropZoneInput(inputId, choices, presets = NULL, hidden = FALSE,
   placeholder = NULL, highlight = FALSE, multivalued = FALSE,
-  selectable = FALSE, selected = NULL, togglevis = FALSE,
-  togglelock = FALSE)
+  selectable = FALSE, togglevis = FALSE, togglelock = FALSE)
 }
 \arguments{
 \item{inputId}{The \code{input} slot that will be used to acces the value.}
@@ -15,7 +14,7 @@ dropZoneInput(inputId, choices, presets = NULL, hidden = FALSE,
 \item{choices}{List of acceptable values with their associated labels. Note that
 the labels can be arbitrary HTML, as long as they are wrapped in a \code{tagList}.}
 
-\item{presets}{Array of preset values.}
+\item{presets}{Array or list of preset values.}
 
 \item{hidden}{Should the selected items be hidden? This is useful to represent
 a reactive or event trigger.}
@@ -28,11 +27,9 @@ a reactive or event trigger.}
 
 \item{selectable}{Are the items in this dropzone selectable?}
 
-\item{selected}{Unique values (of form <value>-ds-<id> if multivalued).}
+\item{togglevis}{Add an icon to allow toggling items between visible/invisible.}
 
-\item{togglevis}{Add an icon to make items inactive/invisible.}
-
-\item{togglelock}{Add an icon to make items non-draggable (i.e. lockable)}
+\item{togglelock}{Add an icon to allow toggling items between locked/unlocked.}
 }
 \description{
 Create a Dragula dropzone input

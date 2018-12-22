@@ -4,6 +4,10 @@ function optionValue(el) {
   return [el.dataset.value, el.dataset.instance].filter(Boolean).join('-ds-');
 }
 
+function getValues($dropzone, withClass) {
+  return $dropzone.children(withClass).map(function() { return optionValue(this) }).get();
+}
+
 $.extend(dropZoneBinding, {
   find: function(scope) {
     return $(scope).find(".ds-dropzone");
@@ -22,11 +26,11 @@ $.extend(dropZoneBinding, {
         let newValue = optionValue($clicked.get(0));
 
         // Get currently selected - right now only one allowed
-        let $selected = $clicked.siblings(".selected");
+        let $selected = $clicked.siblings(".ds-selected");
         let currValue = ($selected.length ? optionValue($selected.get(0)) : null);
 
-        $selected.removeClass("selected");
-        $clicked.addClass("selected");
+        $selected.removeClass("ds-selected");
+        $clicked.addClass("ds-selected");
         Shiny.onInputChange(dzId + "_selected", newValue);
       });
     }
@@ -37,9 +41,7 @@ $.extend(dropZoneBinding, {
       $(this).toggleClass("fa-eye fa-eye-slash");
       $(this).closest(".ds-dropoption").toggleClass("ds-invisible");
       let $dropzone = $(this).closest(".ds-dropzone");
-      $dropzone.trigger("change"); // Removes from input values
-      let newValue = $dropzone.children('.ds-invisible').map(function() { return optionValue(this) }).get();
-      Shiny.onInputChange($dropzone.attr('id') + "_invisible", newValue);
+      Shiny.onInputChange($dropzone.attr('id') + "_invisible", getValues($dropzone, '.ds-invisible'));
     });
 
     // Toggle draggability
@@ -48,12 +50,11 @@ $.extend(dropZoneBinding, {
       $(this).toggleClass("fa-lock fa-lock-open");
       $(this).closest(".ds-dropoption").toggleClass("ds-locked");
       let $dropzone = $(this).closest(".ds-dropzone");
-      let newValue = $dropzone.children('.ds-locked').map(function() { return optionValue(this) }).get();
-      Shiny.onInputChange($dropzone.attr('id') + "_locked", newValue);
+      Shiny.onInputChange($dropzone.attr('id') + "_locked", getValues($dropzone, '.ds-locked'));
     });
   },
   getValue: function(el) {
-    return $('#' + el.id + ' > .ds-dropoption:not(.ds-invisible)').map(function() { return optionValue(this) }).get();
+    return $('#' + el.id + ' > .ds-dropoption').map(function() { return optionValue(this) }).get();
   },
   setValue: function(el, options) {
   },
@@ -161,10 +162,15 @@ $(document).on("ready", function() {
       $(source).trigger("change");
     }
 
-    if (($(source).hasClass('ds-selectable')) &&
-        ($(el).hasClass('selected'))) {
-      let dzId = $(source).attr('id');
+    let dzId = $(source).attr('id');
+    if ($(el).hasClass('ds-selected')) {
       Shiny.onInputChange(dzId + "_selected", null);
+    }
+    if ($(el).hasClass('ds-invisible')) {
+      Shiny.onInputChange(dzId + "_invisible", getValues($(source), '.ds-invisible'));
+    }
+    if ($(el).hasClass('ds-locked')) {
+      Shiny.onInputChange(dzId + "_locked", getValues($(source), '.ds-locked'));
     }
   });
 });

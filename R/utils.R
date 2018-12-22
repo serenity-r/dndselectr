@@ -8,17 +8,13 @@
   return(NULL)
 }
 
-nullOrEmpty <- function(x) {
-  is.null(x) || length(x) == 0
-}
-# Given a vector or list, drop all the NULL items in it
-dropNullsOrEmpty <- function(x) {
-  x[!vapply(x, nullOrEmpty, FUN.VALUE=logical(1))]
-}
-
 # Given a vector or list, drop all the NULL items in it
 dropNulls <- function(x) {
   x[!vapply(x, is.null, FUN.VALUE=logical(1))]
+}
+
+keepTruthy <- function(x) {
+  x[vapply(x, isTruthy, FUN.VALUE=logical(1))]
 }
 
 # Useful for multivalued check
@@ -113,62 +109,59 @@ choicesWithNames <- function(choices) {
   choices
 }
 
-# This does a little more than just splitting preset ids. It also
-# assigns the label of the corresponding option.
-splitPresets <- function(presets, choices, multivalued=FALSE) {
-  ids <- NULL
-  if (!nullOrEmpty(presets)) {
-    if (multivalued) {
-      if (isMultivalued(presets)) {
-        ids <- multivalues(presets, ids=TRUE)
-        presets <- multivalues(presets)
-      } else {
-        ids <- seq(1, length(presets))
-      }
+# multivalued and selectable must be given by dropZoneInput
+presetsWithOptions <- function(presets, choices, multivalued) {
+  if (is.atomic(presets)) presets <- list(values = presets)
+  for (option in c("selected", "locked", "invisible")) {
+    presets <- parseOption(presets, option)
+  }
+  presets <- getIds(presets, multivalued)
+
+  # Make sure they are valid choices
+  valid_choices <- presets$values %in% names(choices)
+  if (anyNAOrFalse(valid_choices)) {
+    warning("Preset value(s) ", paste(presets$values[!valid_choices], sep=", "), " not allowed for this dropzone.")
+  }
+  # Subset accordingly
+  presets <- lapply(presets, function(value, valid_choices) { value[valid_choices] }, valid_choices = valid_choices)
+  presets$values <- choices[presets$values]
+
+  presets
+}
+
+getIds <- function(presets, multivalued) {
+  if (multivalued) {
+    if (isMultivalued(presets$values)) {
+      presets$ids <- multivalues(presets$values, ids=TRUE)
+      presets$values <- multivalues(presets$values)
     } else {
-      ids <- rep(NA, length(presets))
+      presets$ids <- seq(1, length(presets$values))
     }
-
-    # Make sure they are valid choices
-    if (anyNAOrFalse(presets %in% names(choices))) {
-      warning("Preset value(s) ", paste(presets[!(presets %in% names(choices))], sep=", "), " not allowed for this dropzone.")
-    }
-    # Subset accordingly
-    ids <- ids[presets %in% names(choices)]
-    presets <- dropNulls(choices[presets])
+  } else {
+    presets$ids <- rep(NA, length(presets$values))
   }
-
-  list(
-    values = presets,
-    ids = ids
-  )
+  presets
 }
 
-# Given the result of splitPresets, reconstruct the id'd unique value.
-# Throws away the label for the preset.
-# Note: Consider refactoring and making this an inverse function of multivalues
-#       The function multivalues could also return a list of values and ids,
-#       like what splitPresets is doing.
-combinePresets <- function(presets) {
-  sapply(seq_along(names(presets$values)),
-         FUN = function(value, id, i) {
-           ifelse(is.na(id[i]), value[i], paste0(value[i], '-ds-', id[i]))
-         }, value = names(presets$values), id = presets$ids)
-}
-
-# If valid selected item present, will return array of NAs for non-selected items,
-# and string "selected" for the selected item.
-parseSelected <- function(selected, presets) {
-  if (is.null(presets) || is.null(selected)) {
-    return(NULL)
+parseOption <- function(presets, option) {
+  if (is.null(presets$values) || is.null(presets[[option]])) {
+    return(presets)
   }
-  if (length(selected) > 1) {
+  if ((option == "selected") && (length(presets$selected) > 1)) {
     stop("Only one selected value allowed!")
   }
-  if (anyNAOrFalse(selected %in% presets)) {
-    warning("Selected value ", paste(selected[!(selected %in% presets)], sep=", "), " not in presets.")
+  if (anyNAOrFalse(presets[[option]] %in% presets$values)) {
+    warning(.simpleCap(option), " value ", paste(presets[[option]][!(presets[[option]] %in% presets$values)], sep=", "), " not in presets.")
   }
-  selections <- rep(NA, length(presets))
-  selections[presets == selected] <- "selected"
-  return(selections)
+  classnames <- rep(NA, length(presets$values))
+  classnames[presets$values == presets[[option]]] <- paste0('ds-', option)
+  presets[[option]] <- classnames
+  return(presets)
+}
+
+# From toupper help
+.simpleCap <- function(x) {
+  s <- strsplit(x, " ")[[1]]
+  paste(toupper(substring(s, 1, 1)), substring(s, 2),
+        sep = "", collapse = " ")
 }

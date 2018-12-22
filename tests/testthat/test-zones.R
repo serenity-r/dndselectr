@@ -31,10 +31,35 @@ test_that("Dragula zone items are formatted correctly", {
   )
 })
 
-test_that("Dropzone selections are doing their thing", {
-  expect_equal(parseSelected(selected = NULL, presets = "foo"), NULL)
-  expect_equal(parseSelected(selected = "foo", presets = NULL), NULL)
-  expect_warning(parseSelected(selected = "foo", presets = "bar"), NULL)
-  expect_error(parseSelected(selected = c("foo", "bar"), presets = "bar"), "Only one selected value allowed!")
-  expect_equal(parseSelected(selected = "bar", presets = c("foo", "bar")), c(NA, "selected"))
+test_that("Drop zones are working properly", {
+  # Simple (no presets)
+  expect_match(
+    as.character(
+      dropZoneInput("dropzone",
+                    choices = list(foo = "Foo", bar = "Bar")
+                    )),
+    "<div id=\"dropzone\" class=\"ds-dropzone\">\n  <div class=\"ds-dropzone-options\">\n    <div data-value=\"foo\" data-instance class=\"ds-dropoption\">Foo</div>\n    <div data-value=\"bar\" data-instance class=\"ds-dropoption\">Bar</div>\n  </div>\n</div>"
+  )
+
+  # Make sure icons match preset state
+  expect_match(
+    as.character(
+      dropZoneInput("dropzone",
+                    choices = list(foo = "Foo"),
+                    presets = list(values = "foo", invisible = "foo"),
+                    togglevis = TRUE)),
+    "<div id=\"dropzone\" class=\"ds-dropzone\">\n  <div data-value=\"foo\" data-instance class=\"ds-dropoption ds-invisible\">\n    Foo\n    <div class=\"ds-toggle-visible\">\n      <i class=\"fa fa-eye-slash\"></i>\n    </div>\n  </div>\n  <div class=\"ds-dropzone-options\">\n    <div data-value=\"foo\" data-instance class=\"ds-dropoption\">\n      Foo\n      <div class=\"ds-toggle-visible\">\n        <i class=\"fa fa-eye\"></i>\n      </div>\n    </div>\n  </div>\n</div>"
+  )
+
+  # Let's go crazy
+  expect_match(
+    as.character(
+      dropZoneInput("dropzone",
+                    choices = list(foo = "Foo", bar = "Bar"),
+                    presets = list(values = c("foo-ds-2", "bar-ds-4"),
+                                   selected = "bar-ds-4",
+                                   invisible = "foo-ds-2"),
+                    multivalued = TRUE)),
+    "<div id=\"dropzone\" class=\"ds-dropzone ds-multivalued\">\n  <div data-value=\"foo\" data-instance=\"2\" class=\"ds-dropoption ds-invisible\">Foo</div>\n  <div data-value=\"bar\" data-instance=\"4\" class=\"ds-dropoption ds-selected\">Bar</div>\n  <div class=\"ds-dropzone-options\">\n    <div data-value=\"foo\" data-instance class=\"ds-dropoption\">Foo</div>\n    <div data-value=\"bar\" data-instance class=\"ds-dropoption\">Bar</div>\n  </div>\n</div>"
+  )
 })

@@ -13,7 +13,7 @@ shinyApp(
       column(6,
              selectInput("whichzone",
                          label = "Which Zone?",
-                         choices = list(stevezone = "Steve", fredzone = "Fred"),
+                         choices = c(Steve = "stevezone", Fred = "fredzone"),
                          selected = "Steve"),
              uiOutput("pickedzone")
       )
@@ -28,17 +28,17 @@ shinyApp(
   ),
   server = function(input, output) {
     output$showme <- renderText({
-      paste(paste("Steve: ", paste(input[["Steve"]], collapse=" ")),
-            paste("Fred: ", paste(input[["Fred"]], collapse=" ")),
+      paste(paste("Steve: ", paste(input$stevezone, collapse=" ")),
+            paste("Fred: ", paste(input$fredzone, collapse=" ")),
             sep = "\n")
     })
 
     output$selected_steve <- renderText({
-      paste("Steve: ", input$Steve_selected)
+      paste("Steve: ", input$stevezone_selected)
     })
 
     output$selected_fred <- renderText({
-      paste("Fred: ", input$Fred_selected)
+      paste("Fred: ", input$fredzone_selected)
     })
 
     output$pickedzone <- renderUI({
@@ -49,8 +49,8 @@ shinyApp(
                                    four = "4"),
                     multivalued = TRUE,
                     selectable = TRUE,
-                    presets = input[[input$whichzone %||% "stevezone"]],
-                    selected = input[[paste0(input$whichzone, '_selected') %||% NULL]])
+                    presets = list(values = input[[input$whichzone %||% "stevezone"]],
+                                   selected = input[[paste0(input$whichzone, '_selected') %||% NULL]]))
     })
   }
 )

@@ -30,7 +30,7 @@ shinyApp(
     )
   ),
   server = function(input, output) {
-    output$showme <- renderPrint({ input$dropzone })
+    output$showme <- renderPrint({ paste(setdiff(input$dropzone, input$dropzone_invisible), collapse = " ") })
     output$invisible <- renderPrint({ input$dropzone_invisible })
     output$selected <- renderPrint({ input$dropzone_selected })
   }

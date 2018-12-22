@@ -5,7 +5,8 @@
 \title{Create items for dragzones/dropzones}
 \usage{
 dragulaZoneItems(zone, type, items, ids = rep(NA, length(items)),
-  selected = NULL, togglevis = FALSE, togglelock = FALSE)
+  selected = NULL, invisible = NULL, locked = NULL, togglevis = FALSE,
+  togglelock = FALSE)
 }
 \arguments{
 \item{zone}{Container zone type: either \code{drop} or \code{drag}}
@@ -16,11 +17,15 @@ dragulaZoneItems(zone, type, items, ids = rep(NA, length(items)),
 
 \item{ids}{If multivalued, these will be unique ids}
 
-\item{selected}{Unique values (of form <value>-ds-<id> if multivalued).}
+\item{selected}{Selected items (array length of items - either NA or ds-selected)}
 
-\item{togglevis}{Add an icon to make items inactive.}
+\item{invisible}{Invisible items (array length of items - either NA or ds-invisible)}
 
-\item{togglelock}{Add an icon to make items non-draggable (i.e. lockable)}
+\item{locked}{Locked items (array length of items - either NA or ds-locked)}
+
+\item{togglevis}{Add an icon to allow toggling items between visible/invisible.}
+
+\item{togglelock}{Add an icon to allow toggling items between locked/unlocked.}
 }
 \value{
 div element

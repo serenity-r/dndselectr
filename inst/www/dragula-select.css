@@ -26,8 +26,8 @@ span.ds-placeholder {
   cursor: move;
 }
 
-.ds-dragitem.selected,
-.ds-dropoption.selected {
+.ds-dragitem.ds-selected,
+.ds-dropoption.ds-selected {
   background-color: rgba(0.3, 0.3, 0.3, 0.3);
 }
 
