@@ -33,3 +33,7 @@ devtools::install_github("serenity-r/dragulaSelectR")
 dragulaSelectR::runExample()
 #> Valid examples are "01-basic.R", "02-hidden.R", "03-multivalued.R", "04-renderUI.R", "05-multivalued-renderUI.R", "06-selectable.R", "07-renderUI-selectable.R", "08-hidden-entangled.R", "09-selectable-toggle.R"
 ```
+
+Please note that the ‘dragulaSelectR’ project is released with a
+[Contributor Code of Conduct](CODE_OF_CONDUCT.md). By contributing to
+this project, you agree to abide by its terms.
