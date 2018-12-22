@@ -15,7 +15,7 @@ shinyApp(
                                           three = "3",
                                           four = "4"),
                            presets = c("one"),
-                           lockable = TRUE)
+                           togglelock = TRUE)
       )
     ),
     fluidRow(

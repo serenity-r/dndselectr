@@ -38,8 +38,8 @@ span.ds-placeholder {
 }
 
 /* Visibility */
-.ds-visible,
-.ds-lock {
+.ds-toggle-visible,
+.ds-toggle-lock {
   color: #000;
   margin-left: 5px;
   float: right;
@@ -67,8 +67,8 @@ span.ds-placeholder {
 );
 }
 
-.ds-visible > i,
-.ds-lock > i {
+.ds-toggle-visible > i,
+.ds-toggle-lock > i {
   cursor: pointer;
   z-index: 1;
 }

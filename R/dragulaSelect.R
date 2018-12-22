@@ -93,8 +93,8 @@ dragZone <- function(id, choices) {
 #' @param multivalued Allow multiple items with the same value?
 #' @param selectable Are the items in this dropzone selectable?
 #' @param selected  Unique values (of form <value>-ds-<id> if multivalued).
-#' @param togglevis Add an icon to make items inactive.
-#' @param lockable Add an icon to make items non-draggable (i.e. lockable)
+#' @param togglevis Add an icon to make items inactive/invisible.
+#' @param togglelock Add an icon to make items non-draggable (i.e. lockable)
 #'
 #' @export
 #'
@@ -108,7 +108,7 @@ dragZone <- function(id, choices) {
 #'
 dropZoneInput <- function(inputId, choices, presets=NULL, hidden=FALSE, placeholder=NULL,
                           highlight=FALSE, multivalued=FALSE, selectable=FALSE,
-                          selected=NULL, togglevis=FALSE, lockable=FALSE) {
+                          selected=NULL, togglevis=FALSE, togglelock=FALSE) {
 
   # Resolve names
   choices <- choicesWithNames(choices)
@@ -131,12 +131,12 @@ dropZoneInput <- function(inputId, choices, presets=NULL, hidden=FALSE, placehol
                      ids = presets$ids,
                      selected = selected,
                      togglevis = togglevis,
-                     lockable = lockable),
+                     togglelock = togglelock),
     div(
       class = 'ds-dropzone-options',
       dragulaZoneItems('drop', 'options', choices,
                        togglevis = togglevis,
-                       lockable = lockable)
+                       togglelock = togglelock)
       )
     )
 
@@ -254,12 +254,12 @@ opts2class <- function(varArgs) {
 #' @param ids If multivalued, these will be unique ids
 #' @param selected  Unique values (of form <value>-ds-<id> if multivalued).
 #' @param togglevis Add an icon to make items inactive.
-#' @param lockable Add an icon to make items non-draggable (i.e. lockable)
+#' @param togglelock Add an icon to make items non-draggable (i.e. lockable)
 #'
 #' @return div element
 #'
 dragulaZoneItems <- function(zone, type, items, ids=rep(NA, length(items)), selected=NULL,
-                             togglevis=FALSE, lockable=FALSE) {
+                             togglevis=FALSE, togglelock=FALSE) {
   if (!(zone %in% c('drag', 'drop'))) {
     stop(zone, " is not a valid container type. Dragula container type must be either 'drag' or 'drop'")
   }
@@ -269,17 +269,17 @@ dragulaZoneItems <- function(zone, type, items, ids=rep(NA, length(items)), sele
   values <- names(items)
   tagList(
     lapply(seq_along(items),
-           FUN = function(values, labels, ids, selected, togglevis, lockable, i) {
+           FUN = function(values, labels, ids, selected, togglevis, togglelock, i) {
              div(
                "data-value" = values[[i]] %||% labels[[i]],
                "data-instance" = ids[[i]],
                class = paste(c(paste0('ds-', ifelse(zone=='drop', 'dropoption', 'dragitem')),
                              selected[[i]] %AND% selected[[i]]), collapse = ' '),
                labels[[i]] %||% values[[i]],
-               switch(togglevis && (zone == 'drop'), div(class = "ds-visible", icon("eye")), NULL),
-               switch(lockable && (zone == 'drop'), div(class = "ds-lock", icon("lock-open")), NULL)
+               switch(togglevis && (zone == 'drop'), div(class = "ds-toggle-visible", icon("eye")), NULL),
+               switch(togglelock && (zone == 'drop'), div(class = "ds-toggle-lock", icon("lock-open")), NULL)
              )
-           }, values = values, labels = items, ids = ids, selected = selected, togglevis = togglevis, lockable = lockable
+           }, values = values, labels = items, ids = ids, selected = selected, togglevis = togglevis, togglelock = togglelock
     )
   )
 }

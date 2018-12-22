@@ -32,7 +32,7 @@ $.extend(dropZoneBinding, {
     }
 
     // Toggle visibility
-    $(el).on("click", ".ds-dropoption > .ds-visible i", function(ev) {
+    $(el).on("click", ".ds-dropoption > .ds-toggle-visible i", function(ev) {
       ev.stopPropagation(); // Avoid selecting
       $(this).toggleClass("fa-eye fa-eye-slash");
       $(this).closest(".ds-dropoption").toggleClass("ds-inactive");
@@ -40,7 +40,7 @@ $.extend(dropZoneBinding, {
     });
 
     // Toggle draggability
-    $(el).on("click", ".ds-dropoption > .ds-lock i", function(ev) {
+    $(el).on("click", ".ds-dropoption > .ds-toggle-lock i", function(ev) {
       ev.stopPropagation(); // Avoid selecting
       $(this).toggleClass("fa-lock fa-lock-open");
       $(this).closest(".ds-dropoption").toggleClass("ds-locked");
