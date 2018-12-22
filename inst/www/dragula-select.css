@@ -53,18 +53,18 @@ span.ds-placeholder {
   visibility: visible;
 }
 
-.ds-inactive {
+.ds-invisible {
   opacity: 0.3;
 }
 
 .ds-locked {
   background: repeating-linear-gradient(
-  45deg,
-  #eee,
-  #eee 10px,
-  #999 10px,
-  #999 20px
-);
+    45deg,
+    #eee,
+    #eee 10px,
+    #999 10px,
+    #999 20px
+  );
 }
 
 .ds-toggle-visible > i,

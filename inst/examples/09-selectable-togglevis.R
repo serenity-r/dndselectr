@@ -21,12 +21,17 @@ shinyApp(
       )
     ),
     fluidRow(
+      h3("Visible values"),
       verbatimTextOutput("showme"),
+      h3("Invisible values"),
+      verbatimTextOutput("invisible"),
+      h3("Selected"),
       verbatimTextOutput("selected")
     )
   ),
   server = function(input, output) {
     output$showme <- renderPrint({ input$dropzone })
+    output$invisible <- renderPrint({ input$dropzone_invisible })
     output$selected <- renderPrint({ input$dropzone_selected })
   }
 )

@@ -35,8 +35,11 @@ $.extend(dropZoneBinding, {
     $(el).on("click", ".ds-dropoption > .ds-toggle-visible i", function(ev) {
       ev.stopPropagation(); // Avoid selecting
       $(this).toggleClass("fa-eye fa-eye-slash");
-      $(this).closest(".ds-dropoption").toggleClass("ds-inactive");
-      $(this).closest(".ds-dropzone").trigger("change");
+      $(this).closest(".ds-dropoption").toggleClass("ds-invisible");
+      let $dropzone = $(this).closest(".ds-dropzone");
+      $dropzone.trigger("change"); // Removes from input values
+      let newValue = $dropzone.children('.ds-invisible').map(function() { return optionValue(this) }).get();
+      Shiny.onInputChange($dropzone.attr('id') + "_invisible", newValue);
     });
 
     // Toggle draggability
@@ -44,10 +47,13 @@ $.extend(dropZoneBinding, {
       ev.stopPropagation(); // Avoid selecting
       $(this).toggleClass("fa-lock fa-lock-open");
       $(this).closest(".ds-dropoption").toggleClass("ds-locked");
+      let $dropzone = $(this).closest(".ds-dropzone");
+      let newValue = $dropzone.children('.ds-locked').map(function() { return optionValue(this) }).get();
+      Shiny.onInputChange($dropzone.attr('id') + "_locked", newValue);
     });
   },
   getValue: function(el) {
-    return $('#' + el.id + ' > .ds-dropoption:not(.ds-inactive)').map(function() { return optionValue(this) }).get();
+    return $('#' + el.id + ' > .ds-dropoption:not(.ds-invisible)').map(function() { return optionValue(this) }).get();
   },
   setValue: function(el, options) {
   },

@@ -19,11 +19,15 @@ shinyApp(
       )
     ),
     fluidRow(
-      verbatimTextOutput("showme")
+      h3("Values"),
+      verbatimTextOutput("showme"),
+      h3("Locked"),
+      verbatimTextOutput("locked")
     )
   ),
   server = function(input, output) {
     output$showme <- renderPrint({ input$dropzone })
+    output$locked <- renderPrint({ input$dropzone_locked })
   }
 )
 
