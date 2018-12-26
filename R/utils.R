@@ -154,7 +154,7 @@ parseOption <- function(presets, option) {
     warning(.simpleCap(option), " value ", paste(presets[[option]][!(presets[[option]] %in% presets$values)], sep=", "), " not in presets.")
   }
   classnames <- rep(NA, length(presets$values))
-  classnames[presets$values == presets[[option]]] <- paste0('ds-', option)
+  classnames[presets$values %in% presets[[option]]] <- paste0('ds-', option)
   presets[[option]] <- classnames
   return(presets)
 }
