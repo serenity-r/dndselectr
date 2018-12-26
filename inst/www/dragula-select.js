@@ -79,11 +79,13 @@ $(document).on("ready", function() {
     $(target).trigger("change");
   });
 
-  // Highlighting
   dragulaSelectR.drake.on("over", function(el, container, source) {
+    // Highlighting
     if ($(container).hasClass('ds-highlight')) {
       $(container).addClass('gu-highlight');
     }
+    // Change content of item in transit
+    $(el).html($(container).children(".ds-dropzone-options").children('.ds-dropoption[data-value="' + $(el).data('value') + '"]').html());
   });
 
   dragulaSelectR.drake.on("out", function(el, container, source) {
