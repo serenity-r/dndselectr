@@ -367,15 +367,13 @@ multivalues <- function(values, ids=FALSE) {
 entangle <- function(session, dropZoneOneId, dropZoneTwoId) {
   return({
     observeEvent(session$input[[dropZoneOneId]], {
-      if (!isTruthy(session$input[[dropZoneTwoId]]) ||
-          !isTRUE(all.equal(session$input[[dropZoneOneId]], session$input[[dropZoneTwoId]]))) {
+      if (!isTRUE(all.equal(session$input[[dropZoneOneId]], session$input[[dropZoneTwoId]]))) {
         entangleSourceToTarget(session, sourceId = dropZoneOneId, targetId = dropZoneTwoId)
       }
     }, ignoreNULL = FALSE)
 
     observeEvent(session$input[[dropZoneTwoId]], {
-      if (!isTruthy(session$input[[dropZoneOneId]]) ||
-          !isTRUE(all.equal(session$input[[dropZoneOneId]], session$input[[dropZoneTwoId]]))) {
+      if (!isTRUE(all.equal(session$input[[dropZoneOneId]], session$input[[dropZoneTwoId]]))) {
         entangleSourceToTarget(session, sourceId = dropZoneTwoId, targetId = dropZoneOneId)
       }
     }, ignoreNULL = FALSE)
