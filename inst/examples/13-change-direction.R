@@ -2,15 +2,16 @@ shinyApp(
   ui = fluidPage(
     tags$head(
       tags$style(HTML("
-      #hzone .ds-dropoption,
-      #hzone .gu-transit {
-        vertical-align: middle;
-        display: inline-block;
-        text-align: center;
-        width: 30px;
-        height: 30px;
-        margin: 3px 0 3px 3px;
-      }"))),
+        #hzone .ds-dropoption,
+        #hzone .gu-transit {
+          vertical-align: middle;
+          display: inline-block;
+          text-align: center;
+          width: 30px;
+          height: 30px;
+          margin: 3px 0 3px 3px;
+        }"))
+      ),
     fluidRow(
       column(6,
              h3("Dragzone"),

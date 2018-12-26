@@ -36,12 +36,14 @@ $(document).on("ready", function() {
   dragulaSelectR.drake = dragula(dragulaSelectR.options);
 
   dragulaSelectR.drake.on("drag", function(el, source) {
+    // Set removeOnSpill from source zone setting
     let removeOnSpill = $(source).data('remove-on-spill');
     dragulaSelectR.options.removeOnSpill = (removeOnSpill !== undefined ? removeOnSpill : true);
   });
 
   dragulaSelectR.drake.on("dragend", function(el) {
-    dragulaSelectR.options.removeOnSpill = true; // Set back to default
+    // Set removeOnSpill back to default
+    dragulaSelectR.options.removeOnSpill = true;
   });
 
   dragulaSelectR.drake.on("drop", function(el, target, source, sibling) {
@@ -93,12 +95,15 @@ $(document).on("ready", function() {
 
   dragulaSelectR.drake.on("out", function(el, container, source) {
     $(container).removeClass('gu-highlight');
+
+    // New entry. Dragula doesn't remove temporary gu-hide class for
+    //   some reason.
     if (!$(source).data('remove-on-spill')) {
       $(el).removeClass("gu-hide");
     }
   });
 
-  // Trigger change on item removal
+  // Trigger changes on item removal
   dragulaSelectR.drake.on("remove", function(el, container, source) {
     if ($(source).hasClass('ds-dropzone')) {
       $(source).trigger("change");
@@ -169,8 +174,6 @@ $.extend(dropZoneBinding, {
   },
   getValue: function(el) {
     return $('#' + el.id + ' > .ds-dropoption').map(function() { return optionValue(this) }).get();
-  },
-  setValue: function(el, options) {
   },
   subscribe: function(el, callback) {
     $(el).on("change.dropZoneBinding", function(e) {
