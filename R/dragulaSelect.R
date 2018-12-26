@@ -363,14 +363,14 @@ entangle <- function(session, dropZoneOneId, dropZoneTwoId) {
           !isTRUE(all.equal(session$input[[dropZoneOneId]], session$input[[dropZoneTwoId]]))) {
         entangleSourceToTarget(session, sourceId = dropZoneOneId, targetId = dropZoneTwoId)
       }
-    })
+    }, ignoreNULL = FALSE)
 
     observeEvent(session$input[[dropZoneTwoId]], {
       if (!isTruthy(session$input[[dropZoneOneId]]) ||
           !isTRUE(all.equal(session$input[[dropZoneOneId]], session$input[[dropZoneTwoId]]))) {
         entangleSourceToTarget(session, sourceId = dropZoneTwoId, targetId = dropZoneOneId)
       }
-    })
+    }, ignoreNULL = FALSE)
   })
 }
 
