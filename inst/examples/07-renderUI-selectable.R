@@ -4,26 +4,25 @@ shinyApp(
   ui = fluidPage(
     fluidRow(
       column(6,
+             h3("Dragzone"),
              dragZone("dragzone",
                       choices = list(one = "One",
                                      two = "Two",
                                      three = "Three",
-                                     four = "Four"))
+                                     four = "Four")),
+             h3("Dropzone Values"),
+             verbatimTextOutput("showme"),
+             h3("Selected Values"),
+             verbatimTextOutput("selected")
       ),
       column(6,
+             h3("Dropzones"),
              selectInput("whichzone",
                          label = "Which Zone?",
                          choices = c(Steve = "stevezone", Fred = "fredzone"),
                          selected = "Steve"),
              uiOutput("pickedzone")
       )
-    ),
-    fluidRow(
-      h3("Options"),
-      verbatimTextOutput("showme"),
-      h3("Selected"),
-      verbatimTextOutput("selected_steve"),
-      verbatimTextOutput("selected_fred")
     )
   ),
   server = function(input, output) {
@@ -33,12 +32,10 @@ shinyApp(
             sep = "\n")
     })
 
-    output$selected_steve <- renderText({
-      paste("Steve: ", input$stevezone_selected)
-    })
-
-    output$selected_fred <- renderText({
-      paste("Fred: ", input$fredzone_selected)
+    output$selected <- renderText({
+      paste(paste("Steve: ", paste(input$stevezone_selected, collapse=" ")),
+            paste("Fred: ", paste(input$fredzone_selected, collapse=" ")),
+            sep = "\n")
     })
 
     output$pickedzone <- renderUI({

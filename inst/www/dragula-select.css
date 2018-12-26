@@ -12,6 +12,16 @@
   padding: 2px 4px;
 }
 
+.ds-dropzone[data-direction="horizontal"] > .ds-dropoption,
+.ds-dropzone[data-direction="horizontal"] > .gu-transit {
+  vertical-align: middle;
+  display: inline-block;
+  text-align: center;
+  width: 30px;
+  height: 30px;
+  margin: 3px 0 3px 3px;
+}
+
 span.ds-placeholder {
   position: absolute;
   padding: 6px 4px;

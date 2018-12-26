@@ -1,17 +1,5 @@
 shinyApp(
   ui = fluidPage(
-    tags$head(
-      tags$style(HTML("
-        #hzone .ds-dropoption,
-        #hzone .gu-transit {
-          vertical-align: middle;
-          display: inline-block;
-          text-align: center;
-          width: 30px;
-          height: 30px;
-          margin: 3px 0 3px 3px;
-        }"))
-      ),
     fluidRow(
       column(6,
              h3("Dragzone"),
@@ -19,17 +7,19 @@ shinyApp(
                       choices = list(one = "One",
                                      two = "Two",
                                      three = "Three",
-                                     four = "Four"))
+                                     four = "Four")),
+             h3("Dropzone Values"),
+             verbatimTextOutput("showme")
       ),
       column(6,
-             h3("Horizontal"),
+             h3("Dropzone: Horizontal"),
              dropZoneInput("hzone",
                            choices = list(one = "1",
                                           two = "2",
                                           three = "3",
                                           four = "4"),
                            direction="horizontal"),
-             h3("Vertical"),
+             h3("Dropzone: Vertical"),
              dropZoneInput("vzone",
                            choices = list(one = "1",
                                           two = "2",
@@ -37,10 +27,6 @@ shinyApp(
                                           four = "4"),
                            direction="vertical")
       )
-    ),
-    fluidRow(
-      h3("Values"),
-      verbatimTextOutput("showme")
     )
   ),
   server = function(input, output) {

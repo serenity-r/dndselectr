@@ -2,12 +2,17 @@ shinyApp(
   ui = fluidPage(
     fluidRow(
       column(6,
+             h3("Dragzone"),
              dragZone("dragzone", choices = list(one = "One",
                                                  two = "Two",
                                                  three = "Three",
-                                                 four = "Four"))
+                                                 four = "Four")),
+             h3("Dropzone Values"),
+             verbatimTextOutput("hidden")
       ),
       column(6,
+             h2("Entangled Dropzones"),
+             h3("Dropzone (Hidden Items)"),
              dropZoneInput("dropzone_hidden", choices = list(one = "1",
                                                              two = "2",
                                                              three = "3",
@@ -17,6 +22,7 @@ shinyApp(
                            highlight = TRUE,
                            presets = list(values = "one",
                                           locked = "one")),
+             h3("Dropzone (Visible Items)"),
              dropZoneInput("dropzone_visible", choices = list(one = "1",
                                                               two = "2",
                                                               three = "3",
@@ -24,17 +30,14 @@ shinyApp(
                            presets = list(values = "one",
                                           locked = "one"))
       )
-    ),
-    fluidRow(
-      h3("Hidden"),
-      verbatimTextOutput("showme_hidden"),
-      h3("Visible"),
-      verbatimTextOutput("showme_visible")
     )
   ),
   server = function(input, output, session) {
-    output$showme_hidden <- renderPrint({ input$dropzone_hidden })
-    output$showme_visible <- renderPrint({ input$dropzone_visible })
+    output$hidden <- renderText({
+      paste(paste("Hidden: ", paste(input$dropzone_hidden, collapse=" ")),
+            paste("Visible: ", paste(input$dropzone_visible, collapse=" ")),
+            sep = "\n")
+      })
 
     entangle(session, "dropzone_hidden", "dropzone_visible")
   }

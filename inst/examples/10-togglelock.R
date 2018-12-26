@@ -2,13 +2,19 @@ shinyApp(
   ui = fluidPage(
     fluidRow(
       column(6,
+             h3("Dragzone"),
              dragZone("dragzone",
                       choices = list(one = "One",
                                      two = "Two",
                                      three = "Three",
-                                     four = "Four"))
+                                     four = "Four")),
+             h3("Dropzone Values"),
+             verbatimTextOutput("showme"),
+             h3("Locked Values"),
+             verbatimTextOutput("locked")
       ),
       column(6,
+             h3("Dropzone"),
              dropZoneInput("dropzone",
                            choices = list(one = "1",
                                           two = "2",
@@ -17,12 +23,6 @@ shinyApp(
                            presets = c("one"),
                            togglelock = TRUE)
       )
-    ),
-    fluidRow(
-      h3("Values"),
-      verbatimTextOutput("showme"),
-      h3("Locked"),
-      verbatimTextOutput("locked")
     )
   ),
   server = function(input, output) {

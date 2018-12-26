@@ -2,13 +2,19 @@ shinyApp(
   ui = fluidPage(
     fluidRow(
       column(6,
+             h3("Dragzone"),
              dragZone("dragzone",
                       choices = list(one = "One",
                                      two = "Two",
                                      three = "Three",
-                                     four = "Four"))
+                                     four = "Four")),
+             h3("Dropzone Values"),
+             verbatimTextOutput("showme"),
+             h3("Selected Values"),
+             verbatimTextOutput("selected")
       ),
       column(6,
+             h3("Dropzone"),
              dropZoneInput("dropzone",
                            choices = list(one = "1",
                                           two = "2",
@@ -18,10 +24,6 @@ shinyApp(
                            multivalued = TRUE,
                            selectable = TRUE)
       )
-    ),
-    fluidRow(
-      verbatimTextOutput("showme"),
-      verbatimTextOutput("selected")
     )
   ),
   server = function(input, output) {

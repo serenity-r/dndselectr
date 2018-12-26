@@ -4,29 +4,29 @@ shinyApp(
   ui = fluidPage(
     fluidRow(
       column(6,
+             h3("Dragzone"),
              dragZone("dragzone",
                       choices = list(one = "One",
                                      two = "Two",
                                      three = "Three",
-                                     four = "Four"))
+                                     four = "Four")),
+             h3("Dropzone Values"),
+             verbatimTextOutput("showme"),
+             h3("Selected"),
+             verbatimTextOutput("selected"),
+             h3("Invisible"),
+             verbatimTextOutput("invisible"),
+             h3("Locked"),
+             verbatimTextOutput("locked")
       ),
       column(6,
+             h3("Dropzones"),
              selectInput("whichzone",
                          label = "Which Zone?",
                          choices = c(Steve = "stevezone", Fred = "fredzone"),
                          selected = "Steve"),
              uiOutput("pickedzone")
       )
-    ),
-    fluidRow(
-      h3("Options"),
-      verbatimTextOutput("showme"),
-      h3("Selected"),
-      verbatimTextOutput("selected"),
-      h3("Invisible"),
-      verbatimTextOutput("invisible"),
-      h3("Locked"),
-      verbatimTextOutput("locked")
     )
   ),
   server = function(input, output) {
