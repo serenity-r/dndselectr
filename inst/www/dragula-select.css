@@ -47,7 +47,7 @@ span.ds-placeholder {
   display: none;
 }
 
-/* Visibility */
+/* visibility and locking */
 .ds-toggle-visible,
 .ds-toggle-lock {
   color: #000;
@@ -97,4 +97,11 @@ span.ds-placeholder {
 
 .fa-lock:hover:before {
   content: "\f3c1";
+}
+
+.gu-transit > .ds-toggle-visible,
+.gu-mirror > .ds-toggle-visible,
+.gu-transit > .ds-toggle-lock,
+.gu-mirror > .ds-toggle-lock {
+  display: none;
 }
