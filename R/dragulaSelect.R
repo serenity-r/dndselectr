@@ -94,6 +94,7 @@ dragZone <- function(id, choices) {
 #' @param selectable Are the items in this dropzone selectable?
 #' @param togglevis Add an icon to allow toggling items between visible/invisible.
 #' @param togglelock Add an icon to allow toggling items between locked/unlocked.
+#' @param removeOnSpill Remove items when dragged outside dropzone?
 #'
 #' @export
 #'
@@ -107,7 +108,7 @@ dragZone <- function(id, choices) {
 #'
 dropZoneInput <- function(inputId, choices, presets=NULL, hidden=FALSE, placeholder=NULL,
                           highlight=FALSE, multivalued=FALSE, selectable=FALSE,
-                          togglevis=FALSE, togglelock=FALSE) {
+                          togglevis=FALSE, togglelock=FALSE, removeOnSpill=TRUE) {
 
   # Resolve names
   choices <- choicesWithNames(choices)
@@ -121,6 +122,7 @@ dropZoneInput <- function(inputId, choices, presets=NULL, hidden=FALSE, placehol
                                                         highlight = highlight,
                                                         multivalued = multivalued,
                                                         selectable = selectable))), "right"),
+    "data-remove-on-spill" = tolower(removeOnSpill),
     insertPlaceholder(inputId, ifelse(hidden, placeholder, NA)),
     dragulaZoneItems('drop', 'presets',
                      items = presets$values,

@@ -6,7 +6,8 @@
 \usage{
 dropZoneInput(inputId, choices, presets = NULL, hidden = FALSE,
   placeholder = NULL, highlight = FALSE, multivalued = FALSE,
-  selectable = FALSE, togglevis = FALSE, togglelock = FALSE)
+  selectable = FALSE, togglevis = FALSE, togglelock = FALSE,
+  removeOnSpill = TRUE)
 }
 \arguments{
 \item{inputId}{The \code{input} slot that will be used to acces the value.}
@@ -30,6 +31,8 @@ a reactive or event trigger.}
 \item{togglevis}{Add an icon to allow toggling items between visible/invisible.}
 
 \item{togglelock}{Add an icon to allow toggling items between locked/unlocked.}
+
+\item{removeOnSpill}{Remove items when dragged outside dropzone?}
 }
 \description{
 Create a Dragula dropzone input
