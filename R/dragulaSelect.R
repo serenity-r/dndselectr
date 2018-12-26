@@ -91,10 +91,16 @@ dragZone <- function(id, choices) {
 #' @param placeholder If hidden is true, insert placeholder text.
 #' @param highlight Highlights the container on dragover. Useful when \code{hidden} is active.
 #' @param multivalued Allow multiple items with the same value?
-#' @param selectable Are the items in this dropzone selectable?
-#' @param togglevis Add an icon to allow toggling items between visible/invisible.
-#' @param togglelock Add an icon to allow toggling items between locked/unlocked.
-#' @param removeOnSpill Remove items when dragged outside dropzone?
+#' @param selectable Are the items in this dropzone selectable? Default is \code{false}. Use
+#'   Shiny input \code{input$<inputId>_selected} to access selected items.
+#' @param togglevis Add an icon to allow toggling items between visible/invisible. Default is
+#'   \code{false}. Use Shiny input \code{input$<inputId>_invisible} to access invisible items.
+#' @param togglelock Add an icon to allow toggling items between locked/unlocked. Locked items
+#'   are not draggable. Default is \code{false}. Use Shiny input \code{input$<inputId>_locked}
+#'   to access locked items.
+#' @param removeOnSpill Remove items when dragged outside dropzone? Default is \code{true}.
+#' @param direction Direction (\code{horizontal} or \code{vertical}) to consider when
+#'   determining where an element would be dropped. Default is \code{vertical}.
 #'
 #' @export
 #'
@@ -108,7 +114,8 @@ dragZone <- function(id, choices) {
 #'
 dropZoneInput <- function(inputId, choices, presets=NULL, hidden=FALSE, placeholder=NULL,
                           highlight=FALSE, multivalued=FALSE, selectable=FALSE,
-                          togglevis=FALSE, togglelock=FALSE, removeOnSpill=TRUE) {
+                          togglevis=FALSE, togglelock=FALSE, removeOnSpill=TRUE,
+                          direction="vertical") {
 
   # Resolve names
   choices <- choicesWithNames(choices)
@@ -123,6 +130,7 @@ dropZoneInput <- function(inputId, choices, presets=NULL, hidden=FALSE, placehol
                                                         multivalued = multivalued,
                                                         selectable = selectable))), "right"),
     "data-remove-on-spill" = tolower(removeOnSpill),
+    "data-direction" = tolower(direction),
     insertPlaceholder(inputId, ifelse(hidden, placeholder, NA)),
     dragulaZoneItems('drop', 'presets',
                      items = presets$values,

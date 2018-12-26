@@ -84,6 +84,9 @@ $(document).on("ready", function() {
     if ($(container).hasClass('ds-highlight')) {
       $(container).addClass('gu-highlight');
     }
+    // Set direction
+    let direction = $(container).data('direction');
+    dragulaSelectR.options.direction = (direction !== undefined ? direction : "vertical");
     // Change content of item in transit
     $(el).html($(container).children(".ds-dropzone-options").children('.ds-dropoption[data-value="' + $(el).data('value') + '"]').html());
   });

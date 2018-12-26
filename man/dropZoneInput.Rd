@@ -7,7 +7,7 @@
 dropZoneInput(inputId, choices, presets = NULL, hidden = FALSE,
   placeholder = NULL, highlight = FALSE, multivalued = FALSE,
   selectable = FALSE, togglevis = FALSE, togglelock = FALSE,
-  removeOnSpill = TRUE)
+  removeOnSpill = TRUE, direction = "vertical")
 }
 \arguments{
 \item{inputId}{The \code{input} slot that will be used to acces the value.}
@@ -26,13 +26,20 @@ a reactive or event trigger.}
 
 \item{multivalued}{Allow multiple items with the same value?}
 
-\item{selectable}{Are the items in this dropzone selectable?}
+\item{selectable}{Are the items in this dropzone selectable? Default is \code{false}. Use
+Shiny input \code{input$<inputId>_selected} to access selected items.}
 
-\item{togglevis}{Add an icon to allow toggling items between visible/invisible.}
+\item{togglevis}{Add an icon to allow toggling items between visible/invisible. Default is
+\code{false}. Use Shiny input \code{input$<inputId>_invisible} to access invisible items.}
 
-\item{togglelock}{Add an icon to allow toggling items between locked/unlocked.}
+\item{togglelock}{Add an icon to allow toggling items between locked/unlocked. Locked items
+are not draggable. Default is \code{false}. Use Shiny input \code{input$<inputId>_locked}
+to access locked items.}
 
-\item{removeOnSpill}{Remove items when dragged outside dropzone?}
+\item{removeOnSpill}{Remove items when dragged outside dropzone? Default is \code{true}.}
+
+\item{direction}{Direction (\code{horizontal} or \code{vertical}) to consider when
+determining where an element would be dropped. Default is \code{vertical}.}
 }
 \description{
 Create a Dragula dropzone input
