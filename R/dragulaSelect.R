@@ -167,6 +167,7 @@ dropZoneInput <- function(inputId, choices, presets=NULL, hidden=FALSE, placehol
 #' @param freeze No items allowed before these. Analogous to freezing the first few
 #'   columns of a spreadsheet (array length of items - either NA or ds-freeze). Makes
 #'   since only for first initial items, and when used in conjunction with locked.
+#'   Frozen items also cannot be toggled.
 #' @param togglevis Add an icon to allow toggling items between visible/invisible.
 #' @param togglelock Add an icon to allow toggling items between locked/unlocked.
 #'
@@ -191,11 +192,11 @@ dragulaZoneItems <- function(zone, type, items, ids=rep(NA, length(items)), sele
                                     paste(keepTruthy(c(selected[[i]], invisible[[i]], locked[[i]], freeze[[i]])), collapse = ' '))
                               ),
                labels[[i]] %||% values[[i]],
-               switch(togglevis && (zone == 'drop'),
+               switch(togglevis && (zone == 'drop') && !isTruthy(freeze[[i]]),
                       div(class = "ds-toggle-visible",
                           ifelse(isTruthy(invisible[[i]]), tagList(icon("eye-slash")), tagList(icon("eye")))),
                       NULL),
-               switch(togglelock && (zone == 'drop'),
+               switch(togglelock && (zone == 'drop') && !isTruthy(freeze[[i]]),
                       div(class = "ds-toggle-lock",
                           ifelse(isTruthy(locked[[i]]), tagList(icon("lock")), tagList(icon("lock-open")))),
                       NULL)

@@ -25,7 +25,8 @@ dragulaZoneItems(zone, type, items, ids = rep(NA, length(items)),
 
 \item{freeze}{No items allowed before these. Analogous to freezing the first few
 columns of a spreadsheet (array length of items - either NA or ds-freeze). Makes
-since only for first initial items, and when used in conjunction with locked.}
+since only for first initial items, and when used in conjunction with locked.
+Frozen items also cannot be toggled.}
 
 \item{togglevis}{Add an icon to allow toggling items between visible/invisible.}
 
