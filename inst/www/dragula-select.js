@@ -177,16 +177,14 @@ $.extend(dropZoneBinding, {
       Shiny.onInputChange($dropzone.attr('id') + "_locked", getValues($dropzone, '.ds-locked'));
     });
 
-    // Initialize secondary inputs (selected, invisible, and locked)
-    $(el).on("shiny:bound", function(ev) {
-      // Need timeout so other binding stuff can happen before we update
-      //   secondary inputs (essentially, without the timeout, no dice...)
-      setTimeout(function() {
-        let dzId = el.id;
-        Shiny.onInputChange(dzId + "_selected", getValues($(el), '.ds-selected'));
-        Shiny.onInputChange(dzId + "_invisible", getValues($(el), '.ds-invisible'));
-        Shiny.onInputChange(dzId + "_locked", getValues($(el), '.ds-locked'));
-      });
+    // Initialize secondary inputs (selected, invisible, and locked).
+    //   Need timeout so other binding stuff can happen before we update
+    //   secondary inputs (essentially, without the timeout, no dice...)
+    setTimeout(function() {
+      let dzId = el.id;
+      Shiny.onInputChange(dzId + "_selected", getValues($(el), '.ds-selected'));
+      Shiny.onInputChange(dzId + "_invisible", getValues($(el), '.ds-invisible'));
+      Shiny.onInputChange(dzId + "_locked", getValues($(el), '.ds-locked'));
     });
   },
   getValue: function(el) {
