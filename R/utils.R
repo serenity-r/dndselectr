@@ -112,7 +112,7 @@ choicesWithNames <- function(choices) {
 # multivalued and selectable must be given by dropZoneInput
 presetsWithOptions <- function(presets, choices, multivalued) {
   if (is.atomic(presets)) presets <- list(values = presets)
-  for (option in c("selected", "locked", "invisible")) {
+  for (option in c("selected", "locked", "invisible", "freeze")) {
     presets <- parseOption(presets, option)
   }
   presets <- getIds(presets, multivalued)

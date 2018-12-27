@@ -20,10 +20,13 @@ dragulaSelectR.options = {
 
     // Source -> Target only AND
     //   no dropzone to different dropzone AND (note: caused issue when drop triggered before remove - might change in future)
-    //   valid available option in dropzone
-    return ((!target.classList.contains('ds-dragzone')) &&
+    //   valid available option in dropzone AND
+    //   not before a frozen item (note: need .gu-transit check as well)
+    return (!target.classList.contains('ds-dragzone') &&
             !(source.classList.contains('ds-dropzone') && (source.id !== target.id)) &&
-            (dropoption.length > 0));
+            (dropoption.length > 0) &&
+            !$(sibling).is('.ds-freeze') &&
+            !$('.gu-transit').next().is('.ds-freeze'));
   },
   revertOnSpill: true, // Always revert to source container on spill
   removeOnSpill: true  // Always remove drag item on spill
@@ -86,9 +89,11 @@ $(document).on("ready", function() {
     if ($(container).hasClass('ds-highlight')) {
       $(container).addClass('gu-highlight');
     }
-    // Set direction
-    let direction = $(container).data('direction');
-    dragulaSelectR.options.direction = (direction !== undefined ? direction : "vertical");
+    // Set direction (timed out due to glitch when over first occurs)
+    setTimeout(function() {
+      let direction = $(container).data('direction');
+      dragulaSelectR.options.direction = (direction !== undefined ? direction : "vertical");
+    });
     // Change content of item in transit
     $(el).html($(container).children(".ds-dropzone-options").children('.ds-dropoption[data-value="' + $(el).data('value') + '"]').html());
   });
@@ -170,6 +175,18 @@ $.extend(dropZoneBinding, {
       $(this).closest(".ds-dropoption").toggleClass("ds-locked");
       let $dropzone = $(this).closest(".ds-dropzone");
       Shiny.onInputChange($dropzone.attr('id') + "_locked", getValues($dropzone, '.ds-locked'));
+    });
+
+    // Initialize secondary inputs (selected, invisible, and locked)
+    $(el).on("shiny:bound", function(ev) {
+      // Need timeout so other binding stuff can happen before we update
+      //   secondary inputs (essentially, without the timeout, no dice...)
+      setTimeout(function() {
+        let dzId = el.id;
+        Shiny.onInputChange(dzId + "_selected", getValues($(el), '.ds-selected'));
+        Shiny.onInputChange(dzId + "_invisible", getValues($(el), '.ds-invisible'));
+        Shiny.onInputChange(dzId + "_locked", getValues($(el), '.ds-locked'));
+      });
     });
   },
   getValue: function(el) {

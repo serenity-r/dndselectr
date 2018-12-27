@@ -5,8 +5,8 @@
 \title{Create items for dragzones/dropzones}
 \usage{
 dragulaZoneItems(zone, type, items, ids = rep(NA, length(items)),
-  selected = NULL, invisible = NULL, locked = NULL, togglevis = FALSE,
-  togglelock = FALSE)
+  selected = NULL, invisible = NULL, locked = NULL, freeze = NULL,
+  togglevis = FALSE, togglelock = FALSE)
 }
 \arguments{
 \item{zone}{Container zone type: either \code{drop} or \code{drag}}
@@ -22,6 +22,10 @@ dragulaZoneItems(zone, type, items, ids = rep(NA, length(items)),
 \item{invisible}{Invisible items (array length of items - either NA or ds-invisible)}
 
 \item{locked}{Locked items (array length of items - either NA or ds-locked)}
+
+\item{freeze}{No items allowed before these. Analogous to freezing the first few
+columns of a spreadsheet (array length of items - either NA or ds-freeze). Makes
+since only for first initial items, and when used in conjunction with locked.}
 
 \item{togglevis}{Add an icon to allow toggling items between visible/invisible.}
 

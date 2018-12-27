@@ -51,6 +51,17 @@ test_that("Drop zones are working properly", {
     "<div id=\"dropzone\" class=\"ds-dropzone\" data-remove-on-spill=\"true\" data-direction=\"vertical\">\n  <div data-value=\"foo\" data-instance class=\"ds-dropoption ds-invisible\">\n    Foo\n    <div class=\"ds-toggle-visible\">\n      <i class=\"fa fa-eye-slash\"></i>\n    </div>\n  </div>\n  <div class=\"ds-dropzone-options\">\n    <div data-value=\"foo\" data-instance class=\"ds-dropoption\">\n      Foo\n      <div class=\"ds-toggle-visible\">\n        <i class=\"fa fa-eye\"></i>\n      </div>\n    </div>\n  </div>\n</div>"
   )
 
+  # Only one ds-dropoption!!
+  expect_match(
+    as.character(
+      dropZoneInput("dropzone",
+                    choices = list(foo = "Foo"),
+                    presets = list(values = "foo",
+                                   selected = "foo",
+                                   invisible = "foo"))),
+    "<div id=\"dropzone\" class=\"ds-dropzone\" data-remove-on-spill=\"true\" data-direction=\"vertical\">\n  <div data-value=\"foo\" data-instance class=\"ds-dropoption ds-selected ds-invisible\">Foo</div>\n  <div class=\"ds-dropzone-options\">\n    <div data-value=\"foo\" data-instance class=\"ds-dropoption\">Foo</div>\n  </div>\n</div>"
+  )
+
   # Let's go crazy
   expect_match(
     as.character(

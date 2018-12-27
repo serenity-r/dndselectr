@@ -138,6 +138,7 @@ dropZoneInput <- function(inputId, choices, presets=NULL, hidden=FALSE, placehol
                      selected = presets$selected,
                      invisible = presets$invisible,
                      locked = presets$locked,
+                     freeze = presets$freeze,
                      togglevis = togglevis,
                      togglelock = togglelock),
     div(
@@ -163,13 +164,16 @@ dropZoneInput <- function(inputId, choices, presets=NULL, hidden=FALSE, placehol
 #' @param selected  Selected items (array length of items - either NA or ds-selected)
 #' @param invisible Invisible items (array length of items - either NA or ds-invisible)
 #' @param locked  Locked items (array length of items - either NA or ds-locked)
+#' @param freeze No items allowed before these. Analogous to freezing the first few
+#'   columns of a spreadsheet (array length of items - either NA or ds-freeze). Makes
+#'   since only for first initial items, and when used in conjunction with locked.
 #' @param togglevis Add an icon to allow toggling items between visible/invisible.
 #' @param togglelock Add an icon to allow toggling items between locked/unlocked.
 #'
 #' @return div element
 #'
 dragulaZoneItems <- function(zone, type, items, ids=rep(NA, length(items)), selected=NULL,
-                             invisible=NULL, locked=NULL, togglevis=FALSE, togglelock=FALSE) {
+                             invisible=NULL, locked=NULL, freeze=NULL, togglevis=FALSE, togglelock=FALSE) {
   if (!(zone %in% c('drag', 'drop'))) {
     stop(zone, " is not a valid container type. Dragula container type must be either 'drag' or 'drop'")
   }
@@ -179,13 +183,13 @@ dragulaZoneItems <- function(zone, type, items, ids=rep(NA, length(items)), sele
   values <- names(items)
   tagList(
     lapply(seq_along(items),
-           FUN = function(values, labels, ids, selected, invisible, locked, togglevis, togglelock, i) {
+           FUN = function(values, labels, ids, selected, invisible, locked, freeze, togglevis, togglelock, i) {
              div(
                "data-value" = values[[i]] %||% labels[[i]],
                "data-instance" = ids[[i]],
                class = trimws(paste(paste0('ds-', ifelse(zone=='drop', 'dropoption', 'dragitem')),
-                                    keepTruthy(c(selected[[i]], invisible[[i]], locked[[i]])),
-                                    collapse = ' ')),
+                                    paste(keepTruthy(c(selected[[i]], invisible[[i]], locked[[i]], freeze[[i]])), collapse = ' '))
+                              ),
                labels[[i]] %||% values[[i]],
                switch(togglevis && (zone == 'drop'),
                       div(class = "ds-toggle-visible",
@@ -196,7 +200,8 @@ dragulaZoneItems <- function(zone, type, items, ids=rep(NA, length(items)), sele
                           ifelse(isTruthy(locked[[i]]), tagList(icon("lock")), tagList(icon("lock-open")))),
                       NULL)
              )
-           }, values = values, labels = items, ids = ids, selected = selected, invisible = invisible, locked = locked, togglevis = togglevis, togglelock = togglelock
+           }, values = values, labels = items, ids = ids, selected = selected, invisible = invisible,
+           locked = locked, freeze = freeze, togglevis = togglevis, togglelock = togglelock
     )
   )
 }
