@@ -22,46 +22,19 @@ test_that("Choices are correctly assigned names", {
     choicesWithNames(list(A="a", "b", C=3, 4)),
     list(A="a", "b"="b", C="3", "4"="4")
   )
-  # List, named, with a sub-vector
+  # Unnamed list of tags
   expect_identical(
-    choicesWithNames(list(A="a", B="b", C=c("d", "e"))),
-    list(A="a", B="b", C=list(d="d", e="e"))
+    choicesWithNames(list(div(), p())),
+    list("<div></div>" = div(), "<p></p>" = p())
   )
-  # List, named, with a sub-vector with numeric elements
+  # Unnamed list of HTML
   expect_identical(
-    choicesWithNames(list(A="a", B="b", C=c(1, 2))),
-    list(A="a", B="b", C=list(`1`="1", `2`="2"))
+    choicesWithNames(list(HTML("<div></div>"), HTML(4))),
+    list("<div></div>" = HTML("<div></div>"), "4" = HTML(4))
   )
-  # List, named, with sublist
-  expect_identical(
-    choicesWithNames(list(A="a", B="b", C=list("d", "e"))),
-    list(A="a", B="b", C=list(d="d", e="e"))
+  # Error if choice entry is list
+  expect_error(
+    choicesWithNames(list(a = "1", b = list())),
+    "Individual choices cannot be vectors or lists."
   )
-  # List, named, with sublist with numeric elements
-  expect_identical(
-    choicesWithNames(list(A="a", B="b", C=list(1, 2))),
-    list(A="a", B="b", C=list(`1`="1", `2`="2"))
-  )
-  # List, named, with a named sub-vector of length 1
-  expect_identical(
-    choicesWithNames(list(A="a", B="b", C=c(D="d"))),
-    list(A="a", B="b", C=list(D="d"))
-  )
-  # List, named, with a named sub-vector of length 1 with a numeric element
-  expect_identical(
-    choicesWithNames(list(A="a", B="b", C=c(D=1))),
-    list(A="a", B="b", C=list(D="1"))
-  )
-  # List, some named, with sublist
-  expect_identical(
-    choicesWithNames(list(A="a", "b", C=list("d", E="e"))),
-    list(A="a", b="b", C=list(d="d", E="e"))
-  )
-  # Deeper nesting
-  expect_identical(
-    choicesWithNames(list(A="a", "b", C=list(D=list("e", "f"), G=c(H="h", "i")))),
-    list(A="a", b="b", C=list(D=list(e="e", f="f"), G=list(H="h", i="i")))
-  )
-  # Error when sublist is unnamed
-  expect_error(choicesWithNames(list(A="a", "b", list(1,2))))
 })

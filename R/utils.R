@@ -68,10 +68,9 @@ insertPlaceholder <- function(zoneId, placeholder) {
 }
 
 # Takes a vector or list, and adds names (same as the value) to any entries
-# without names. Coerces all leaf nodes to `character`.
+# without names.
 choicesWithNames <- function(choices) {
-  # Take a vector or list, and convert to list. Also, if any children are
-  # vectors with length > 1, convert those to list. If the list is unnamed,
+  # Take a vector or list, and convert to list. If the list is unnamed,
   # convert it to a named list with blank names.
   listify <- function(obj) {
     # If a list/vector is unnamed, give it blank names
@@ -81,12 +80,12 @@ choicesWithNames <- function(choices) {
     }
 
     res <- lapply(obj, function(val) {
-      if (is.list(val))
-        listify(val)
-      else if (length(val) == 1 && is.null(names(val)))
-        as.character(val)
-      else
-        makeNamed(as.list(val))
+      if (any(class(val) %in% c("html", "shiny.tag", "shiny.tag.list"))) {
+        return(val)
+      } else if (length(val) == 1) {
+        return(as.character(val))
+      } else
+        stop("Individual choices cannot be vectors or lists.")
     })
 
     makeNamed(res)
@@ -95,16 +94,16 @@ choicesWithNames <- function(choices) {
   choices <- listify(choices)
   if (length(choices) == 0) return(choices)
 
-  # Recurse into any subgroups
-  choices <- mapply(choices, names(choices), FUN = function(choice, name) {
-    if (!is.list(choice)) return(choice)
-    if (name == "") stop('All sub-lists in "choices" must be named.')
-    choicesWithNames(choice)
-  }, SIMPLIFY = FALSE)
-
   # default missing names to choice values
-  missing <- names(choices) == ""
-  names(choices)[missing] <- as.character(choices)[missing]
+  # Note: Need to use mapply since vectorized as.character(choices) does bad
+  #  things to a list of shiny.tag objects
+  names(choices) <- mapply(function(choice, name) {
+    if (name == "") {
+      return(as.character(choice))
+    } else {
+      return(name)
+    }
+  }, choices, names(choices), USE.NAMES=FALSE)
 
   choices
 }

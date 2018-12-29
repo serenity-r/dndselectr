@@ -55,11 +55,17 @@ span.ds-placeholder {
   float: right;
 }
 
-.ds-dropoption i {
+.ds-dropoption i.fa-lock-open,
+.ds-dropoption i.fa-eye,
+.ds-dropoption i.fa-lock,
+.ds-dropoption i.fa-eye-slash {
   visibility: hidden;
 }
 
-.ds-dropoption:hover i {
+.ds-dropoption:hover i.fa-lock-open,
+.ds-dropoption:hover i.fa-eye,
+.ds-dropoption:hover i.fa-lock,
+.ds-dropoption:hover i.fa-eye-slash{
   visibility: visible;
 }
 
