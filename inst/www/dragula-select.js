@@ -16,7 +16,13 @@ dragulaSelectR.options = {
   },
   accepts: function(el, target, source, sibling) {
     // Make sure option exists within dropzone
-    var dropoption = $(target).children(".ds-dropzone-options").children('.ds-dropoption[data-value="' + $(el).data('value') + '"]');
+    let validOption = $(target).children(".ds-dropzone-options").children('.ds-dropoption[data-value="' + $(el).data('value') + '"]').length > 0;
+
+    // Check if item is already there (not including temporary
+    //   in-transit pre-drop item)
+    let numitems = $(target).children('[data-value="' + $(el).data('value') + '"]:not(".gu-transit")').length;
+    let multivalued = $(target).hasClass('ds-multivalued');
+    let roomForGrowth = (multivalued || ((!multivalued) && (numitems === 0)));
 
     // Source -> Target only AND
     //   no dropzone to different dropzone AND (note: caused issue when drop triggered before remove - might change in future)
@@ -24,9 +30,8 @@ dragulaSelectR.options = {
     //   not before a frozen item (note: need .gu-transit check as well)
     return (!target.classList.contains('ds-dragzone') &&
             !(source.classList.contains('ds-dropzone') && (source.id !== target.id)) &&
-            (dropoption.length > 0) &&
-            !$(sibling).is('.ds-freeze') &&
-            !$('.gu-transit').next().is('.ds-freeze'));
+            validOption && roomForGrowth &&
+            !$(sibling).is('.ds-freeze') && !$('.gu-transit').next().is('.ds-freeze'));
   },
   revertOnSpill: true, // Always revert to source container on spill
   removeOnSpill: true  // Always remove drag item on spill
@@ -52,28 +57,19 @@ $(document).on("ready", function() {
   dragulaSelectR.drake.on("drop", function(el, target, source, sibling) {
     // Coming in from source - otherwise, do nothing
     if ($(el).hasClass('ds-dragitem')) {
-      // Capture number of existing items with this value
-      var numitems = $(target).children('[data-value="' + $(el).data('value') + '"]').length;
+      // Clone option with corresponding value
+      let $newItem = $(target).children(".ds-dropzone-options").children('.ds-dropoption[data-value="' + $(el).data('value') + '"]').clone();
 
-      // If set to only one per value
-      var multivalued = $(target).hasClass('ds-multivalued');
-      if (multivalued || ((!multivalued) && (numitems === 1))) {
-        // Clone option with corresponding value
-        var dropoption = $(target).children(".ds-dropzone-options").children('.ds-dropoption[data-value="' + $(el).data('value') + '"]');
-        var $newItem = dropoption.clone();
+      // Update dropzone counter
+      $(target).data('counter', $(target).data('counter') + 1);
 
-        // Update dropzone counter
-        $(target).data('counter', $(target).data('counter') + 1);
+      // Set instance id for new item (only used for multivalued)
+      $newItem.attr('data-instance', $(target).hasClass('ds-multivalued') ? $(target).data('counter') : '');
 
-        // Set instance id for new item (only used for multivalued)
-        $newItem.attr('data-instance', multivalued ? $(target).data('counter') : '');
-
-        var hidden = $(target).hasClass('ds-hidden');
-        if (!hidden && sibling) {
-          $newItem.insertBefore(sibling);
-        } else {
-          $(target).append($newItem);
-        }
+      if (!$(target).hasClass('ds-hidden') && sibling) {
+        $newItem.insertBefore(sibling);
+      } else {
+        $(target).append($newItem);
       }
 
       // Always remove element coming from source
