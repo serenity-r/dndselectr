@@ -132,6 +132,12 @@ dropZoneInput <- function(inputId, choices, presets=NULL, hidden=FALSE, placehol
     "data-remove-on-spill" = tolower(removeOnSpill),
     "data-direction" = tolower(direction),
     insertPlaceholder(inputId, ifelse(hidden, placeholder, NA)),
+    div(
+      class = 'ds-dropzone-options',
+      dragulaZoneItems('drop', 'options', choices,
+                       togglevis = togglevis,
+                       togglelock = togglelock)
+    ),
     dragulaZoneItems('drop', 'presets',
                      items = presets$values,
                      ids = presets$ids,
@@ -140,14 +146,8 @@ dropZoneInput <- function(inputId, choices, presets=NULL, hidden=FALSE, placehol
                      locked = presets$locked,
                      freeze = presets$freeze,
                      togglevis = togglevis,
-                     togglelock = togglelock),
-    div(
-      class = 'ds-dropzone-options',
-      dragulaZoneItems('drop', 'options', choices,
-                       togglevis = togglevis,
-                       togglelock = togglelock)
-      )
-    )
+                     togglelock = togglelock)
+  )
 
   attachDependencies(inputTag)
 }
