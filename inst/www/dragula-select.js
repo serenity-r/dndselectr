@@ -12,7 +12,7 @@ dragulaSelectR.options = {
     return source.classList.contains('ds-dragzone');
   },
   invalid: function (el, handle) {
-    return $(el).hasClass('ds-locked');
+    return ($(el).hasClass('ds-locked') || $(el).hasClass('ds-placeholder'));
   },
   accepts: function(el, target, source, sibling) {
     // Make sure option exists within dropzone
