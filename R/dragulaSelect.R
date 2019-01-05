@@ -393,6 +393,6 @@ entangle <- function(session, dropZoneOneId, dropZoneTwoId) {
 #' @param targetId  The \code{id} of the target dropzone.
 #'
 entangleSourceToTarget <- function(session, sourceId, targetId) {
-  message <- dropNulls(list(action = "entangle", sourceId = sourceId))
+  message <- dropNulls(list(action = "entangle", sourceId = session$ns(sourceId)))
   session$sendInputMessage(targetId, message)
 }
