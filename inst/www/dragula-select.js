@@ -72,6 +72,12 @@ $(document).on("ready", function() {
         $(target).append($newItem);
       }
 
+      // Trigger selection if applicable
+      if ($(target).data('select-on-drop')) {
+        console.log("I'm gonna select it!");
+        $newItem.trigger("click");
+      }
+
       // Always remove element coming from source
       el.remove();
     }

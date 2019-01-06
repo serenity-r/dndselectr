@@ -6,8 +6,8 @@
 \usage{
 dropZoneInput(inputId, choices, presets = NULL, hidden = FALSE,
   placeholder = NULL, highlight = FALSE, multivalued = FALSE,
-  selectable = FALSE, togglevis = FALSE, togglelock = FALSE,
-  removeOnSpill = TRUE, direction = "vertical")
+  selectable = FALSE, selectOnDrop = FALSE, togglevis = FALSE,
+  togglelock = FALSE, removeOnSpill = TRUE, direction = "vertical")
 }
 \arguments{
 \item{inputId}{The \code{input} slot that will be used to acces the value.}
@@ -28,6 +28,8 @@ a reactive or event trigger.}
 
 \item{selectable}{Are the items in this dropzone selectable? Default is \code{false}. Use
 Shiny input \code{input$<inputId>_selected} to access selected items.}
+
+\item{selectOnDrop}{Should new dropped items be automatically selected?}
 
 \item{togglevis}{Add an icon to allow toggling items between visible/invisible. Default is
 \code{false}. Use Shiny input \code{input$<inputId>_invisible} to access invisible items.}

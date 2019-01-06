@@ -46,6 +46,7 @@ shinyApp(
                                    four = "4"),
                     multivalued = TRUE,
                     selectable = TRUE,
+                    selectOnDrop = TRUE,
                     presets = list(values = input[[input$whichzone %||% "stevezone"]],
                                    selected = input[[paste0(input$whichzone, '_selected') %||% NULL]]))
     })

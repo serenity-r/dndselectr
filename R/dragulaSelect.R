@@ -93,6 +93,7 @@ dragZone <- function(id, choices) {
 #' @param multivalued Allow multiple items with the same value?
 #' @param selectable Are the items in this dropzone selectable? Default is \code{false}. Use
 #'   Shiny input \code{input$<inputId>_selected} to access selected items.
+#' @param selectOnDrop Should new dropped items be automatically selected?
 #' @param togglevis Add an icon to allow toggling items between visible/invisible. Default is
 #'   \code{false}. Use Shiny input \code{input$<inputId>_invisible} to access invisible items.
 #' @param togglelock Add an icon to allow toggling items between locked/unlocked. Locked items
@@ -114,8 +115,8 @@ dragZone <- function(id, choices) {
 #'
 dropZoneInput <- function(inputId, choices, presets=NULL, hidden=FALSE, placeholder=NULL,
                           highlight=FALSE, multivalued=FALSE, selectable=FALSE,
-                          togglevis=FALSE, togglelock=FALSE, removeOnSpill=TRUE,
-                          direction="vertical") {
+                          selectOnDrop=FALSE, togglevis=FALSE, togglelock=FALSE,
+                          removeOnSpill=TRUE, direction="vertical") {
 
   # Resolve names
   choices <- choicesWithNames(choices)
@@ -129,6 +130,7 @@ dropZoneInput <- function(inputId, choices, presets=NULL, hidden=FALSE, placehol
                                                         highlight = highlight,
                                                         multivalued = multivalued,
                                                         selectable = selectable))), "right"),
+    "data-select-on-drop" = tolower(selectOnDrop),
     "data-remove-on-spill" = tolower(removeOnSpill),
     "data-direction" = tolower(direction),
     insertPlaceholder(inputId, ifelse(hidden, placeholder, NA)),
