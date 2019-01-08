@@ -74,7 +74,6 @@ $(document).on("ready", function() {
 
       // Trigger selection if applicable
       if ($(target).data('select-on-drop')) {
-        console.log("I'm gonna select it!");
         $newItem.trigger("click");
       }
 
