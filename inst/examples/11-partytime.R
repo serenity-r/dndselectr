@@ -66,7 +66,7 @@ shinyApp(
                     selectable = TRUE,
                     togglevis = TRUE,
                     togglelock = TRUE,
-                    presets = list(values = input[[thiszone()]],
+                    presets = list(values = isolate(input[[thiszone()]]),
                                    selected = isolate(input[[paste0(thiszone(), '_selected') %||% NULL]]),
                                    invisible = isolate(input[[paste0(thiszone(), '_invisible') %||% NULL]]),
                                    locked = isolate(input[[paste0(thiszone(), '_locked') %||% NULL]])))
