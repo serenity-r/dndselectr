@@ -20,9 +20,10 @@ dragulaSelectR.options = {
 
     // Check if item is already there (not including temporary
     //   in-transit pre-drop item)
-    let numitems = $(target).children('[data-value="' + $(el).data('value') + '"]:not(".gu-transit")').length;
+    let numItemsTotal = $(target).children('.ds-dropoption:not(".gu-transit")').length;
+    let numItemsWithValue = $(target).children('[data-value="' + $(el).data('value') + '"]:not(".gu-transit")').length;
     let multivalued = $(target).hasClass('ds-multivalued');
-    let roomForGrowth = (multivalued || ((!multivalued) && (numitems === 0)));
+    let roomForGrowth = ((multivalued || ((!multivalued) && (numItemsWithValue === 0))) && (numItemsTotal < $(target).data('maxInput')));
 
     // Source -> Target only AND
     //   no dropzone to different dropzone AND (note: caused issue when drop triggered before remove - might change in future)

@@ -102,6 +102,7 @@ dragZone <- function(id, choices) {
 #' @param removeOnSpill Remove items when dragged outside dropzone? Default is \code{true}.
 #' @param direction Direction (\code{horizontal} or \code{vertical}) to consider when
 #'   determining where an element would be dropped. Default is \code{vertical}.
+#' @param maxInput Maximum allowable dropped items.
 #'
 #' @export
 #'
@@ -116,13 +117,18 @@ dragZone <- function(id, choices) {
 dropZoneInput <- function(inputId, choices, presets=NULL, hidden=FALSE, placeholder=NULL,
                           highlight=FALSE, multivalued=FALSE, selectable=FALSE,
                           selectOnDrop=FALSE, togglevis=FALSE, togglelock=FALSE,
-                          removeOnSpill=TRUE, direction="vertical") {
+                          removeOnSpill=TRUE, direction="vertical", maxInput=Inf) {
 
   # Resolve names
   choices <- choicesWithNames(choices)
 
   # Manage presets
   presets <- presetsWithOptions(presets, choices, multivalued)
+
+  # Make sure number of preset values obeys maxInput setting
+  if (length(presets$values) > maxInput) {
+    stop("Number of preset values (", length(presets$values), ") exceeds the maximum allowable (", maxInput,")")
+  }
 
   inputTag <- div(
     id = inputId,
@@ -133,6 +139,7 @@ dropZoneInput <- function(inputId, choices, presets=NULL, hidden=FALSE, placehol
     "data-select-on-drop" = tolower(selectOnDrop),
     "data-remove-on-spill" = tolower(removeOnSpill),
     "data-direction" = tolower(direction),
+    "data-max-input" = maxInput,
     insertPlaceholder(inputId, ifelse(hidden, placeholder, NA)),
     div(
       class = 'ds-dropzone-options',

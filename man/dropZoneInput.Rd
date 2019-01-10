@@ -7,7 +7,8 @@
 dropZoneInput(inputId, choices, presets = NULL, hidden = FALSE,
   placeholder = NULL, highlight = FALSE, multivalued = FALSE,
   selectable = FALSE, selectOnDrop = FALSE, togglevis = FALSE,
-  togglelock = FALSE, removeOnSpill = TRUE, direction = "vertical")
+  togglelock = FALSE, removeOnSpill = TRUE, direction = "vertical",
+  maxInput = Inf)
 }
 \arguments{
 \item{inputId}{The \code{input} slot that will be used to acces the value.}
@@ -42,6 +43,8 @@ to access locked items.}
 
 \item{direction}{Direction (\code{horizontal} or \code{vertical}) to consider when
 determining where an element would be dropped. Default is \code{vertical}.}
+
+\item{maxInput}{Maximum allowable dropped items.}
 }
 \description{
 Create a Dragula dropzone input
