@@ -139,7 +139,7 @@ dropZoneInput <- function(inputId, choices, presets=NULL, hidden=FALSE, placehol
     "data-select-on-drop" = tolower(selectOnDrop),
     "data-remove-on-spill" = tolower(removeOnSpill),
     "data-direction" = tolower(direction),
-    "data-max-input" = maxInput,
+    "data-max-input" = ifelse(is.infinite(maxInput), "Infinity", maxInput),
     insertPlaceholder(inputId, ifelse(hidden, placeholder, NA)),
     div(
       class = 'ds-dropzone-options',
