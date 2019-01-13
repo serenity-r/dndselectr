@@ -18,9 +18,10 @@ shinyApp(
                                           two = "2",
                                           three = "3",
                                           four = "4"),
-                           presets = c("one"),
+                           presets = c("one", "three"),
                            multivalued = TRUE,
-                           maxInput = 3)
+                           maxInput = 2,
+                           replaceOnDrop = TRUE)
       )
     )
   ),

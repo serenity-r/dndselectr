@@ -27,7 +27,7 @@ span.ds-placeholder {
   padding: 6px 4px;
 }
 
-.ds-dropzone.gu-highlight {
+.ds-dropzone.gu-dragover.ds-highlight {
   border-color: red;
 }
 
@@ -109,5 +109,9 @@ span.ds-placeholder {
 .gu-mirror > .ds-toggle-visible,
 .gu-transit > .ds-toggle-lock,
 .gu-mirror > .ds-toggle-lock {
+  display: none;
+}
+
+.ds-dropzone.ds-replace-on-drop.ds-max-input > .ds-dragitem.gu-transit:not(.gu-hide) + .ds-dropoption {
   display: none;
 }

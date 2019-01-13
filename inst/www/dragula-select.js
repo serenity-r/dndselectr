@@ -20,10 +20,12 @@ dragulaSelectR.options = {
 
     // Check if item is already there (not including temporary
     //   in-transit pre-drop item)
-    let numItemsTotal = $(target).children('.ds-dropoption:not(".gu-transit")').length;
     let numItemsWithValue = $(target).children('[data-value="' + $(el).data('value') + '"]:not(".gu-transit")').length;
     let multivalued = $(target).hasClass('ds-multivalued');
-    let roomForGrowth = ((multivalued || ((!multivalued) && (numItemsWithValue === 0))) && (numItemsTotal < Number($(target).data('maxInput'))));
+    let spaceAvailable = ((multivalued || (numItemsWithValue === 0)) &&
+                          (!$(target).hasClass('ds-max-input') ||
+                           $(el).hasClass('ds-dropoption') ||
+                           ($(target).hasClass('ds-replace-on-drop') && (sibling !== null))));
 
     // Source -> Target only AND
     //   no dropzone to different dropzone AND (note: caused issue when drop triggered before remove - might change in future)
@@ -31,7 +33,7 @@ dragulaSelectR.options = {
     //   not before a frozen item (note: need .gu-transit check as well)
     return (!target.classList.contains('ds-dragzone') &&
             !(source.classList.contains('ds-dropzone') && (source.id !== target.id)) &&
-            validOption && roomForGrowth &&
+            validOption && spaceAvailable &&
             !$(sibling).is('.ds-freeze') && !$('.gu-transit').next().is('.ds-freeze'));
   },
   revertOnSpill: true, // Always revert to source container on spill
@@ -80,6 +82,22 @@ $(document).on("ready", function() {
 
       // Always remove element coming from source
       el.remove();
+
+      // If replace on drop, remove replaced element (will always be next)
+      if ($(target).hasClass('ds-max-input') && $(target).hasClass('ds-replace-on-drop')) {
+        if (!$(target).hasClass('ds-hidden')) {
+          // sibling should always exist
+          sibling.remove();
+        } else {
+          $(target).children('.ds-dropoption').last().prev().remove();
+        }
+      }
+
+      // Check if at max allowable inputs
+      let numItemsTotal = $(target).children('.ds-dropoption:not(".gu-transit")').length;
+      if (numItemsTotal === Number($(target).data('maxInput'))) {
+        $(target).addClass('ds-max-input');
+      }
     }
 
     // Raise an event to signal that the value changed
@@ -87,10 +105,8 @@ $(document).on("ready", function() {
   });
 
   dragulaSelectR.drake.on("over", function(el, container, source) {
-    // Highlighting
-    if ($(container).hasClass('ds-highlight')) {
-      $(container).addClass('gu-highlight');
-    }
+    $(container).addClass('gu-dragover');
+
     // Set direction (timed out due to glitch when over first occurs)
     setTimeout(function() {
       let direction = $(container).data('direction');
@@ -101,7 +117,7 @@ $(document).on("ready", function() {
   });
 
   dragulaSelectR.drake.on("out", function(el, container, source) {
-    $(container).removeClass('gu-highlight');
+    $(container).removeClass('gu-dragover');
 
     // New entry. Dragula doesn't remove temporary gu-hide class for
     //   some reason.
@@ -112,6 +128,8 @@ $(document).on("ready", function() {
 
   // Trigger changes on item removal
   dragulaSelectR.drake.on("remove", function(el, container, source) {
+    $(container).removeClass('ds-max-input');
+
     if ($(source).hasClass('ds-dropzone')) {
       $(source).trigger("change");
     }

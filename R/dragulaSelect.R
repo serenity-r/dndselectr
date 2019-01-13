@@ -103,6 +103,7 @@ dragZone <- function(id, choices) {
 #' @param direction Direction (\code{horizontal} or \code{vertical}) to consider when
 #'   determining where an element would be dropped. Default is \code{vertical}.
 #' @param maxInput Maximum allowable dropped items.
+#' @param replaceOnDrop Replace item on drop when at maximum allowable items?
 #'
 #' @export
 #'
@@ -117,7 +118,8 @@ dragZone <- function(id, choices) {
 dropZoneInput <- function(inputId, choices, presets=NULL, hidden=FALSE, placeholder=NULL,
                           highlight=FALSE, multivalued=FALSE, selectable=FALSE,
                           selectOnDrop=FALSE, togglevis=FALSE, togglelock=FALSE,
-                          removeOnSpill=TRUE, direction="vertical", maxInput=Inf) {
+                          removeOnSpill=TRUE, direction="vertical", maxInput=Inf,
+                          replaceOnDrop=FALSE) {
 
   # Resolve names
   choices <- choicesWithNames(choices)
@@ -135,7 +137,9 @@ dropZoneInput <- function(inputId, choices, presets=NULL, hidden=FALSE, placehol
     class = trimws(paste('ds-dropzone', opts2class(list(hidden = hidden,
                                                         highlight = highlight,
                                                         multivalued = multivalued,
-                                                        selectable = selectable))), "right"),
+                                                        selectable = selectable,
+                                                        `max-input` = (length(presets$values) == maxInput),
+                                                        `replace-on-drop` = replaceOnDrop))), "right"),
     "data-select-on-drop" = tolower(selectOnDrop),
     "data-remove-on-spill" = tolower(removeOnSpill),
     "data-direction" = tolower(direction),
