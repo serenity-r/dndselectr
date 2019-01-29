@@ -4,12 +4,14 @@
 \alias{dragZone}
 \title{Create a Dragula dragzone container}
 \usage{
-dragZone(id, choices)
+dragZone(id, choices, ...)
 }
 \arguments{
 \item{id}{The container id.}
 
 \item{choices}{List of values to select from.}
+
+\item{...}{Additional arguments passed along to tags$div, such as class}
 }
 \description{
 Create a Dragula dragzone container

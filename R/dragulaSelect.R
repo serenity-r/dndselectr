@@ -46,6 +46,7 @@ NULL
 #'
 #' @param id The container id.
 #' @param choices List of values to select from.
+#' @param ... Additional arguments passed along to tags$div, such as class
 #'
 #' @export
 #'
@@ -57,7 +58,7 @@ NULL
 #'
 #' @seealso \code{\link{dragulaSelectR}}
 #'
-dragZone <- function(id, choices) {
+dragZone <- function(id, choices, ...) {
 
   if (missing(id)) {
     warning("Using generic 'dragzone' as id. HTML element may not be unique!")
@@ -74,7 +75,8 @@ dragZone <- function(id, choices) {
   inputTag <- div(
     id = id,
     class = 'ds-dragzone',
-    dragulaZoneItems('drag', 'options', choices)
+    dragulaZoneItems('drag', 'options', choices),
+    ...
   )
 
   attachDependencies(inputTag)
@@ -104,6 +106,7 @@ dragZone <- function(id, choices) {
 #'   determining where an element would be dropped. Default is \code{vertical}.
 #' @param maxInput Maximum allowable dropped items.
 #' @param replaceOnDrop Replace item on drop when at maximum allowable items?
+#' @param ... Additional arguments passed along to tags$div, such as class
 #'
 #' @export
 #'
@@ -119,7 +122,7 @@ dropZoneInput <- function(inputId, choices, presets=NULL, hidden=FALSE, placehol
                           highlight=FALSE, multivalued=FALSE, selectable=FALSE,
                           selectOnDrop=FALSE, togglevis=FALSE, togglelock=FALSE,
                           removeOnSpill=TRUE, direction="vertical", maxInput=Inf,
-                          replaceOnDrop=FALSE) {
+                          replaceOnDrop=FALSE, ...) {
 
   # Resolve names
   choices <- choicesWithNames(choices)
@@ -159,7 +162,8 @@ dropZoneInput <- function(inputId, choices, presets=NULL, hidden=FALSE, placehol
                      locked = presets$locked,
                      freeze = presets$freeze,
                      togglevis = togglevis,
-                     togglelock = togglelock)
+                     togglelock = togglelock),
+    ...
   )
 
   attachDependencies(inputTag)
