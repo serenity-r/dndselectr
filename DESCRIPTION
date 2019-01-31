@@ -14,7 +14,7 @@ Imports:
 Suggests:
     testthat,
     covr
-URL: https://github.com/serenity-r/dragulaSelectR
+URL: https://serenity-r.github.io/dragulaSelectR/, https://github.com/serenity-r/dragulaSelectR
 BugReports: https://github.com/serenity-r/dragulaSelectR/issues
 License: MIT + file LICENSE
 Encoding: UTF-8
