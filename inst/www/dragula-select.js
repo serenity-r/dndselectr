@@ -40,10 +40,7 @@ dragulaSelectR.options = {
   removeOnSpill: true  // Always remove drag item on spill
 };
 
-// #############################
-// ### dragulaSelectR events ###
-// #############################
-$(document).on("ready", function() {
+function initDragulaSelectR() {
   dragulaSelectR.drake = dragula(dragulaSelectR.options);
 
   dragulaSelectR.drake.on("drag", function(el, source) {
@@ -145,6 +142,15 @@ $(document).on("ready", function() {
       Shiny.onInputChange(dzId + "_locked", getValues($(source), '.ds-locked'));
     }
   });
+}
+
+// #############################
+// ### dragulaSelectR events ###
+// #############################
+$(document).on("ready", function() {
+  if (dragulaSelectR.drake === undefined) {
+    initDragulaSelectR();
+  }
 });
 
 // #####################
@@ -157,6 +163,10 @@ $.extend(dropZoneBinding, {
     return $(scope).find(".ds-dropzone");
   },
   initialize: function(el) {
+    // Race condition
+    if (dragulaSelectR.drake === undefined) {
+      initDragulaSelectR();
+    }
     dragulaSelectR.drake.containers.push(el);
 
     // Set multivalued counter to max instance value
