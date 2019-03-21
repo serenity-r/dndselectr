@@ -7,7 +7,7 @@ Description: Utilizes Dragula JS library to implement a drag-and-drop Shiny sele
     This implementation creates a Shiny input that replicates much of the functionality of 
     selectInput. Multiple zones for dragging and dropping are allowed. See the Dragula JS
     library for more information (https://github.com/bevacqua/dragula).
-Depends: R (>= 3.5.0)
+Depends: R (>= 3.4.0)
 Imports:
     shiny (>= 1.1.0),
     htmltools (>= 0.3.6)
