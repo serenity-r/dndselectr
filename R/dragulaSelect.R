@@ -90,7 +90,7 @@ dragZone <- function(id, choices, ...) {
 #' @param presets Array or list of preset values.
 #' @param hidden Should the selected items be hidden? This is useful to represent
 #'   a reactive or event trigger.
-#' @param placeholder If hidden is true, insert placeholder text.
+#' @param placeholder Insert placeholder text.
 #' @param highlight Highlights the container on dragover. Useful when \code{hidden} is active.
 #' @param multivalued Allow multiple items with the same value?
 #' @param selectable Are the items in this dropzone selectable? Default is \code{false}. Use
@@ -106,7 +106,7 @@ dragZone <- function(id, choices, ...) {
 #'   determining where an element would be dropped. Default is \code{vertical}.
 #' @param maxInput Maximum allowable dropped items.
 #' @param replaceOnDrop Replace item on drop when at maximum allowable items?
-#' @param ... Additional arguments passed along to tags$div, such as class
+#' @param ... Additional arguments passed along to \code{tags$div}, such as class
 #'
 #' @export
 #'
@@ -147,7 +147,7 @@ dropZoneInput <- function(inputId, choices, presets=NULL, hidden=FALSE, placehol
     "data-remove-on-spill" = tolower(removeOnSpill),
     "data-direction" = tolower(direction),
     "data-max-input" = ifelse(is.infinite(maxInput), "Infinity", maxInput),
-    insertPlaceholder(inputId, ifelse(hidden, placeholder, NA)),
+    insertPlaceholder(placeholder, hidden = !hidden && (length(presets$values) > 0)),
     div(
       class = 'ds-dropzone-options',
       dragulaZoneItems('drop', 'options', choices,
@@ -222,6 +222,23 @@ dragulaZoneItems <- function(zone, type, items, ids=rep(NA, length(items)), sele
            locked = locked, freeze = freeze, togglevis = togglevis, togglelock = togglelock
     )
   )
+}
+
+updateDropZoneInput <- function(session, inputId, choices=NULL, presets=NULL)
+{
+  # Manage presets
+  presets <- presetsWithOptions(presets, choices, multivalued)
+
+  # Make sure number of preset values obeys maxInput setting
+  if (length(presets$values) > maxInput) {
+    stop("Number of preset values (", length(presets$values), ") exceeds the maximum allowable (", maxInput,")")
+  }
+
+  choices <- if (!is.null(choices)) choicesWithNames(choices)
+  if (!is.null(presets)) presets <- as.character(presets)
+  options <- if (!is.null(choices)) selectOptions(choices, selected)
+  message <- dropNulls(list(label = label, options = options, value = selected))
+  session$sendInputMessage(inputId, message)
 }
 
 #' Run dragulaSelectR Example Applications

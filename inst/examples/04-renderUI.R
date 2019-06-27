@@ -36,7 +36,8 @@ shinyApp(
                                    two = "2",
                                    three = "3",
                                    four = "4"),
-                    presets = input[[input$whichzone %||% "stevezone"]])
+                    presets = input[[input$whichzone %||% "stevezone"]],
+                    placeholder = "Insert numbers here")
     })
   }
 )

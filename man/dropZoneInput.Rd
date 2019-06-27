@@ -21,7 +21,7 @@ the labels can be arbitrary HTML, as long as they are wrapped in a \code{tagList
 \item{hidden}{Should the selected items be hidden? This is useful to represent
 a reactive or event trigger.}
 
-\item{placeholder}{If hidden is true, insert placeholder text.}
+\item{placeholder}{Insert placeholder text.}
 
 \item{highlight}{Highlights the container on dragover. Useful when \code{hidden} is active.}
 
@@ -48,7 +48,7 @@ determining where an element would be dropped. Default is \code{vertical}.}
 
 \item{replaceOnDrop}{Replace item on drop when at maximum allowable items?}
 
-\item{...}{Additional arguments passed along to tags$div, such as class}
+\item{...}{Additional arguments passed along to \code{tags$div}, such as class}
 }
 \description{
 Create a Dragula dropzone input

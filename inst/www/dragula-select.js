@@ -111,6 +111,11 @@ function initDragulaSelectR() {
     });
     // Change content of item in transit
     $(el).html($(container).children(".ds-dropzone-options").children('.ds-dropoption[data-value="' + $(el).data('value') + '"]').html());
+
+    // Hide placeholder if dropzone not hidden
+    if (!$(container).hasClass("ds-hidden")) {
+      $(container).children(".ds-placeholder").addClass("hidden");
+    }
   });
 
   dragulaSelectR.drake.on("out", function(el, container, source) {
@@ -120,6 +125,11 @@ function initDragulaSelectR() {
     //   some reason.
     if (!$(source).data('remove-on-spill')) {
       $(el).removeClass("gu-hide");
+    }
+
+    // Un-hide placeholder if no more items in non-hidden dropzone
+    if (!$(container).hasClass("ds-hidden") && ($(container).children('.ds-dropoption:not(".gu-transit")').length === 0)) {
+      $(container).children(".ds-placeholder").removeClass("hidden");
     }
   });
 
