@@ -2,6 +2,7 @@
 .ds-dropzone {
   border-style: solid;
   min-height: 40px;
+  position: relative;
 }
 
 .ds-dragitem,
