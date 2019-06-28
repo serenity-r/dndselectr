@@ -225,6 +225,13 @@ $.extend(dropZoneBinding, {
       Shiny.onInputChange(dzId + "_selected", getValues($(el), '.ds-selected'));
       Shiny.onInputChange(dzId + "_invisible", getValues($(el), '.ds-invisible'));
       Shiny.onInputChange(dzId + "_locked", getValues($(el), '.ds-locked'));
+
+      // Store settings to allow for server-side checking in updateDropZoneInput
+      Shiny.onInputChange(dzId + "_settings:ds-fix-settings", {
+        choices: $(el).find('.ds-dropzone-options > .ds-dropoption').map(function() { return optionValue(this) }).get(),
+        multivalued: $(el).hasClass('ds-multivalued'),
+        maxInput: $(el).data('max-input')
+      });
     });
   },
   getValue: function(el) {
@@ -250,6 +257,35 @@ $.extend(dropZoneBinding, {
 
         $(el).trigger("change");
       }
+    }
+
+    if (data.hasOwnProperty('placeholder')) {
+      $(el).children(".ds-placeholder").html(data.placeholder);
+
+      // Un-hide placeholder if no items in non-hidden dropzone
+      if (!$(el).hasClass("ds-hidden") && ($(el).children('.ds-dropoption:not(".gu-transit")').length === 0)) {
+        $(el).children(".ds-placeholder").removeClass("hidden");
+      }
+    }
+
+    if (data.hasOwnProperty('presets')) {
+      // Remove drop options
+      $('#' + el.id).children('.ds-dropoption').remove();
+
+      // Add new drop options
+      Object.values(data.presets.values).forEach(function(value) {
+        $(el).data('counter', $(el).data('counter') + 1);
+        $(el).children(".ds-dropzone-options").children('.ds-dropoption[data-value="' + value + '"]').clone().attr("data-instance", $(el).hasClass('ds-multivalued') ? $(el).data('counter') : null).appendTo(el);
+      });
+
+      // Toggle placeholder status
+      if (Object.values(data.presets.values).length === 0) {
+        $(el).children(".ds-placeholder").removeClass("hidden");
+      } else {
+        $(el).children(".ds-placeholder").addClass("hidden");
+      }
+
+      $(el).trigger("change");
     }
   }
 });

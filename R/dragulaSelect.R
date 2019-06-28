@@ -147,7 +147,7 @@ dropZoneInput <- function(inputId, choices, presets=NULL, hidden=FALSE, placehol
     "data-remove-on-spill" = tolower(removeOnSpill),
     "data-direction" = tolower(direction),
     "data-max-input" = ifelse(is.infinite(maxInput), "Infinity", maxInput),
-    insertPlaceholder(placeholder, hidden = !hidden && (length(presets$values) > 0)),
+    insertPlaceholder(placeholder, hidden = is.null(placeholder) || (!hidden && (length(presets$values) > 0))),
     div(
       class = 'ds-dropzone-options',
       dragulaZoneItems('drop', 'options', choices,
@@ -224,20 +224,30 @@ dragulaZoneItems <- function(zone, type, items, ids=rep(NA, length(items)), sele
   )
 }
 
-updateDropZoneInput <- function(session, inputId, choices=NULL, presets=NULL)
+#' Change the values or settings of a dropzone on the client
+#'
+#' Note: Set presets to NA if you want to delete all presets. Will give a warning.
+#'
+#' @inheritParams dropZoneInput
+#'
+#' @export
+updateDropZoneInput <- function(session, inputId, presets=NULL, placeholder=NULL)
 {
-  # Manage presets
-  presets <- presetsWithOptions(presets, choices, multivalued)
+  choices <- choicesWithNames(session$input[[paste0(inputId, "_settings")]]$choices)
+  multivalued <- session$input[[paste0(inputId, "_settings")]]$multivalued
+  maxInput <- session$input[[paste0(inputId, "_settings")]]$maxInput
 
-  # Make sure number of preset values obeys maxInput setting
-  if (length(presets$values) > maxInput) {
-    stop("Number of preset values (", length(presets$values), ") exceeds the maximum allowable (", maxInput,")")
+  if (!is.null(presets)) {
+    # Manage presets
+    presets <- presetsWithOptions(presets, choices, multivalued)
+
+    # Make sure number of preset values obeys maxInput setting
+    if (length(presets$values) > maxInput) {
+      stop("Number of preset values (", length(presets$values), ") exceeds the maximum allowable (", maxInput,")")
+    }
   }
 
-  choices <- if (!is.null(choices)) choicesWithNames(choices)
-  if (!is.null(presets)) presets <- as.character(presets)
-  options <- if (!is.null(choices)) selectOptions(choices, selected)
-  message <- dropNulls(list(label = label, options = options, value = selected))
+  message <- dropNulls(list(presets = presets, placeholder = placeholder))
   session$sendInputMessage(inputId, message)
 }
 

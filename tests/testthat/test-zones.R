@@ -38,7 +38,7 @@ test_that("Drop zones are working properly", {
       dropZoneInput("dropzone",
                     choices = list(foo = "Foo", bar = "Bar")
                     )),
-    "<div id=\"dropzone\" class=\"ds-dropzone\" data-select-on-drop=\"false\" data-remove-on-spill=\"true\" data-direction=\"vertical\" data-max-input=\"Infinity\">\n  <div class=\"ds-dropzone-options\">\n    <div data-value=\"foo\" data-instance class=\"ds-dropoption\">Foo</div>\n    <div data-value=\"bar\" data-instance class=\"ds-dropoption\">Bar</div>\n  </div>\n</div>"
+    "<div id=\"dropzone\" class=\"ds-dropzone\" data-select-on-drop=\"false\" data-remove-on-spill=\"true\" data-direction=\"vertical\" data-max-input=\"Infinity\">\n  <span class=\"ds-placeholder hidden\"></span>\n  <div class=\"ds-dropzone-options\">\n    <div data-value=\"foo\" data-instance class=\"ds-dropoption\">Foo</div>\n    <div data-value=\"bar\" data-instance class=\"ds-dropoption\">Bar</div>\n  </div>\n</div>"
   )
 
   # Make sure icons match preset state
@@ -48,7 +48,7 @@ test_that("Drop zones are working properly", {
                     choices = list(foo = "Foo"),
                     presets = list(values = "foo", invisible = "foo"),
                     togglevis = TRUE)),
-    "<div id=\"dropzone\" class=\"ds-dropzone\" data-select-on-drop=\"false\" data-remove-on-spill=\"true\" data-direction=\"vertical\" data-max-input=\"Infinity\">\n  <div class=\"ds-dropzone-options\">\n    <div data-value=\"foo\" data-instance class=\"ds-dropoption\">\n      Foo\n      <div class=\"ds-toggle-visible\">\n        <i class=\"fa fa-eye\"></i>\n      </div>\n    </div>\n  </div>\n  <div data-value=\"foo\" data-instance class=\"ds-dropoption ds-invisible\">\n    Foo\n    <div class=\"ds-toggle-visible\">\n      <i class=\"fa fa-eye-slash\"></i>\n    </div>\n  </div>\n</div>"
+    "<div id=\"dropzone\" class=\"ds-dropzone\" data-select-on-drop=\"false\" data-remove-on-spill=\"true\" data-direction=\"vertical\" data-max-input=\"Infinity\">\n  <span class=\"ds-placeholder hidden\"></span>\n  <div class=\"ds-dropzone-options\">\n    <div data-value=\"foo\" data-instance class=\"ds-dropoption\">\n      Foo\n      <div class=\"ds-toggle-visible\">\n        <i class=\"fa fa-eye\"></i>\n      </div>\n    </div>\n  </div>\n  <div data-value=\"foo\" data-instance class=\"ds-dropoption ds-invisible\">\n    Foo\n    <div class=\"ds-toggle-visible\">\n      <i class=\"fa fa-eye-slash\"></i>\n    </div>\n  </div>\n</div>"
   )
 
   # Only one ds-dropoption!!
@@ -59,7 +59,7 @@ test_that("Drop zones are working properly", {
                     presets = list(values = "foo",
                                    selected = "foo",
                                    invisible = "foo"))),
-    "<div id=\"dropzone\" class=\"ds-dropzone\" data-select-on-drop=\"false\" data-remove-on-spill=\"true\" data-direction=\"vertical\" data-max-input=\"Infinity\">\n  <div class=\"ds-dropzone-options\">\n    <div data-value=\"foo\" data-instance class=\"ds-dropoption\">Foo</div>\n  </div>\n  <div data-value=\"foo\" data-instance class=\"ds-dropoption ds-selected ds-invisible\">Foo</div>\n</div>"
+    "<div id=\"dropzone\" class=\"ds-dropzone\" data-select-on-drop=\"false\" data-remove-on-spill=\"true\" data-direction=\"vertical\" data-max-input=\"Infinity\">\n  <span class=\"ds-placeholder hidden\"></span>\n  <div class=\"ds-dropzone-options\">\n    <div data-value=\"foo\" data-instance class=\"ds-dropoption\">Foo</div>\n  </div>\n  <div data-value=\"foo\" data-instance class=\"ds-dropoption ds-selected ds-invisible\">Foo</div>\n</div>"
   )
 
   # Let's go crazy
@@ -73,7 +73,7 @@ test_that("Drop zones are working properly", {
                     multivalued = TRUE,
                     removeOnSpill = FALSE,
                     direction = "horizontal")),
-    "<div id=\"dropzone\" class=\"ds-dropzone ds-multivalued\" data-select-on-drop=\"false\" data-remove-on-spill=\"false\" data-direction=\"horizontal\" data-max-input=\"Infinity\">\n  <div class=\"ds-dropzone-options\">\n    <div data-value=\"foo\" data-instance class=\"ds-dropoption\">Foo</div>\n    <div data-value=\"bar\" data-instance class=\"ds-dropoption\">Bar</div>\n  </div>\n  <div data-value=\"foo\" data-instance=\"2\" class=\"ds-dropoption ds-invisible\">Foo</div>\n  <div data-value=\"bar\" data-instance=\"4\" class=\"ds-dropoption ds-selected\">Bar</div>\n</div>"
+    "<div id=\"dropzone\" class=\"ds-dropzone ds-multivalued\" data-select-on-drop=\"false\" data-remove-on-spill=\"false\" data-direction=\"horizontal\" data-max-input=\"Infinity\">\n  <span class=\"ds-placeholder hidden\"></span>\n  <div class=\"ds-dropzone-options\">\n    <div data-value=\"foo\" data-instance class=\"ds-dropoption\">Foo</div>\n    <div data-value=\"bar\" data-instance class=\"ds-dropoption\">Bar</div>\n  </div>\n  <div data-value=\"foo\" data-instance=\"2\" class=\"ds-dropoption ds-invisible\">Foo</div>\n  <div data-value=\"bar\" data-instance=\"4\" class=\"ds-dropoption ds-selected\">Bar</div>\n</div>"
   )
 })
 

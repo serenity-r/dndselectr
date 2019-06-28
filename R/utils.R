@@ -65,7 +65,7 @@ isWindows <- function() .Platform$OS.type == 'windows'
 
 insertPlaceholder <- function(placeholder, hidden = FALSE) {
   class <- paste(c("ds-placeholder", switch(hidden, "hidden", NULL)), collapse = " ")
-  placeholder %AND% tags$span(class = class, placeholder)
+  tags$span(class = class, placeholder %||% '')
 }
 
 # Takes a vector or list, and adds names (same as the value) to any entries
@@ -164,4 +164,11 @@ parseOption <- function(presets, option) {
   s <- strsplit(x, " ")[[1]]
   paste(toupper(substring(s, 1, 1)), substring(s, 2),
         sep = "", collapse = " ")
+}
+
+# Input handler for dropzone settings
+# See zzz.R for handler registration
+fixSettings <- function(x, session, inputname) {
+  x[["choices"]] <- unlist(x[["choices"]])
+  x
 }
