@@ -279,10 +279,18 @@ $.extend(dropZoneBinding, {
       });
 
       // Toggle placeholder status
-      if (Object.values(data.presets.values).length === 0) {
+      let numItemsTotal = Object.values(data.presets.values).length;
+      if (numItemsTotal === 0) {
         $(el).children(".ds-placeholder").removeClass("hidden");
       } else {
         $(el).children(".ds-placeholder").addClass("hidden");
+      }
+
+      // Add proper class if at maximum input
+      if (numItemsTotal === Number($(el).data('maxInput'))) {
+        $(el).addClass('ds-max-input');
+      } else {
+        $(el).removeClass('ds-max-input');
       }
 
       $(el).trigger("change");
