@@ -7,6 +7,8 @@
 updateDropZoneInput(session, inputId, presets = NULL, placeholder = NULL)
 }
 \arguments{
+\item{session}{The session object passed to function given to shinyServer.}
+
 \item{inputId}{The \code{input} slot that will be used to acces the value.}
 
 \item{presets}{Array or list of preset values.}

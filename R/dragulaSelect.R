@@ -228,6 +228,7 @@ dragulaZoneItems <- function(zone, type, items, ids=rep(NA, length(items)), sele
 #'
 #' Note: Set presets to NA if you want to delete all presets. Will give a warning.
 #'
+#' @param session The session object passed to function given to shinyServer.
 #' @inheritParams dropZoneInput
 #'
 #' @export
