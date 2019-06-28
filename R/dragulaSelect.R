@@ -233,22 +233,26 @@ dragulaZoneItems <- function(zone, type, items, ids=rep(NA, length(items)), sele
 #' @export
 updateDropZoneInput <- function(session, inputId, presets=NULL, placeholder=NULL)
 {
-  choices <- choicesWithNames(session$input[[paste0(inputId, "_settings")]]$choices)
-  multivalued <- session$input[[paste0(inputId, "_settings")]]$multivalued
-  maxInput <- session$input[[paste0(inputId, "_settings")]]$maxInput
+  # Make sure dropzone has been initialized first
+  if (!is.null(session$input[[paste0(inputId, "_settings")]])) {
+    choices <- choicesWithNames(session$input[[paste0(inputId, "_settings")]]$choices)
+    multivalued <- session$input[[paste0(inputId, "_settings")]]$multivalued
+    maxInput <- session$input[[paste0(inputId, "_settings")]]$maxInput
 
-  if (!is.null(presets)) {
-    # Manage presets
-    presets <- presetsWithOptions(presets, choices, multivalued)
+    # NULL means do nothing; NA or "" means delete all options
+    if (!is.null(presets)) {
+      # Manage presets
+      presets <- presetsWithOptions(presets, choices, multivalued)
 
-    # Make sure number of preset values obeys maxInput setting
-    if (length(presets$values) > maxInput) {
-      stop("Number of preset values (", length(presets$values), ") exceeds the maximum allowable (", maxInput,")")
+      # Make sure number of preset values obeys maxInput setting
+      if (length(presets$values) > maxInput) {
+        stop("Number of preset values (", length(presets$values), ") exceeds the maximum allowable (", maxInput,")")
+      }
     }
-  }
 
-  message <- dropNulls(list(presets = presets, placeholder = placeholder))
-  session$sendInputMessage(inputId, message)
+    message <- dropNulls(list(presets = presets, placeholder = placeholder))
+    session$sendInputMessage(inputId, message)
+  }
 }
 
 #' Run dragulaSelectR Example Applications

@@ -14,5 +14,5 @@ updateDropZoneInput(session, inputId, presets = NULL, placeholder = NULL)
 \item{placeholder}{Insert placeholder text.}
 }
 \description{
-Note: Set presets to NA if you want to delete all presets.
+Note: Set presets to NA if you want to delete all presets. Will give a warning.
 }
