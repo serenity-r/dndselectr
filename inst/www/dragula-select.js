@@ -1,43 +1,82 @@
 // ##############################
 // ### dragulaSelectR options ###
 // ##############################
-var dragulaSelectR = {};
+var dragulaSelectR = {
+  options: {
+    isContainer: function(el) {
+      return el.classList.contains('ds-dragzone');
+    },
+    copy: function(el, source) {
+      // Source -> Target only
+      return source.classList.contains('ds-dragzone');
+    },
+    invalid: function (el, handle) {
+      return ($(el).hasClass('ds-locked') || $(el).hasClass('ds-placeholder'));
+    },
+    accepts: function(el, target, source, sibling) {
+      // Make sure option exists within dropzone
+      let validOption = $(target).children(".ds-dropzone-options").children('.ds-dropoption[data-value="' + $(el).data('value') + '"]').length > 0;
 
-dragulaSelectR.options = {
-  isContainer: function(el) {
-    return el.classList.contains('ds-dragzone');
-  },
-  copy: function(el, source) {
-    // Source -> Target only
-    return source.classList.contains('ds-dragzone');
-  },
-  invalid: function (el, handle) {
-    return ($(el).hasClass('ds-locked') || $(el).hasClass('ds-placeholder'));
-  },
-  accepts: function(el, target, source, sibling) {
-    // Make sure option exists within dropzone
-    let validOption = $(target).children(".ds-dropzone-options").children('.ds-dropoption[data-value="' + $(el).data('value') + '"]').length > 0;
+      // Check if item is already there (not including temporary
+      //   in-transit pre-drop item)
+      let numItemsWithValue = $(target).children('[data-value="' + $(el).data('value') + '"]:not(".gu-transit")').length;
+      let multivalued = $(target).hasClass('ds-multivalued');
+      let spaceAvailable = ((multivalued || (numItemsWithValue === 0)) &&
+                            (!$(target).hasClass('ds-max-input') ||
+                             $(el).hasClass('ds-dropoption') ||
+                             ($(target).hasClass('ds-replace-on-drop') && (sibling !== null))));
 
-    // Check if item is already there (not including temporary
-    //   in-transit pre-drop item)
-    let numItemsWithValue = $(target).children('[data-value="' + $(el).data('value') + '"]:not(".gu-transit")').length;
-    let multivalued = $(target).hasClass('ds-multivalued');
-    let spaceAvailable = ((multivalued || (numItemsWithValue === 0)) &&
-                          (!$(target).hasClass('ds-max-input') ||
-                           $(el).hasClass('ds-dropoption') ||
-                           ($(target).hasClass('ds-replace-on-drop') && (sibling !== null))));
-
-    // Source -> Target only AND
-    //   no dropzone to different dropzone AND (note: caused issue when drop triggered before remove - might change in future)
-    //   valid available option in dropzone AND
-    //   not before a frozen item (note: need .gu-transit check as well)
-    return (!target.classList.contains('ds-dragzone') &&
-            !(source.classList.contains('ds-dropzone') && (source.id !== target.id)) &&
-            validOption && spaceAvailable &&
-            !$(sibling).is('.ds-freeze') && !$('.gu-transit').next().is('.ds-freeze'));
+      // Source -> Target only AND
+      //   no dropzone to different dropzone AND (note: caused issue when drop triggered before remove - might change in future)
+      //   valid available option in dropzone AND
+      //   not before a frozen item (note: need .gu-transit check as well)
+      return (!target.classList.contains('ds-dragzone') &&
+              !(source.classList.contains('ds-dropzone') && (source.id !== target.id)) &&
+              validOption && spaceAvailable &&
+              !$(sibling).is('.ds-freeze') && !$('.gu-transit').next().is('.ds-freeze'));
+    },
+    revertOnSpill: true, // Always revert to source container on spill
+    removeOnSpill: true  // Always remove drag item on spill
   },
-  revertOnSpill: true, // Always revert to source container on spill
-  removeOnSpill: true  // Always remove drag item on spill
+  append: function(el, target, sibling) {
+    // target = dropzone; el = dragitem; sibling = dropitem (or null for end)
+    // If calling manually, make sure you call $(target).trigger("change");
+
+    // Clone option with corresponding value
+    let $newItem = $(target).children(".ds-dropzone-options").children('.ds-dropoption[data-value="' + $(el).data('value') + '"]').clone();
+
+    // Update dropzone counter
+    $(target).data('counter', $(target).data('counter') + 1);
+
+    // Set instance id for new item (only used for multivalued)
+    $newItem.attr('data-instance', $(target).hasClass('ds-multivalued') ? $(target).data('counter') : '');
+
+    if (!$(target).hasClass('ds-hidden') && sibling) {
+      $newItem.insertBefore(sibling);
+    } else {
+      $(target).append($newItem);
+    }
+
+    // Trigger selection if applicable
+    if ($(target).data('select-on-drop')) {
+      $newItem.trigger("click");
+    }
+
+    // If replace on drop, remove replaced element (will always be next)
+    if ($(target).hasClass('ds-max-input') && $(target).hasClass('ds-replace-on-drop')) {
+      if (!$(target).hasClass('ds-hidden') && sibling) {
+        sibling.remove();
+      } else {
+        $(target).children('.ds-dropoption').last().prev().remove();
+      }
+    }
+
+    // Check if at max allowable inputs
+    let numItemsTotal = $(target).children('.ds-dropoption:not(".gu-transit")').length;
+    if (numItemsTotal === Number($(target).data('maxInput'))) {
+      $(target).addClass('ds-max-input');
+    }
+  }
 };
 
 function initDragulaSelectR() {
@@ -57,44 +96,10 @@ function initDragulaSelectR() {
   dragulaSelectR.drake.on("drop", function(el, target, source, sibling) {
     // Coming in from source - otherwise, do nothing
     if ($(el).hasClass('ds-dragitem')) {
-      // Clone option with corresponding value
-      let $newItem = $(target).children(".ds-dropzone-options").children('.ds-dropoption[data-value="' + $(el).data('value') + '"]').clone();
-
-      // Update dropzone counter
-      $(target).data('counter', $(target).data('counter') + 1);
-
-      // Set instance id for new item (only used for multivalued)
-      $newItem.attr('data-instance', $(target).hasClass('ds-multivalued') ? $(target).data('counter') : '');
-
-      if (!$(target).hasClass('ds-hidden') && sibling) {
-        $newItem.insertBefore(sibling);
-      } else {
-        $(target).append($newItem);
-      }
-
-      // Trigger selection if applicable
-      if ($(target).data('select-on-drop')) {
-        $newItem.trigger("click");
-      }
+      dragulaSelectR.append(el, target, sibling);
 
       // Always remove element coming from source
       el.remove();
-
-      // If replace on drop, remove replaced element (will always be next)
-      if ($(target).hasClass('ds-max-input') && $(target).hasClass('ds-replace-on-drop')) {
-        if (!$(target).hasClass('ds-hidden')) {
-          // sibling should always exist
-          sibling.remove();
-        } else {
-          $(target).children('.ds-dropoption').last().prev().remove();
-        }
-      }
-
-      // Check if at max allowable inputs
-      let numItemsTotal = $(target).children('.ds-dropoption:not(".gu-transit")').length;
-      if (numItemsTotal === Number($(target).data('maxInput'))) {
-        $(target).addClass('ds-max-input');
-      }
     }
 
     // Raise an event to signal that the value changed
@@ -200,7 +205,7 @@ $.extend(dropZoneBinding, {
     }
 
     // Toggle visibility
-    $(el).on("click", ".ds-dropoption > .ds-toggle-visible i", function(ev) {
+    $(el).on("click", ".ds-dropoption .ds-toggle-visible i", function(ev) {
       ev.stopPropagation(); // Avoid selecting
       $(this).toggleClass("fa-eye fa-eye-slash");
       $(this).closest(".ds-dropoption").toggleClass("ds-invisible");
@@ -255,6 +260,10 @@ $.extend(dropZoneBinding, {
         // Copy counter information
         $('#' + el.id).data('counter', $('#' + data.sourceId).data('counter'));
 
+        $(el).trigger("change");
+      } else
+      if (data.action === "append") {
+        dragulaSelectR.append($('#' + data.dragzoneId).children('[data-value = ' + data.value + ']')[0], document.getElementById(el.id), null);
         $(el).trigger("change");
       }
     }

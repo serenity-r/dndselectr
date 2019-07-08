@@ -4,7 +4,8 @@
 \alias{updateDropZoneInput}
 \title{Change the values or settings of a dropzone on the client}
 \usage{
-updateDropZoneInput(session, inputId, presets = NULL, placeholder = NULL)
+updateDropZoneInput(session, inputId, presets = NULL,
+  placeholder = NULL)
 }
 \arguments{
 \item{session}{The session object passed to function given to shinyServer.}

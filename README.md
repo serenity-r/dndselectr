@@ -29,7 +29,7 @@ devtools::install_github("serenity-r/dragulaSelectR")
 
 ``` r
 dragulaSelectR::runExample()
-#> Valid examples are "01-basic.R", "02-hidden.R", "03-multivalued.R", "04-renderUI.R", "05-multivalued-renderUI.R", "06-selectable.R", "07-renderUI-selectable.R", "08-hidden-entangled.R", "09-selectable-togglevis.R", "10-togglelock.R", "11-partytime.R", "12-removeOnSpill.R", "13-change-direction.R", "14-frozen-items.R", "15-complex-choices.R", "16-max-input.R"
+#> Valid examples are "01-basic.R", "02-hidden.R", "03-multivalued.R", "04-renderUI.R", "05-multivalued-renderUI.R", "06-selectable.R", "07-renderUI-selectable.R", "08-hidden-entangled.R", "09-selectable-togglevis.R", "10-togglelock.R", "11-partytime.R", "12-removeOnSpill.R", "13-change-direction.R", "14-frozen-items.R", "15-complex-choices.R", "16-max-input.R", "17-check-settings.R"
 ```
 
 Please note that the ‘dragulaSelectR’ project is released with a

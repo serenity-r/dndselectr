@@ -445,3 +445,15 @@ entangleSourceToTarget <- function(session, sourceId, targetId) {
   message <- dropNulls(list(action = "entangle", sourceId = session$ns(sourceId)))
   session$sendInputMessage(targetId, message)
 }
+
+#' Append item to end of specified dropzone
+#'
+#' @param session The \code{session} object passed to function given to \code{shinyServer}.
+#' @param value The value to clone from dragzoneId and append to dropzoneId.
+#' @param dragzoneId The \code{id} of the dragzone.
+#' @param dropzoneId The \code{id} of the dropzone.
+#'
+append <- function(session, value, dragzoneId, dropzoneId) {
+  message <- dropNulls(list(action = "append", value = value, dragzoneId = dragzoneId))
+  session$sendInputMessage(dropzoneId, message)
+}
