@@ -453,7 +453,19 @@ entangleSourceToTarget <- function(session, sourceId, targetId) {
 #' @param dragzoneId The \code{id} of the dragzone.
 #' @param dropzoneId The \code{id} of the dropzone.
 #'
-append <- function(session, value, dragzoneId, dropzoneId) {
+#' @export
+appendToDropzone <- function(session, value, dragzoneId, dropzoneId) {
   message <- dropNulls(list(action = "append", value = value, dragzoneId = dragzoneId))
+  session$sendInputMessage(dropzoneId, message)
+}
+
+#' Delete selected item in specified dropzone
+#'
+#' @param session The \code{session} object passed to function given to \code{shinyServer}.
+#' @param dropzoneId The \code{id} of the dropzone.
+#'
+#' @export
+removeSelected <- function(session, dropzoneId) {
+  message <- dropNulls(list(action = "remove_selected"))
   session$sendInputMessage(dropzoneId, message)
 }

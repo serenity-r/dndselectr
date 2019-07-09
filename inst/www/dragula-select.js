@@ -76,6 +76,25 @@ var dragulaSelectR = {
     if (numItemsTotal === Number($(target).data('maxInput'))) {
       $(target).addClass('ds-max-input');
     }
+  },
+  remove: function(el, container, source) {
+    $(container).removeClass('ds-max-input');
+
+    // This will unfortunately cause a double-update when manually calling
+    if ($(source).hasClass('ds-dropzone')) {
+      $(source).trigger("change");
+    }
+
+    let dzId = $(source).attr('id');
+    if ($(el).hasClass('ds-selected')) {
+      Shiny.onInputChange(dzId + "_selected", null);
+    }
+    if ($(el).hasClass('ds-invisible')) {
+      Shiny.onInputChange(dzId + "_invisible", getValues($(source), '.ds-invisible'));
+    }
+    if ($(el).hasClass('ds-locked')) {
+      Shiny.onInputChange(dzId + "_locked", getValues($(source), '.ds-locked'));
+    }
   }
 };
 
@@ -140,22 +159,7 @@ function initDragulaSelectR() {
 
   // Trigger changes on item removal
   dragulaSelectR.drake.on("remove", function(el, container, source) {
-    $(container).removeClass('ds-max-input');
-
-    if ($(source).hasClass('ds-dropzone')) {
-      $(source).trigger("change");
-    }
-
-    let dzId = $(source).attr('id');
-    if ($(el).hasClass('ds-selected')) {
-      Shiny.onInputChange(dzId + "_selected", null);
-    }
-    if ($(el).hasClass('ds-invisible')) {
-      Shiny.onInputChange(dzId + "_invisible", getValues($(source), '.ds-invisible'));
-    }
-    if ($(el).hasClass('ds-locked')) {
-      Shiny.onInputChange(dzId + "_locked", getValues($(source), '.ds-locked'));
-    }
+    dragulaSelectR.remove(el, container, source);
   });
 }
 
@@ -263,7 +267,12 @@ $.extend(dropZoneBinding, {
         $(el).trigger("change");
       } else
       if (data.action === "append") {
-        dragulaSelectR.append($('#' + data.dragzoneId).children('[data-value = ' + data.value + ']')[0], document.getElementById(el.id), null);
+        dragulaSelectR.append($('#' + data.dragzoneId).children('[data-value = ' + data.value + ']')[0], el, null);
+        $(el).trigger("change");
+      } else
+      if (data.action === "remove_selected") {
+        dragulaSelectR.remove($(el).children(".ds-selected")[0], el, el);
+        $(el).children(".ds-selected").trigger("remove");
         $(el).trigger("change");
       }
     }
