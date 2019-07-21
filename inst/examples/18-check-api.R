@@ -18,9 +18,11 @@ shinyApp(
              verbatimTextOutput("invisible"),
              h3("Locked"),
              verbatimTextOutput("locked"),
-             textInput("appendItem", label = h3("Text input"), value = ""),
+             textInput("item", label = h3("Item to append or select"), value = ""),
              actionButton("append", label = "Append to dropzone"),
-             actionButton("remove", label = "Remove selected")
+             actionButton("remove", label = "Remove selected"),
+             actionButton("select", label = "Select"),
+             actionButton("unselect", label = "Unselect")
       ),
       column(6,
              h3("Dropzones"),
@@ -69,6 +71,7 @@ shinyApp(
                     selectable = TRUE,
                     togglevis = TRUE,
                     togglelock = TRUE,
+                    placeholder = "Drop items here",
                     presets = list(values = isolate(input[[thiszone()]]),
                                    selected = isolate(input[[paste0(thiszone(), '_selected') %||% NULL]]),
                                    invisible = isolate(input[[paste0(thiszone(), '_invisible') %||% NULL]]),
@@ -76,11 +79,19 @@ shinyApp(
     })
 
     observeEvent(input$append, {
-      dragulaSelectR::appendToDropzone(session, input$appendItem, "dragzone", input$whichzone)
+      dragulaSelectR::appendToDropzone(session, input$item, input$whichzone)
     })
 
     observeEvent(input$remove, {
       dragulaSelectR::removeSelected(session, input$whichzone)
+    })
+
+    observeEvent(input$select, {
+      dragulaSelectR::select(session, input$item, input$whichzone)
+    })
+
+    observeEvent(input$unselect, {
+      dragulaSelectR::unselect(session, input$whichzone)
     })
   }
 )

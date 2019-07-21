@@ -38,12 +38,13 @@ var dragulaSelectR = {
     revertOnSpill: true, // Always revert to source container on spill
     removeOnSpill: true  // Always remove drag item on spill
   },
-  append: function(el, target, sibling) {
+  append: function(value, target, sibling) {
     // target = dropzone; el = dragitem; sibling = dropitem (or null for end)
     // If calling manually, make sure you call $(target).trigger("change");
+    // Refactor TO DO: Eventually remove el as it is not needed - only the value is necessary
 
     // Clone option with corresponding value
-    let $newItem = $(target).children(".ds-dropzone-options").children('.ds-dropoption[data-value="' + $(el).data('value') + '"]').clone();
+    let $newItem = $(target).children(".ds-dropzone-options").children('.ds-dropoption[data-value="' + value + '"]').clone();
 
     // Update dropzone counter
     $(target).data('counter', $(target).data('counter') + 1);
@@ -76,6 +77,9 @@ var dragulaSelectR = {
     if (numItemsTotal === Number($(target).data('maxInput'))) {
       $(target).addClass('ds-max-input');
     }
+
+    // Hide placeholder
+    $(target).children(".ds-placeholder").addClass("hidden");
   },
   remove: function(el, container, source) {
     $(container).removeClass('ds-max-input');
@@ -95,6 +99,10 @@ var dragulaSelectR = {
     if ($(el).hasClass('ds-locked')) {
       Shiny.onInputChange(dzId + "_locked", getValues($(source), '.ds-locked'));
     }
+  },
+  unselect: function(container) {
+    $(container).children().removeClass("ds-selected");
+    Shiny.onInputChange(container.id + "_selected", null);
   }
 };
 
@@ -115,7 +123,7 @@ function initDragulaSelectR() {
   dragulaSelectR.drake.on("drop", function(el, target, source, sibling) {
     // Coming in from source - otherwise, do nothing
     if ($(el).hasClass('ds-dragitem')) {
-      dragulaSelectR.append(el, target, sibling);
+      dragulaSelectR.append($(el).data('value'), target, sibling);
 
       // Always remove element coming from source
       el.remove();
@@ -267,15 +275,30 @@ $.extend(dropZoneBinding, {
         $(el).trigger("change");
       } else
       if (data.action === "append") {
-        dragulaSelectR.append($('#' + data.dragzoneId).children('[data-value = ' + data.value + ']')[0], el, null);
+        dragulaSelectR.append(data.value, el, null);
         $(el).trigger("change");
+      } else
+      if (data.action === "select") {
+        dragulaSelectR.unselect(el);
+        let selector = ".ds-dropoption[data-value='" + data.val + "']" + (data.hasOwnProperty('id') ? "[data-instance='" + data.id + "']" : "");
+        $(el).children(selector).trigger("click");
+      } else
+      if (data.action === "unselect") {
+        dragulaSelectR.unselect(el);
       } else
       if (data.action === "remove_selected") {
         dragulaSelectR.remove($(el).children(".ds-selected")[0], el, el);
         $(el).children(".ds-selected").trigger("remove");
+
+        // Possibly show placeholder
+        let numItemsTotal = $(el).children('.ds-dropoption:not(".gu-transit")').length;
+        if (numItemsTotal === 0) {
+          $(el).children(".ds-placeholder").removeClass('hidden');
+        }
+
         $(el).trigger("change");
       }
-    }
+    } // END: action
 
     if (data.hasOwnProperty('placeholder')) {
       $(el).children(".ds-placeholder").html(data.placeholder);
@@ -287,31 +310,34 @@ $.extend(dropZoneBinding, {
     }
 
     if (data.hasOwnProperty('presets')) {
-      // Remove drop options
-      $('#' + el.id).children('.ds-dropoption').remove();
+      // Gonna keep this double if just in case we refactor to include other options (like selected)
+      if (data.presets.hasOwnProperty('values')) {
+        // Remove drop options
+        $('#' + el.id).children('.ds-dropoption').remove();
 
-      // Add new drop options
-      Object.values(data.presets.values).forEach(function(value) {
-        $(el).data('counter', $(el).data('counter') + 1);
-        $(el).children(".ds-dropzone-options").children('.ds-dropoption[data-value="' + value + '"]').clone().attr("data-instance", $(el).hasClass('ds-multivalued') ? $(el).data('counter') : null).appendTo(el);
-      });
+        // Add new drop options
+        Object.values(data.presets.values).forEach(function(value) {
+          $(el).data('counter', $(el).data('counter') + 1);
+          $(el).children(".ds-dropzone-options").children('.ds-dropoption[data-value="' + value + '"]').clone().attr("data-instance", $(el).hasClass('ds-multivalued') ? $(el).data('counter') : null).appendTo(el);
+        });
 
-      // Toggle placeholder status
-      let numItemsTotal = Object.values(data.presets.values).length;
-      if (numItemsTotal === 0) {
-        $(el).children(".ds-placeholder").removeClass("hidden");
-      } else {
-        $(el).children(".ds-placeholder").addClass("hidden");
+        // Toggle placeholder status
+        let numItemsTotal = Object.values(data.presets.values).length;
+        if (numItemsTotal === 0) {
+          $(el).children(".ds-placeholder").removeClass("hidden");
+        } else {
+          $(el).children(".ds-placeholder").addClass("hidden");
+        }
+
+        // Add proper class if at maximum input
+        if (numItemsTotal === Number($(el).data('maxInput'))) {
+          $(el).addClass('ds-max-input');
+        } else {
+          $(el).removeClass('ds-max-input');
+        }
+
+        $(el).trigger("change");
       }
-
-      // Add proper class if at maximum input
-      if (numItemsTotal === Number($(el).data('maxInput'))) {
-        $(el).addClass('ds-max-input');
-      } else {
-        $(el).removeClass('ds-max-input');
-      }
-
-      $(el).trigger("change");
     }
   }
 });

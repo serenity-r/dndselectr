@@ -450,12 +450,11 @@ entangleSourceToTarget <- function(session, sourceId, targetId) {
 #'
 #' @param session The \code{session} object passed to function given to \code{shinyServer}.
 #' @param value The value to clone from dragzoneId and append to dropzoneId.
-#' @param dragzoneId The \code{id} of the dragzone.
 #' @param dropzoneId The \code{id} of the dropzone.
 #'
 #' @export
-appendToDropzone <- function(session, value, dragzoneId, dropzoneId) {
-  message <- dropNulls(list(action = "append", value = value, dragzoneId = dragzoneId))
+appendToDropzone <- function(session, value, dropzoneId) {
+  message <- dropNulls(list(action = "append", value = value))
   session$sendInputMessage(dropzoneId, message)
 }
 
@@ -467,5 +466,30 @@ appendToDropzone <- function(session, value, dragzoneId, dropzoneId) {
 #' @export
 removeSelected <- function(session, dropzoneId) {
   message <- dropNulls(list(action = "remove_selected"))
+  session$sendInputMessage(dropzoneId, message)
+}
+
+#' Remove selection
+#'
+#' @param session The \code{session} object passed to function given to \code{shinyServer}.
+#' @param dropzoneId The \code{id} of the dropzone.
+#'
+#' @export
+unselect <- function(session, dropzoneId) {
+  message <- dropNulls(list(action = "unselect"))
+  session$sendInputMessage(dropzoneId, message)
+}
+
+#' Select element
+#'
+#' @param session The \code{session} object passed to function given to \code{shinyServer}.
+#' @param value The value of the item to select.
+#' @param dropzoneId The \code{id} of the dropzone.
+#'
+#' @export
+select <- function(session, value, dropzoneId) {
+  message <- dropNulls(list(action = "select",
+                            val = multivalues(value),
+                            id = switch(isMultivalued(value), multivalues(value, ids=TRUE), NULL)))
   session$sendInputMessage(dropzoneId, message)
 }
