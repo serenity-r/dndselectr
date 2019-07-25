@@ -48,6 +48,19 @@ span.ds-placeholder {
   display: none;
 }
 
+.ds-dropzone.ds-flex {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.ds-dropzone.ds-flex[data-direction="horizontal"] {
+  flex-direction: row;
+}
+
+.ds-dropzone.ds-flex[data-direction="vertical"] {
+  flex-direction: column;
+}
+
 /* visibility and locking */
 .ds-toggle-visible,
 .ds-toggle-lock {

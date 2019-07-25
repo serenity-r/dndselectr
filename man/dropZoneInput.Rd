@@ -8,7 +8,7 @@ dropZoneInput(inputId, choices, presets = NULL, hidden = FALSE,
   placeholder = NULL, highlight = FALSE, multivalued = FALSE,
   selectable = FALSE, selectOnDrop = FALSE, togglevis = FALSE,
   togglelock = FALSE, removeOnSpill = TRUE, direction = "vertical",
-  maxInput = Inf, replaceOnDrop = FALSE, ...)
+  maxInput = Inf, replaceOnDrop = FALSE, flex = FALSE, ...)
 }
 \arguments{
 \item{inputId}{The \code{input} slot that will be used to acces the value.}
@@ -47,6 +47,9 @@ determining where an element would be dropped. Default is \code{vertical}.}
 \item{maxInput}{Maximum allowable dropped items.}
 
 \item{replaceOnDrop}{Replace item on drop when at maximum allowable items?}
+
+\item{flex}{Use flex container for dropzone. Items are set to wrap, and flex direction is
+given by the \code{direction} argument (defaults to \code{vertical}).}
 
 \item{...}{Additional arguments passed along to \code{tags$div}, such as class}
 }

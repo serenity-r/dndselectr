@@ -106,6 +106,8 @@ dragZone <- function(id, choices, ...) {
 #'   determining where an element would be dropped. Default is \code{vertical}.
 #' @param maxInput Maximum allowable dropped items.
 #' @param replaceOnDrop Replace item on drop when at maximum allowable items?
+#' @param flex Use flex container for dropzone. Items are set to wrap, and flex direction is
+#'   given by the \code{direction} argument (defaults to \code{vertical}).
 #' @param ... Additional arguments passed along to \code{tags$div}, such as class
 #'
 #' @export
@@ -122,7 +124,7 @@ dropZoneInput <- function(inputId, choices, presets=NULL, hidden=FALSE, placehol
                           highlight=FALSE, multivalued=FALSE, selectable=FALSE,
                           selectOnDrop=FALSE, togglevis=FALSE, togglelock=FALSE,
                           removeOnSpill=TRUE, direction="vertical", maxInput=Inf,
-                          replaceOnDrop=FALSE, ...) {
+                          replaceOnDrop=FALSE, flex=FALSE, ...) {
 
   # Resolve names
   choices <- choicesWithNames(choices)
@@ -141,6 +143,7 @@ dropZoneInput <- function(inputId, choices, presets=NULL, hidden=FALSE, placehol
                                                         highlight = highlight,
                                                         multivalued = multivalued,
                                                         selectable = selectable,
+                                                        flex = flex,
                                                         `max-input` = (length(presets$values) == maxInput),
                                                         `replace-on-drop` = replaceOnDrop))), "right"),
     "data-select-on-drop" = tolower(selectOnDrop),
