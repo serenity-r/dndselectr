@@ -3,9 +3,11 @@ createItem <- function(text) {
     HTML("<style>
          .blue { color:#fff; background: #00f; }
          .blue i { margin-left: 5px; }
+         .ds-dropzone .ds-dropoption { cursor: default; }
+         .ds-handle { cursor: move; }
          </style>"),
     div(class = "blue",
-        icon("chalkboard-teacher"),
+        icon("chalkboard-teacher", class="ds-handle"),
         text)
   )
 }

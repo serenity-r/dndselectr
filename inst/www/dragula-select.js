@@ -13,6 +13,9 @@ var dragulaSelectR = {
     invalid: function (el, handle) {
       return ($(el).hasClass('ds-locked') || $(el).hasClass('ds-placeholder'));
     },
+    moves: function (el, container, handle) {
+      return !$(el).has('.ds-handle').length || handle.classList.contains('ds-handle');
+    },
     accepts: function(el, target, source, sibling) {
       // Make sure option exists within dropzone
       let validOption = $(target).children(".ds-dropzone-options").children('.ds-dropoption[data-value="' + $(el).data('value') + '"]').length > 0;
