@@ -42,9 +42,8 @@ var dragulaSelectR = {
     removeOnSpill: true  // Always remove drag item on spill
   },
   append: function(value, target, sibling) {
-    // target = dropzone; el = dragitem; sibling = dropitem (or null for end)
+    // target = dropzone; sibling = dropitem (or null for end)
     // If calling manually, make sure you call $(target).trigger("change");
-    // Refactor TO DO: Eventually remove el as it is not needed - only the value is necessary
 
     // Clone option with corresponding value
     let $newItem = $(target).children(".ds-dropzone-options").children('.ds-dropoption[data-value="' + value + '"]').clone();
@@ -83,25 +82,45 @@ var dragulaSelectR = {
 
     // Hide placeholder
     $(target).children(".ds-placeholder").addClass("hidden");
+
+    // Call server to update UI if appropriate
+    if ($(target).data('server')) {
+      $newItem.empty();
+      let dzId = $(target).attr('id');
+      Shiny.onInputChange(dzId + "_server",
+        {
+          value: optionValue($newItem[0]),
+          selector: "#" + dzId + " > .ds-dropoption[data-value='" + value + "']" + ($(target).hasClass('ds-multivalued') ? "[data-instance=" + $(target).data('counter') + "]" : ""),
+          nonce: Math.random()
+        });
+    }
   },
-  remove: function(el, container, source) {
+  detach: function(el, container) {
+    // Note: This function detaches the element from the DOM (if attached) and
+    //   takes care of necessary processing of the dropzone input.  Returns the
+    //   detached jQuery element.
+
+    // First, detach if necessary
+    el = (jQuery.contains(document, el) ? $(el).detach()[0] : el);
+
     $(container).removeClass('ds-max-input');
 
-    // This will unfortunately cause a double-update when manually calling
-    if ($(source).hasClass('ds-dropzone')) {
-      $(source).trigger("change");
-    }
-
-    let dzId = $(source).attr('id');
+    let dzId = $(container).attr('id');
     if ($(el).hasClass('ds-selected')) {
       Shiny.onInputChange(dzId + "_selected", null);
     }
     if ($(el).hasClass('ds-invisible')) {
-      Shiny.onInputChange(dzId + "_invisible", getValues($(source), '.ds-invisible'));
+      Shiny.onInputChange(dzId + "_invisible", getValues($(container), '.ds-invisible'));
     }
     if ($(el).hasClass('ds-locked')) {
-      Shiny.onInputChange(dzId + "_locked", getValues($(source), '.ds-locked'));
+      Shiny.onInputChange(dzId + "_locked", getValues($(container), '.ds-locked'));
     }
+
+    if ($(container).data('server')) {
+      Shiny.unbindAll(el);
+    }
+
+    return($(el));
   },
   unselect: function(container) {
     $(container).children().removeClass("ds-selected");
@@ -144,8 +163,10 @@ function initDragulaSelectR() {
       let direction = $(container).data('direction');
       dragulaSelectR.options.direction = (direction !== undefined ? direction : "vertical");
     });
-    // Change content of item in transit
-    $(el).html($(container).children(".ds-dropzone-options").children('.ds-dropoption[data-value="' + $(el).data('value') + '"]').html());
+    // Change content of item in transit (only if drag -> drop)
+    if ($(el).hasClass('ds-dragitem')) {
+      $(el).html($(container).children(".ds-dropzone-options").children('.ds-dropoption[data-value="' + $(el).data('value') + '"]').html());
+    }
 
     // Hide placeholder if dropzone not hidden
     if (!$(container).hasClass("ds-hidden")) {
@@ -170,7 +191,11 @@ function initDragulaSelectR() {
 
   // Trigger changes on item removal
   dragulaSelectR.drake.on("remove", function(el, container, source) {
-    dragulaSelectR.remove(el, container, source);
+    dragulaSelectR.detach(el, container);
+
+    if ($(source).hasClass('ds-dropzone')) {
+      $(source).trigger("change");
+    }
   });
 }
 
@@ -290,8 +315,7 @@ $.extend(dropZoneBinding, {
         dragulaSelectR.unselect(el);
       } else
       if (data.action === "remove_selected") {
-        dragulaSelectR.remove($(el).children(".ds-selected")[0], el, el);
-        $(el).children(".ds-selected").trigger("remove");
+        dragulaSelectR.detach($(el).children(".ds-selected")[0], el).trigger("remove");
 
         // Possibly show placeholder
         let numItemsTotal = $(el).children('.ds-dropoption:not(".gu-transit")').length;
@@ -316,12 +340,26 @@ $.extend(dropZoneBinding, {
       // Gonna keep this double if just in case we refactor to include other options (like selected)
       if (data.presets.hasOwnProperty('values')) {
         // Remove drop options
-        $('#' + el.id).children('.ds-dropoption').remove();
+        $(el).children('.ds-dropoption').each(function(index) {
+          dragulaSelectR.detach(this, el).trigger("remove");
+        });
 
         // Add new drop options
         Object.values(data.presets.values).forEach(function(value) {
           $(el).data('counter', $(el).data('counter') + 1);
-          $(el).children(".ds-dropzone-options").children('.ds-dropoption[data-value="' + value + '"]').clone().attr("data-instance", $(el).hasClass('ds-multivalued') ? $(el).data('counter') : null).appendTo(el);
+          let $newItem = $(el).children(".ds-dropzone-options").children('.ds-dropoption[data-value="' + value + '"]').clone().attr("data-instance", $(el).hasClass('ds-multivalued') ? $(el).data('counter') : null).appendTo(el);
+
+          // Call server to update UI if appropriate -- duplicate code from append function
+          if ($(el).data('server')) {
+            $newItem.empty();
+            let dzId = $(el).attr('id');
+            Shiny.onInputChange(dzId + "_server",
+              {
+                value: optionValue($newItem[0]),
+                selector: "#" + dzId + " > .ds-dropoption[data-value='" + value + "']" + ($(el).hasClass('ds-multivalued') ? "[data-instance=" + $(el).data('counter') + "]" : ""),
+                nonce: Math.random()
+              });
+          }
         });
 
         // Toggle placeholder status

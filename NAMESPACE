@@ -3,6 +3,7 @@
 export(appendToDropzone)
 export(dragZone)
 export(dropZoneInput)
+export(dropZoneServer)
 export(entangle)
 export(isMultivalued)
 export(multivalues)

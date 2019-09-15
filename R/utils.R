@@ -110,7 +110,7 @@ choicesWithNames <- function(choices) {
 }
 
 # multivalued and selectable must be given by dropZoneInput
-presetsWithOptions <- function(presets, choices, multivalued) {
+presetsWithOptions <- function(presets, choices, multivalued, server=NULL) {
   if (is.atomic(presets)) presets <- list(values = presets)
   for (option in c("selected", "locked", "invisible", "freeze")) {
     presets <- parseOption(presets, option)
@@ -124,7 +124,17 @@ presetsWithOptions <- function(presets, choices, multivalued) {
   }
   # Subset accordingly
   presets <- lapply(presets, function(value, valid_choices) { value[valid_choices] }, valid_choices = valid_choices)
-  presets$values <- choices[presets$values]
+
+  # Use server-side UI if appropriate
+  if (is.null(server)) {
+    presets$values <- choices[presets$values]
+  } else {
+    presets$values <- sapply(getUniqueValues(presets, multivalued),
+                             function(value) {
+                               do.call(server,
+                                       c(list(value), server = switch("server" %in% names(formals(server)), TRUE, NULL)))
+                             }, simplify=FALSE)
+  }
 
   presets
 }
@@ -141,6 +151,10 @@ getIds <- function(presets, multivalued) {
     presets$ids <- rep(NA, length(presets$values))
   }
   presets
+}
+
+getUniqueValues <- function(presets, multivalued) {
+  mapply(function(value, id) ifelse(multivalued, paste0(value, '-ds-', id), value), presets$values, presets$ids)
 }
 
 parseOption <- function(presets, option) {

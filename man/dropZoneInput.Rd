@@ -8,7 +8,8 @@ dropZoneInput(inputId, choices, presets = NULL, hidden = FALSE,
   placeholder = NULL, highlight = FALSE, multivalued = FALSE,
   selectable = FALSE, selectOnDrop = FALSE, togglevis = FALSE,
   togglelock = FALSE, removeOnSpill = TRUE, direction = "vertical",
-  maxInput = Inf, replaceOnDrop = FALSE, flex = FALSE, ...)
+  maxInput = Inf, replaceOnDrop = FALSE, flex = FALSE,
+  server = NULL, ...)
 }
 \arguments{
 \item{inputId}{The \code{input} slot that will be used to acces the value.}
@@ -50,6 +51,12 @@ determining where an element would be dropped. Default is \code{vertical}.}
 
 \item{flex}{Use flex container for dropzone. Items are set to wrap, and flex direction is
 given by the \code{direction} argument (defaults to \code{vertical}).}
+
+\item{server}{Function or function name as a string that will be used for
+server-side creation of UI for dropzone items. This is needed only when the
+dropzone items contain Shiny inputs and/or outputs. You must also include
+the \code{\link{dropZoneServer}} function in the server portion of your
+Shiny app.}
 
 \item{...}{Additional arguments passed along to \code{tags$div}, such as class}
 }

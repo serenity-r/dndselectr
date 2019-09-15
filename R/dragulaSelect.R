@@ -108,6 +108,11 @@ dragZone <- function(id, choices, ...) {
 #' @param replaceOnDrop Replace item on drop when at maximum allowable items?
 #' @param flex Use flex container for dropzone. Items are set to wrap, and flex direction is
 #'   given by the \code{direction} argument (defaults to \code{vertical}).
+#' @param server Function or function name as a string that will be used for
+#'   server-side creation of UI for dropzone items. This is needed only when the
+#'   dropzone items contain Shiny inputs and/or outputs. You must also include
+#'   the \code{\link{dropZoneServer}} function in the server portion of your
+#'   Shiny app.
 #' @param ... Additional arguments passed along to \code{tags$div}, such as class
 #'
 #' @export
@@ -124,13 +129,13 @@ dropZoneInput <- function(inputId, choices, presets=NULL, hidden=FALSE, placehol
                           highlight=FALSE, multivalued=FALSE, selectable=FALSE,
                           selectOnDrop=FALSE, togglevis=FALSE, togglelock=FALSE,
                           removeOnSpill=TRUE, direction="vertical", maxInput=Inf,
-                          replaceOnDrop=FALSE, flex=FALSE, ...) {
+                          replaceOnDrop=FALSE, flex=FALSE, server=NULL, ...) {
 
   # Resolve names
   choices <- choicesWithNames(choices)
 
   # Manage presets
-  presets <- presetsWithOptions(presets, choices, multivalued)
+  presets <- presetsWithOptions(presets, choices, multivalued, server)
 
   # Make sure number of preset values obeys maxInput setting
   if (length(presets$values) > maxInput) {
@@ -150,6 +155,7 @@ dropZoneInput <- function(inputId, choices, presets=NULL, hidden=FALSE, placehol
     "data-remove-on-spill" = tolower(removeOnSpill),
     "data-direction" = tolower(direction),
     "data-max-input" = ifelse(is.infinite(maxInput), "Infinity", maxInput),
+    "data-server" = tolower(ifelse(!is.null(server), TRUE, FALSE)),
     insertPlaceholder(placeholder, hidden = is.null(placeholder) || (!hidden && (length(presets$values) > 0))),
     div(
       class = 'ds-dropzone-options',
@@ -249,11 +255,12 @@ updateDropZoneInput <- function(session, inputId, presets=NULL, placeholder=NULL
       presets <- presetsWithOptions(presets, choices, multivalued)
 
       # Make sure number of preset values obeys maxInput setting
-      if (length(presets$values) > maxInput) {
+      if (!is.null(maxInput) && (length(presets$values) > maxInput)) {
         stop("Number of preset values (", length(presets$values), ") exceeds the maximum allowable (", maxInput,")")
       }
     }
 
+    # Refactor - handle presets server-side (like dropZoneInput)
     message <- dropNulls(list(presets = presets, placeholder = placeholder))
     session$sendInputMessage(inputId, message)
   }
@@ -409,6 +416,46 @@ multivalues <- function(values, ids=FALSE) {
              }
            }, simplify = "array")
   }
+}
+
+#' Create server code to handle server-side creation of UI for dropzone items
+#'
+#' This function will create the necessary event handlers that will call
+#'   the UI function specified in the \code{server} argument of the
+#'   \code{\link{dropZoneInput}} function.
+#' @param session     The \code{session} object passed to function given to \code{shinyServer}.
+#' @param dropZoneId  The \code{id} of the first dropzone.
+#' @param server      Function or function name as a string that will be used for
+#'   server-side creation of UI for dropzone items. This is needed only when the
+#'   dropzone items contain Shiny inputs and/or outputs.
+#'
+#' @return Expression including an observe event handler.
+#' @export
+dropZoneServer <- function(session, dropZoneId, server) {
+  return({
+    newserver <- list()
+    newserver[[dropZoneId]] <- switch(class(server), "character" = eval(parse(text = server)), "function" = server)
+    session$userData$server <- c(session$userData$server, newserver)
+
+    observeEvent(session$input[[paste0(dropZoneId, '_server')]], {
+      ui_func <- session$userData$server[[dropZoneId]]
+      ui <- do.call(ui_func,
+                    dropNulls(
+                      list(
+                        session$input[[paste0(dropZoneId, '_server')]]$value,
+                        server = switch("server" %in% names(formals(ui_func)), TRUE, NULL)
+                      )
+                    )
+      )
+
+      # Make sure client-side code doesn't insert HTML within the selector element
+      insertUI(
+        selector = session$input[[paste0(dropZoneId, '_server')]]$selector,
+        ui = ui,
+        session = session
+      )
+    })
+  })
 }
 
 #' Entangle two dropzones
