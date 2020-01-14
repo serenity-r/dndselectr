@@ -315,7 +315,7 @@ $.extend(dropZoneBinding, {
         dragulaSelectR.unselect(el);
       } else
       if (data.action === "remove_selected") {
-        dragulaSelectR.detach($(el).children(".ds-selected")[0], el).trigger("remove");
+        dragulaSelectR.detach($(el).children(".ds-selected")[0], el);
 
         // Possibly show placeholder
         let numItemsTotal = $(el).children('.ds-dropoption:not(".gu-transit")').length;
@@ -341,7 +341,7 @@ $.extend(dropZoneBinding, {
       if (data.presets.hasOwnProperty('values')) {
         // Remove drop options
         $(el).children('.ds-dropoption').each(function(index) {
-          dragulaSelectR.detach(this, el).trigger("remove");
+          dragulaSelectR.detach(this, el);
         });
 
         // Add new drop options
