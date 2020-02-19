@@ -1,7 +1,7 @@
-// ##############################
-// ### dragulaSelectR options ###
-// ##############################
-var dragulaSelectR = {
+// ##########################
+// ### dndselectr options ###
+// ##########################
+var dndselectr = {
   options: {
     isContainer: function(el) {
       return el.classList.contains('ds-dragzone');
@@ -128,24 +128,24 @@ var dragulaSelectR = {
   }
 };
 
-function initDragulaSelectR() {
-  dragulaSelectR.drake = dragula(dragulaSelectR.options);
+function initdndselectr() {
+  dndselectr.drake = dragula(dndselectr.options);
 
-  dragulaSelectR.drake.on("drag", function(el, source) {
+  dndselectr.drake.on("drag", function(el, source) {
     // Set removeOnSpill from source zone setting
     let removeOnSpill = $(source).data('remove-on-spill');
-    dragulaSelectR.options.removeOnSpill = (removeOnSpill !== undefined ? removeOnSpill : true);
+    dndselectr.options.removeOnSpill = (removeOnSpill !== undefined ? removeOnSpill : true);
   });
 
-  dragulaSelectR.drake.on("dragend", function(el) {
+  dndselectr.drake.on("dragend", function(el) {
     // Set removeOnSpill back to default
-    dragulaSelectR.options.removeOnSpill = true;
+    dndselectr.options.removeOnSpill = true;
   });
 
-  dragulaSelectR.drake.on("drop", function(el, target, source, sibling) {
+  dndselectr.drake.on("drop", function(el, target, source, sibling) {
     // Coming in from source - otherwise, do nothing
     if ($(el).hasClass('ds-dragitem')) {
-      dragulaSelectR.append($(el).data('value'), target, sibling);
+      dndselectr.append($(el).data('value'), target, sibling);
 
       // Always remove element coming from source
       el.remove();
@@ -155,13 +155,13 @@ function initDragulaSelectR() {
     $(target).trigger("change");
   });
 
-  dragulaSelectR.drake.on("over", function(el, container, source) {
+  dndselectr.drake.on("over", function(el, container, source) {
     $(container).addClass('gu-dragover');
 
     // Set direction (timed out due to glitch when over first occurs)
     setTimeout(function() {
       let direction = $(container).data('direction');
-      dragulaSelectR.options.direction = (direction !== undefined ? direction : "vertical");
+      dndselectr.options.direction = (direction !== undefined ? direction : "vertical");
     });
     // Change content of item in transit (only if drag -> drop)
     if ($(el).hasClass('ds-dragitem')) {
@@ -174,7 +174,7 @@ function initDragulaSelectR() {
     }
   });
 
-  dragulaSelectR.drake.on("out", function(el, container, source) {
+  dndselectr.drake.on("out", function(el, container, source) {
     $(container).removeClass('gu-dragover');
 
     // New entry. Dragula doesn't remove temporary gu-hide class for
@@ -190,8 +190,8 @@ function initDragulaSelectR() {
   });
 
   // Trigger changes on item removal
-  dragulaSelectR.drake.on("remove", function(el, container, source) {
-    dragulaSelectR.detach(el, container);
+  dndselectr.drake.on("remove", function(el, container, source) {
+    dndselectr.detach(el, container);
 
     if ($(source).hasClass('ds-dropzone')) {
       $(source).trigger("change");
@@ -199,12 +199,12 @@ function initDragulaSelectR() {
   });
 }
 
-// #############################
-// ### dragulaSelectR events ###
-// #############################
+// #########################
+// ### dndselectr events ###
+// #########################
 $(document).on("ready", function() {
-  if (dragulaSelectR.drake === undefined) {
-    initDragulaSelectR();
+  if (dndselectr.drake === undefined) {
+    initdndselectr();
   }
 });
 
@@ -219,10 +219,10 @@ $.extend(dropZoneBinding, {
   },
   initialize: function(el) {
     // Race condition
-    if (dragulaSelectR.drake === undefined) {
-      initDragulaSelectR();
+    if (dndselectr.drake === undefined) {
+      initdndselectr();
     }
-    dragulaSelectR.drake.containers.push(el);
+    dndselectr.drake.containers.push(el);
 
     // Set multivalued counter to max instance value
     $(el).data('counter', Math.max(0, ...$('#' + el.id + ' > .ds-dropoption').map(function() { return this.dataset.instance })));
@@ -303,19 +303,19 @@ $.extend(dropZoneBinding, {
         $(el).trigger("change");
       } else
       if (data.action === "append") {
-        dragulaSelectR.append(data.value, el, null);
+        dndselectr.append(data.value, el, null);
         $(el).trigger("change");
       } else
       if (data.action === "select") {
-        dragulaSelectR.unselect(el);
+        dndselectr.unselect(el);
         let selector = ".ds-dropoption[data-value='" + data.val + "']" + (data.hasOwnProperty('id') ? "[data-instance='" + data.id + "']" : "");
         $(el).children(selector).trigger("click");
       } else
       if (data.action === "unselect") {
-        dragulaSelectR.unselect(el);
+        dndselectr.unselect(el);
       } else
       if (data.action === "remove_selected") {
-        dragulaSelectR.detach($(el).children(".ds-selected")[0], el);
+        dndselectr.detach($(el).children(".ds-selected")[0], el);
 
         // Possibly show placeholder
         let numItemsTotal = $(el).children('.ds-dropoption:not(".gu-transit")').length;
@@ -341,7 +341,7 @@ $.extend(dropZoneBinding, {
       if (data.presets.hasOwnProperty('values')) {
         // Remove drop options
         $(el).children('.ds-dropoption').each(function(index) {
-          dragulaSelectR.detach(this, el);
+          dndselectr.detach(this, el);
         });
 
         // Add new drop options
