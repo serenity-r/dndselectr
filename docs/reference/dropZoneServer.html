@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Input is set of possible unique ids from multivalued inputs — isMultivalued • dndselectr</title>
+<title>Create server code to handle server-side creation of UI for dropzone items — dropZoneServer • dndselectr</title>
 
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
@@ -32,9 +32,11 @@
 
 
 
-<meta property="og:title" content="Input is set of possible unique ids from multivalued inputs — isMultivalued" />
+<meta property="og:title" content="Create server code to handle server-side creation of UI for dropzone items — dropZoneServer" />
 
-<meta property="og:description" content="Input is set of possible unique ids from multivalued inputs" />
+<meta property="og:description" content="This function will create the necessary event handlers that will call
+  the UI function specified in the server argument of the
+  dropZoneInput function." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -103,31 +105,43 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Input is set of possible unique ids from multivalued inputs</h1>
+    <h1>Create server code to handle server-side creation of UI for dropzone items</h1>
     <small class="dont-index">Source: <a href='https://github.com/serenity-r/dndselectr/blob/master/R/dndselect.R'><code>R/dndselect.R</code></a></small>
-    <div class="hidden name"><code>isMultivalued.Rd</code></div>
+    <div class="hidden name"><code>dropZoneServer.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>Input is set of possible unique ids from multivalued inputs</p>
+    <p>This function will create the necessary event handlers that will call
+  the UI function specified in the <code>server</code> argument of the
+  <code><a href='dropZoneInput.html'>dropZoneInput</a></code> function.</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>isMultivalued</span>(<span class='no'>values</span>)</pre>
+    <pre class="usage"><span class='fu'>dropZoneServer</span>(<span class='no'>session</span>, <span class='no'>dropZoneId</span>, <span class='no'>server</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>values</th>
-      <td><p>Values returned by dropzone input</p></td>
+      <th>session</th>
+      <td><p>The <code>session</code> object passed to function given to <code>shinyServer</code>.</p></td>
+    </tr>
+    <tr>
+      <th>dropZoneId</th>
+      <td><p>The <code>id</code> of the first dropzone.</p></td>
+    </tr>
+    <tr>
+      <th>server</th>
+      <td><p>Function or function name as a string that will be used for
+server-side creation of UI for dropzone items. This is needed only when the
+dropzone items contain Shiny inputs and/or outputs.</p></td>
     </tr>
     </table>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>logical</p>
+    <p>Expression including an observe event handler.</p>
     
 
   </div>

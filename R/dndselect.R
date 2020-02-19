@@ -1,10 +1,8 @@
-#' dragulaSelectR: Utilizes Dragula JS library to implement a drag-and-drop Shiny select input.
+#' dndselectr: Implements a drag-and-drop Shiny select input
 #'
-#' Utilizes Dragula JS library to implement a drag-and-drop Shiny select input.
-#' Dragula is a drag-and-drop javascript library that is very lightweight and robust.
-#' This implementation creates a Shiny input that replicates much of the functionality of
-#' selectInput. Multiple zones for dragging and dropping are allowed. See the Dragula JS
-#' library for more information (https://github.com/bevacqua/dragula).
+#' Implements a drag-and-drop Shiny select input. This implementation creates a Shiny input that replicates
+#' much of the functionality of selectInput. Multiple zones for dragging and dropping are allowed.
+#' Currently utilizes Dragula JS library, https://github.com/bevacqua/dragula.
 #'
 #' @examples
 #' ## Only run examples in interactive R sessions
@@ -36,13 +34,13 @@
 #'
 #' @import shiny
 #'
-#' @name dragulaSelectR
+#' @name dndselectr
 #'
 #' @seealso \code{\link{dragZone}}, \code{\link{dropZoneInput}}
 #'
 NULL
 
-#' Create a Dragula dragzone container
+#' Create a dragzone container
 #'
 #' @param id The container id.
 #' @param choices List of values to select from.
@@ -56,7 +54,7 @@ NULL
 #'                                     three = "Three",
 #'                                     four = "Four"))
 #'
-#' @seealso \code{\link{dragulaSelectR}}
+#' @seealso \code{\link{dndselectr}}
 #'
 dragZone <- function(id, choices, ...) {
 
@@ -75,14 +73,14 @@ dragZone <- function(id, choices, ...) {
   inputTag <- div(
     id = id,
     class = 'ds-dragzone',
-    dragulaZoneItems('drag', 'options', choices),
+    zoneItems('drag', 'options', choices),
     ...
   )
 
   attachDependencies(inputTag)
 }
 
-#' Create a Dragula dropzone input
+#' Create a dropzone input
 #'
 #' @param inputId The \code{input} slot that will be used to acces the value.
 #' @param choices List of acceptable values with their associated labels. Note that
@@ -123,7 +121,7 @@ dragZone <- function(id, choices, ...) {
 #'                                          three = "3",
 #'                                          four = "4"))
 #'
-#' @seealso \code{\link{dragulaSelectR}}
+#' @seealso \code{\link{dndselectr}}
 #'
 dropZoneInput <- function(inputId, choices, presets=NULL, hidden=FALSE, placeholder=NULL,
                           highlight=FALSE, multivalued=FALSE, selectable=FALSE,
@@ -159,11 +157,11 @@ dropZoneInput <- function(inputId, choices, presets=NULL, hidden=FALSE, placehol
     insertPlaceholder(placeholder, hidden = is.null(placeholder) || (!hidden && (length(presets$values) > 0))),
     div(
       class = 'ds-dropzone-options',
-      dragulaZoneItems('drop', 'options', choices,
+      zoneItems('drop', 'options', choices,
                        togglevis = togglevis,
                        togglelock = togglelock)
     ),
-    dragulaZoneItems('drop', 'presets',
+    zoneItems('drop', 'presets',
                      items = presets$values,
                      ids = presets$ids,
                      selected = presets$selected,
@@ -180,8 +178,7 @@ dropZoneInput <- function(inputId, choices, presets=NULL, hidden=FALSE, placehol
 
 #' Create items for dragzones/dropzones
 #'
-#' In Dragula, the drag and drop areas are called "containers". This function
-#' creates the individual draggable items and options in these containers.
+#' Creates the individual draggable items and options in drag and drop zones.
 #'
 #' @param zone  Container zone type: either \code{drop} or \code{drag}
 #' @param type  Are these \code{options} or \code{presets}?
@@ -199,10 +196,10 @@ dropZoneInput <- function(inputId, choices, presets=NULL, hidden=FALSE, placehol
 #'
 #' @return div element
 #'
-dragulaZoneItems <- function(zone, type, items, ids=rep(NA, length(items)), selected=NULL,
+zoneItems <- function(zone, type, items, ids=rep(NA, length(items)), selected=NULL,
                              invisible=NULL, locked=NULL, freeze=NULL, togglevis=FALSE, togglelock=FALSE) {
   if (!(zone %in% c('drag', 'drop'))) {
-    stop(zone, " is not a valid container type. Dragula container type must be either 'drag' or 'drop'")
+    stop(zone, " is not a valid zone type. Zone type must be either 'drag' or 'drop'")
   }
   if (!(type %in% c('options', 'presets'))) {
     stop(type, " is not a valid item type. Item type must be either 'options' or 'presets'")
@@ -266,9 +263,9 @@ updateDropZoneInput <- function(session, inputId, presets=NULL, placeholder=NULL
   }
 }
 
-#' Run dragulaSelectR Example Applications
+#' Run dndselectr Example Applications
 #'
-#' Launch dragulaSelectR example applications, and optionally, your system's web browser.
+#' Launch dndselectr example applications, and optionally, your system's web browser.
 #'
 #' @param example The name of the example to run, or \code{NA} (the default) to
 #'   list the available examples.
@@ -293,7 +290,7 @@ updateDropZoneInput <- function(session, inputId, presets=NULL, placeholder=NULL
 #'   runExample("01_basic")
 #'
 #'   # Print the directory containing the code for all examples
-#'   system.file("examples", package="dragulaSelectR")
+#'   system.file("examples", package="dndselectr")
 #' }
 #' @export
 #'
@@ -305,7 +302,7 @@ runExample <- function(example=NA,
                                                 interactive()),
                        host=getOption('shiny.host', '127.0.0.1'),
                        display.mode=c("auto", "normal", "showcase")) {
-  examplesDir <- system.file('examples', package='dragulaSelectR')
+  examplesDir <- system.file('examples', package='dndselectr')
   dir <- resolve(examplesDir, example)
   if (is.null(dir)) {
     if (is.na(example)) {
@@ -332,7 +329,7 @@ runExample <- function(example=NA,
 
 #' Attach javascript dependencies
 #'
-#' \code{attachDependencies} attaches the javascript dependencies.Specifically,
+#' \code{attachDependencies} attaches the javascript dependencies. Specifically,
 #' the Dragula JS package is attached, as well as the javascript wrapper and
 #' input bindings.
 #'
@@ -340,16 +337,16 @@ runExample <- function(example=NA,
 attachDependencies <- function(...) {
   deps <- list(
     htmltools::htmlDependency(name = "dragula", version = "3.7.2",
-                              package = "dragulaSelectR",
+                              package = "dndselectr",
                               src = "www/dragula-3.7.2",
                               script = "dragula.min.js",
                               stylesheet = "dragula.min.css"
     ),
-    htmltools::htmlDependency(name = "dragula-select", version = "0.0.0.9000",
-                              package = "dragulaSelectR",
+    htmltools::htmlDependency(name = "dndselectr", version = "0.0.0.9000",
+                              package = "dndselectr",
                               src = "www",
-                              script = "dragula-select.js",
-                              stylesheet = "dragula-select.css"
+                              script = "dndselectr.js",
+                              stylesheet = "dndselectr.css"
     )
   )
   htmltools::attachDependencies(..., deps)

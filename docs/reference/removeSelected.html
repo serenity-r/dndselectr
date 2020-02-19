@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Input is set of possible unique ids from multivalued inputs — isMultivalued • dndselectr</title>
+<title>Delete selected item in specified dropzone — removeSelected • dndselectr</title>
 
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
@@ -32,9 +32,9 @@
 
 
 
-<meta property="og:title" content="Input is set of possible unique ids from multivalued inputs — isMultivalued" />
+<meta property="og:title" content="Delete selected item in specified dropzone — removeSelected" />
 
-<meta property="og:description" content="Input is set of possible unique ids from multivalued inputs" />
+<meta property="og:description" content="Delete selected item in specified dropzone" />
 <meta name="twitter:card" content="summary" />
 
 
@@ -103,31 +103,31 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Input is set of possible unique ids from multivalued inputs</h1>
+    <h1>Delete selected item in specified dropzone</h1>
     <small class="dont-index">Source: <a href='https://github.com/serenity-r/dndselectr/blob/master/R/dndselect.R'><code>R/dndselect.R</code></a></small>
-    <div class="hidden name"><code>isMultivalued.Rd</code></div>
+    <div class="hidden name"><code>removeSelected.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>Input is set of possible unique ids from multivalued inputs</p>
+    <p>Delete selected item in specified dropzone</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>isMultivalued</span>(<span class='no'>values</span>)</pre>
+    <pre class="usage"><span class='fu'>removeSelected</span>(<span class='no'>session</span>, <span class='no'>dropzoneId</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>values</th>
-      <td><p>Values returned by dropzone input</p></td>
+      <th>session</th>
+      <td><p>The <code>session</code> object passed to function given to <code>shinyServer</code>.</p></td>
+    </tr>
+    <tr>
+      <th>dropzoneId</th>
+      <td><p>The <code>id</code> of the dropzone.</p></td>
     </tr>
     </table>
-    
-    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
-
-    <p>logical</p>
     
 
   </div>
@@ -135,9 +135,7 @@
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
-      
-      <li><a href="#value">Value</a></li>
-          </ul>
+                </ul>
 
   </div>
 </div>

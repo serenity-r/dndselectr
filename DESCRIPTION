@@ -1,12 +1,10 @@
-Package: dragulaSelectR
-Title: Utilizes Dragula JS library to implement a drag-and-drop Shiny select input
+Package: dndselectr
+Title: Implements a drag-and-drop Shiny select input
 Version: 0.0.0.9000
 Authors@R: person("M. Drew", "LaMar", email = "mdlama@wm.edu", role = c("aut", "cre"), comment = c(ORCID = "0000-0002-4037-1848"))
-Description: Utilizes Dragula JS library to implement a drag-and-drop Shiny select input. 
-    Dragula is a drag-and-drop javascript library that is very lightweight and robust.
-    This implementation creates a Shiny input that replicates much of the functionality of 
-    selectInput. Multiple zones for dragging and dropping are allowed. See the Dragula JS
-    library for more information (https://github.com/bevacqua/dragula).
+Description: Implements a drag-and-drop Shiny select input. This implementation creates a Shiny input that replicates 
+    much of the functionality of selectInput. Multiple zones for dragging and dropping are allowed.
+    Currently utilizes Dragula JS library, https://github.com/bevacqua/dragula.
 Depends: R (>= 3.4.0)
 Imports:
     shiny (>= 1.1.0),
@@ -14,8 +12,8 @@ Imports:
 Suggests:
     testthat,
     covr
-URL: https://serenity-r.github.io/dragulaSelectR/, https://github.com/serenity-r/dragulaSelectR
-BugReports: https://github.com/serenity-r/dragulaSelectR/issues
+URL: https://serenity-r.github.io/dndselectr/, https://github.com/serenity-r/dndselectr
+BugReports: https://github.com/serenity-r/dndselectr/issues
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true

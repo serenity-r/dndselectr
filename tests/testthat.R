@@ -1,4 +1,4 @@
 library(testthat)
-library(dragulaSelectR)
+library(dndselectr)
 
-test_check("dragulaSelectR")
+test_check("dndselectr")
