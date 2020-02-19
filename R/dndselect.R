@@ -230,6 +230,32 @@ zoneItems <- function(zone, type, items, ids=rep(NA, length(items)), selected=NU
   )
 }
 
+#' Change the choices of a dragzone on the client
+#'
+#' @param session The session object passed to function given to shinyServer.
+#' @inheritParams dragZone
+#'
+#' @export
+updateDragZone <- function(session = getDefaultReactiveDomain(), id, choices=NULL)
+{
+  if (missing(id)) {
+    warning("Using generic 'dragzone' as id. HTML element may not be unique!")
+    id <- "dragzone"
+  }
+
+  selector <- paste0('#', id)
+
+  removeUI(paste(selector, '.ds-dragitem'),
+           multiple = TRUE,
+           session = session)
+
+  if (!is.null(choices)) {
+    insertUI(selector,
+             ui = zoneItems('drag', 'options', choicesWithNames(choices)),
+             session = session)
+  }
+}
+
 #' Change the values or settings of a dropzone on the client
 #'
 #' Note: Set presets to NA if you want to delete all presets. Will give a warning.
@@ -238,7 +264,8 @@ zoneItems <- function(zone, type, items, ids=rep(NA, length(items)), selected=NU
 #' @inheritParams dropZoneInput
 #'
 #' @export
-updateDropZoneInput <- function(session, inputId, presets=NULL, placeholder=NULL)
+updateDropZoneInput <- function(session = getDefaultReactiveDomain(),
+                                inputId, presets=NULL, placeholder=NULL)
 {
   # Make sure dropzone has been initialized first
   if (!is.null(session$input[[paste0(inputId, "_settings")]])) {
