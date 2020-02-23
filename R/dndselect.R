@@ -158,18 +158,18 @@ dropZoneInput <- function(inputId, choices, presets=NULL, hidden=FALSE, placehol
     div(
       class = 'ds-dropzone-options',
       zoneItems('drop', 'options', choices,
-                       togglevis = togglevis,
-                       togglelock = togglelock)
+                togglevis = togglevis,
+                togglelock = togglelock)
     ),
     zoneItems('drop', 'presets',
-                     items = presets$values,
-                     ids = presets$ids,
-                     selected = presets$selected,
-                     invisible = presets$invisible,
-                     locked = presets$locked,
-                     freeze = presets$freeze,
-                     togglevis = togglevis,
-                     togglelock = togglelock),
+              items = presets$values,
+              ids = presets$ids,
+              selected = presets$selected,
+              invisible = presets$invisible,
+              locked = presets$locked,
+              freeze = presets$freeze,
+              togglevis = togglevis,
+              togglelock = togglelock),
     ...
   )
 
@@ -265,18 +265,33 @@ updateDragZone <- function(session = getDefaultReactiveDomain(), id, choices=NUL
 #'
 #' @export
 updateDropZoneInput <- function(session = getDefaultReactiveDomain(),
-                                inputId, presets=NULL, placeholder=NULL)
+                                inputId, presets=NULL, choices=NULL, placeholder=NULL)
 {
   # Make sure dropzone has been initialized first
   if (!is.null(session$input[[paste0(inputId, "_settings")]])) {
-    choices <- choicesWithNames(session$input[[paste0(inputId, "_settings")]]$choices)
+    update_choices <- !is.null(choices)
+    update_presets <- !is.null(presets)
+    if (!update_choices) { # If not updating choices, grab current choices
+      choices <- session$input[[paste0(inputId, "_settings")]]$choices
+    } else
+      if (!update_presets) { # Need this to check if current presets are legit with new choices
+        presets <- session$input[[inputId]]
+      }
+    choices <- choicesWithNames(choices)
     multivalued <- session$input[[paste0(inputId, "_settings")]]$multivalued
     maxInput <- session$input[[paste0(inputId, "_settings")]]$maxInput
 
     # NULL means do nothing; NA or "" means delete all options
-    if (!is.null(presets)) {
+    if (update_presets || update_choices) {
+      preset_choices <- choicesWithNames(names(choices))
       # Manage presets
-      presets <- presetsWithOptions(presets, choices, multivalued)
+      presets <- withCallingHandlers(
+        presetsWithOptions(presets, preset_choices, multivalued),
+        warning = function(w) {
+          update_presets <<- TRUE # There was a problem with presets and new choices - force update
+          invokeRestart("muffleWarning")
+        }
+      )
 
       # Make sure number of preset values obeys maxInput setting
       if (!is.null(maxInput) && (length(presets$values) > maxInput)) {
@@ -284,8 +299,30 @@ updateDropZoneInput <- function(session = getDefaultReactiveDomain(),
       }
     }
 
+    # First, handle updating choices - can do this server-side right here
+    #  since doesn't affect input directly (although can affect indirectly
+    #  through changes to presets, which is handled below)
+    if (update_choices) {
+      selector <- paste0('#', inputId, ' .ds-dropzone-options')
+
+      removeUI(paste(selector, '.ds-dropoption'),
+               multiple = TRUE,
+               immediate = TRUE,
+               session = session)
+
+      if (!is.null(choices)) {
+        insertUI(selector,
+                 ui = zoneItems('drop', 'options', choices),
+                 immediate = TRUE,
+                 session = session)
+      }
+    }
+
     # Refactor - handle presets server-side (like dropZoneInput)
-    message <- dropNulls(list(presets = presets, placeholder = placeholder))
+    # Note: Need to send choices updage message to update settings input
+    message <- dropNulls(list(presets = switch(update_presets, presets),
+                              choices = switch(update_choices, TRUE),
+                              placeholder = placeholder))
     session$sendInputMessage(inputId, message)
   }
 }

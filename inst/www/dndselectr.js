@@ -336,6 +336,17 @@ $.extend(dropZoneBinding, {
       }
     }
 
+    // Only need to update Shiny input storing dropzone settings
+    if (data.hasOwnProperty('choices')) {
+      setTimeout(function() {
+        Shiny.onInputChange(el.id + "_settings:ds-fix-settings", {
+          choices: $(el).find('.ds-dropzone-options > .ds-dropoption').map(function() { return optionValue(this) }).get(),
+          multivalued: $(el).hasClass('ds-multivalued'),
+          maxInput: $(el).data('max-input')
+        });
+      })
+    }
+
     if (data.hasOwnProperty('presets')) {
       // Gonna keep this double if just in case we refactor to include other options (like selected)
       if (data.presets.hasOwnProperty('values')) {

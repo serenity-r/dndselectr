@@ -22,15 +22,21 @@ shinyApp(
                                          choices = c("one", "two", "three", "four"),
                                          selected = c("one", "three"),
                                          inline = TRUE),
-                      actionButton("update_presets", "Update Dropzone Presets")
+                      actionButton("update_presets", "Update Dropzone Presets"),
+                      checkboxGroupInput("new_drop_choices", label="Choices",
+                                         choiceNames = list("1", "2", "3", "4"),
+                                         choiceValues = list("one", "two", "three", "four"),
+                                         selected = c("one", "two", "three", "four"),
+                                         inline = TRUE),
+                      actionButton("update_drop_choices", "Update Dropzone Choices")
                ),
                column(6,
                       h3("Dragzone Settings"),
-                      checkboxGroupInput("new_choices", label="Choices",
+                      checkboxGroupInput("new_drag_choices", label="Choices",
                                          choices = c("one", "two", "three", "four"),
                                          selected = c("one", "three"),
                                          inline = TRUE),
-                      actionButton("update_choices", "Update Dragzone choices")
+                      actionButton("update_drag_choices", "Update Dragzone choices")
                )
              )
       ),
@@ -61,8 +67,15 @@ shinyApp(
       updateDropZoneInput(session, "dropzone", presets = input$new_presets %||% NA)
     })
 
-    observeEvent(input$update_choices, {
-      updateDragZone(session, "dragzone", choices = input$new_choices)
+    observeEvent(input$update_drop_choices, {
+      updateDropZoneInput(session, "dropzone", choices = list(one = "1",
+                                                              two = "2",
+                                                              three = "3",
+                                                              four = "4")[input$new_drop_choices])
+    })
+
+    observeEvent(input$update_drag_choices, {
+      updateDragZone(session, "dragzone", choices = input$new_drag_choices)
     })
   }
 )

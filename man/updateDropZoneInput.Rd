@@ -5,7 +5,7 @@
 \title{Change the values or settings of a dropzone on the client}
 \usage{
 updateDropZoneInput(session = getDefaultReactiveDomain(), inputId,
-  presets = NULL, placeholder = NULL)
+  presets = NULL, choices = NULL, placeholder = NULL)
 }
 \arguments{
 \item{session}{The session object passed to function given to shinyServer.}
@@ -13,6 +13,9 @@ updateDropZoneInput(session = getDefaultReactiveDomain(), inputId,
 \item{inputId}{The \code{input} slot that will be used to acces the value.}
 
 \item{presets}{Array or list of preset values.}
+
+\item{choices}{List of acceptable values with their associated labels. Note that
+the labels can be arbitrary HTML, as long as they are wrapped in a \code{tagList}.}
 
 \item{placeholder}{Insert placeholder text.}
 }
