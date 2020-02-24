@@ -344,7 +344,7 @@ $.extend(dropZoneBinding, {
           multivalued: $(el).hasClass('ds-multivalued'),
           maxInput: $(el).data('max-input')
         });
-      })
+      });
     }
 
     if (data.hasOwnProperty('presets')) {

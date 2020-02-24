@@ -303,7 +303,7 @@ updateDropZoneInput <- function(session = getDefaultReactiveDomain(),
     #  since doesn't affect input directly (although can affect indirectly
     #  through changes to presets, which is handled below)
     if (update_choices) {
-      selector <- paste0('#', inputId, ' .ds-dropzone-options')
+      selector <- paste0('#', session$ns(inputId), ' .ds-dropzone-options')
 
       removeUI(paste(selector, '.ds-dropoption'),
                multiple = TRUE,
@@ -319,7 +319,7 @@ updateDropZoneInput <- function(session = getDefaultReactiveDomain(),
     }
 
     # Refactor - handle presets server-side (like dropZoneInput)
-    # Note: Need to send choices updage message to update settings input
+    # Note: Need to send choices update message in order to update settings input
     message <- dropNulls(list(presets = switch(update_presets, presets),
                               choices = switch(update_choices, TRUE),
                               placeholder = placeholder))
