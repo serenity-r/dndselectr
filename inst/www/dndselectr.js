@@ -90,7 +90,7 @@ var dndselectr = {
       Shiny.onInputChange(dzId + "_server",
         {
           value: optionValue($newItem[0]),
-          selector: "#" + dzId + " > .ds-dropoption[data-value='" + value + "']" + ($(target).hasClass('ds-multivalued') ? "[data-instance=" + $(target).data('counter') + "]" : ""),
+          selector: "#" + dzId + " > .ds-dropoption[data-value='" + value + "']" + ($(target).hasClass('ds-multivalued') ? "[data-instance='" + $(target).data('counter') + "']" : ""),
           nonce: Math.random()
         });
     }
