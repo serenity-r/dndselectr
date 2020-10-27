@@ -4,12 +4,26 @@
 \alias{dropZoneInput}
 \title{Create a dropzone input}
 \usage{
-dropZoneInput(inputId, choices, presets = NULL, hidden = FALSE,
-  placeholder = NULL, highlight = FALSE, multivalued = FALSE,
-  selectable = FALSE, selectOnDrop = FALSE, togglevis = FALSE,
-  togglelock = FALSE, removeOnSpill = TRUE, direction = "vertical",
-  maxInput = Inf, replaceOnDrop = FALSE, flex = FALSE,
-  server = NULL, ...)
+dropZoneInput(
+  inputId,
+  choices,
+  presets = NULL,
+  hidden = FALSE,
+  placeholder = NULL,
+  highlight = FALSE,
+  multivalued = FALSE,
+  selectable = FALSE,
+  selectOnDrop = FALSE,
+  togglevis = FALSE,
+  togglelock = FALSE,
+  removeOnSpill = TRUE,
+  direction = "vertical",
+  maxInput = Inf,
+  replaceOnDrop = FALSE,
+  flex = FALSE,
+  server = NULL,
+  ...
+)
 }
 \arguments{
 \item{inputId}{The \code{input} slot that will be used to acces the value.}

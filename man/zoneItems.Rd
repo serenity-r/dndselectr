@@ -4,9 +4,18 @@
 \alias{zoneItems}
 \title{Create items for dragzones/dropzones}
 \usage{
-zoneItems(zone, type, items, ids = rep(NA, length(items)),
-  selected = NULL, invisible = NULL, locked = NULL, freeze = NULL,
-  togglevis = FALSE, togglelock = FALSE)
+zoneItems(
+  zone,
+  type,
+  items,
+  ids = rep(NA, length(items)),
+  selected = NULL,
+  invisible = NULL,
+  locked = NULL,
+  freeze = NULL,
+  togglevis = FALSE,
+  togglelock = FALSE
+)
 }
 \arguments{
 \item{zone}{Container zone type: either \code{drop} or \code{drag}}

@@ -4,8 +4,7 @@
 \alias{updateDragZone}
 \title{Change the choices of a dragzone on the client}
 \usage{
-updateDragZone(session = getDefaultReactiveDomain(), id,
-  choices = NULL)
+updateDragZone(session = getDefaultReactiveDomain(), id, choices = NULL)
 }
 \arguments{
 \item{session}{The session object passed to function given to shinyServer.}

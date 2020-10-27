@@ -3,7 +3,6 @@
 \docType{package}
 \name{dndselectr}
 \alias{dndselectr}
-\alias{dndselectr-package}
 \title{dndselectr: Implements a drag-and-drop Shiny select input}
 \description{
 Implements a drag-and-drop Shiny select input. This implementation creates a Shiny input that replicates
