@@ -64,19 +64,19 @@ shinyApp(
     })
 
     observeEvent(input$append, {
-      dragulaSelectR::appendToDropzone(session, input$item, "dropzone")
+      dndselectr::appendToDropzone(session, input$item, "dropzone")
     })
 
     observeEvent(input$select, {
-      dragulaSelectR::select(session, input$item, "dropzone")
+      dndselectr::select(session, input$item, "dropzone")
     })
 
     observeEvent(input$remove, {
-      dragulaSelectR::removeSelected(session, "dropzone")
+      dndselectr::removeSelected(session, "dropzone")
     })
 
     observeEvent(input$update_presets, {
-      dragulaSelectR::updateDropZoneInput(session, "dropzone", presets = input$new_presets %||% NA)
+      dndselectr::updateDropZoneInput(session, "dropzone", presets = input$new_presets %||% NA)
     })
   }
 )

@@ -79,19 +79,19 @@ shinyApp(
     })
 
     observeEvent(input$append, {
-      dragulaSelectR::appendToDropzone(session, input$item, input$whichzone)
+      dndselectr::appendToDropzone(session, input$item, input$whichzone)
     })
 
     observeEvent(input$remove, {
-      dragulaSelectR::removeSelected(session, input$whichzone)
+      dndselectr::removeSelected(session, input$whichzone)
     })
 
     observeEvent(input$select, {
-      dragulaSelectR::select(session, input$item, input$whichzone)
+      dndselectr::select(session, input$item, input$whichzone)
     })
 
     observeEvent(input$unselect, {
-      dragulaSelectR::unselect(session, input$whichzone)
+      dndselectr::unselect(session, input$whichzone)
     })
   }
 )
