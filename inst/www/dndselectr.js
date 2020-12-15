@@ -356,9 +356,17 @@ $.extend(dropZoneBinding, {
         });
 
         // Add new drop options
+        let i = 0;
         Object.values(data.presets.values).forEach(function(value) {
           $(el).data('counter', $(el).data('counter') + 1);
-          let $newItem = $(el).children(".ds-dropzone-options").children('.ds-dropoption[data-value="' + value + '"]').clone().attr("data-instance", $(el).hasClass('ds-multivalued') ? $(el).data('counter') : null).appendTo(el);
+          let $newItem = $(el).children(".ds-dropzone-options")
+            .children('.ds-dropoption[data-value="' + value + '"]')
+            .clone()
+            .attr("data-instance", $(el).hasClass('ds-multivalued') ? $(el).data('counter') : null)
+            .addClass('locked' in data.presets ? (Array.isArray(data.presets.locked) ? data.presets.locked[i] : data.presets.locked) : null)
+            .addClass('selected' in data.presets ? (Array.isArray(data.presets.selected) ? data.presets.selected[i] : data.presets.selected) : null)
+            .addClass('invisible' in data.presets ? (Array.isArray(data.presets.invisible) ? data.presets.invisible[i] : data.presets.invisible) : null)
+            .appendTo(el);
 
           // Call server to update UI if appropriate -- duplicate code from append function
           if ($(el).data('server')) {
@@ -371,7 +379,15 @@ $.extend(dropZoneBinding, {
                 nonce: Math.random()
               });
           }
+
+          i++;
         });
+
+        // Update Shiny variables
+        let dzId = el.id;
+        Shiny.onInputChange(dzId + "_selected", getValues($(el), '.ds-selected'));
+        Shiny.onInputChange(dzId + "_invisible", getValues($(el), '.ds-invisible'));
+        Shiny.onInputChange(dzId + "_locked", getValues($(el), '.ds-locked'));
 
         // Toggle placeholder status
         let numItemsTotal = Object.values(data.presets.values).length;

@@ -22,6 +22,18 @@ shinyApp(
                                          choices = c("one", "two", "three", "four"),
                                          selected = c("one", "three"),
                                          inline = TRUE),
+                      checkboxGroupInput("new_locked", label="Locked",
+                                         choices = c("one", "two", "three", "four"),
+                                         selected = c("one", "three"),
+                                         inline = TRUE),
+                      radioButtons("new_selected", label="Selected",
+                                   choices = c("one", "two", "three", "four"),
+                                   selected = c("one"),
+                                   inline = TRUE),
+                      checkboxGroupInput("new_invisible", label="Invisible",
+                                         choices = c("one", "two", "three", "four"),
+                                         selected = c("one", "three"),
+                                         inline = TRUE),
                       actionButton("update_presets", "Update Dropzone Presets"),
                       checkboxGroupInput("new_drop_choices", label="Choices",
                                          choiceNames = list("1", "2", "3", "4"),
@@ -49,6 +61,7 @@ shinyApp(
                                           four = "4"),
                            presets = c("one", "three"),
                            multivalued = FALSE,
+                           togglelock = TRUE,
                            replaceOnDrop = TRUE)
       )
     )
@@ -56,7 +69,8 @@ shinyApp(
   server = function(input, output, session) {
     output$showme <- renderPrint({ input$dropzone })
     output$settings <- renderPrint({
-      input$dropzone_settings
+      c(input$dropzone_settings,
+        input$dropzone_locked)
     })
 
     observeEvent(input$update_placeholder, {
@@ -64,7 +78,10 @@ shinyApp(
     })
 
     observeEvent(input$update_presets, {
-      updateDropZoneInput(session, "dropzone", presets = input$new_presets %||% NA)
+      updateDropZoneInput(session, "dropzone", presets = list(values = input$new_presets %||% NA,
+                                                              locked = input$new_locked %||% NA,
+                                                              selected = input$new_selected %||% NA,
+                                                              invisible = input$new_invisible %||% NA))
     })
 
     observeEvent(input$update_drop_choices, {
