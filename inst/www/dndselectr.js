@@ -282,6 +282,61 @@ $.extend(dropZoneBinding, {
   getValue: function(el) {
     return $('#' + el.id + ' > .ds-dropoption').map(function() { return optionValue(this) }).get();
   },
+  setValue: function(el, value) {
+    // Remove drop options
+    $(el).children('.ds-dropoption').each(function(index) {
+      dndselectr.detach(this, el);
+    });
+
+    // Add new drop options
+    let i = 0;
+    Object.values(value.values).forEach(function(val) {
+      $(el).data('counter', $(el).data('counter') + 1);
+      let $newItem = $(el).children(".ds-dropzone-options")
+        .children('.ds-dropoption[data-value="' + val + '"]')
+        .clone()
+        .attr("data-instance", $(el).hasClass('ds-multivalued') ? $(el).data('counter') : null)
+        .addClass('locked' in value ? (Array.isArray(value.locked) ? value.locked[i] : value.locked) : null)
+        .addClass('selected' in value ? (Array.isArray(value.selected) ? value.selected[i] : value.selected) : null)
+        .addClass('invisible' in value ? (Array.isArray(value.invisible) ? value.invisible[i] : value.invisible) : null)
+        .appendTo(el);
+
+      // Call server to update UI if appropriate -- duplicate code from append function
+      if ($(el).data('server')) {
+        $newItem.empty();
+        let dzId = $(el).attr('id');
+        Shiny.onInputChange(dzId + "_server",
+          {
+            value: optionValue($newItem[0]),
+            selector: "#" + dzId + " > .ds-dropoption[data-value='" + val + "']" + ($(el).hasClass('ds-multivalued') ? "[data-instance=" + $(el).data('counter') + "]" : ""),
+            nonce: Math.random()
+          });
+      }
+
+      i++;
+    });
+
+    // Update Shiny variables
+    let dzId = el.id;
+    Shiny.onInputChange(dzId + "_selected", getValues($(el), '.ds-selected'));
+    Shiny.onInputChange(dzId + "_invisible", getValues($(el), '.ds-invisible'));
+    Shiny.onInputChange(dzId + "_locked", getValues($(el), '.ds-locked'));
+
+    // Toggle placeholder status
+    let numItemsTotal = Object.values(value.values).length;
+    if (numItemsTotal === 0) {
+      $(el).children(".ds-placeholder").removeClass("hidden");
+    } else {
+      $(el).children(".ds-placeholder").addClass("hidden");
+    }
+
+    // Add proper class if at maximum input
+    if (numItemsTotal === Number($(el).data('maxInput'))) {
+      $(el).addClass('ds-max-input');
+    } else {
+      $(el).removeClass('ds-max-input');
+    }
+  },
   subscribe: function(el, callback) {
     $(el).on("change.dropZoneBinding", function(e) {
       callback();
@@ -350,59 +405,7 @@ $.extend(dropZoneBinding, {
     if (data.hasOwnProperty('presets')) {
       // Gonna keep this double if just in case we refactor to include other options (like selected)
       if (data.presets.hasOwnProperty('values')) {
-        // Remove drop options
-        $(el).children('.ds-dropoption').each(function(index) {
-          dndselectr.detach(this, el);
-        });
-
-        // Add new drop options
-        let i = 0;
-        Object.values(data.presets.values).forEach(function(value) {
-          $(el).data('counter', $(el).data('counter') + 1);
-          let $newItem = $(el).children(".ds-dropzone-options")
-            .children('.ds-dropoption[data-value="' + value + '"]')
-            .clone()
-            .attr("data-instance", $(el).hasClass('ds-multivalued') ? $(el).data('counter') : null)
-            .addClass('locked' in data.presets ? (Array.isArray(data.presets.locked) ? data.presets.locked[i] : data.presets.locked) : null)
-            .addClass('selected' in data.presets ? (Array.isArray(data.presets.selected) ? data.presets.selected[i] : data.presets.selected) : null)
-            .addClass('invisible' in data.presets ? (Array.isArray(data.presets.invisible) ? data.presets.invisible[i] : data.presets.invisible) : null)
-            .appendTo(el);
-
-          // Call server to update UI if appropriate -- duplicate code from append function
-          if ($(el).data('server')) {
-            $newItem.empty();
-            let dzId = $(el).attr('id');
-            Shiny.onInputChange(dzId + "_server",
-              {
-                value: optionValue($newItem[0]),
-                selector: "#" + dzId + " > .ds-dropoption[data-value='" + value + "']" + ($(el).hasClass('ds-multivalued') ? "[data-instance=" + $(el).data('counter') + "]" : ""),
-                nonce: Math.random()
-              });
-          }
-
-          i++;
-        });
-
-        // Update Shiny variables
-        let dzId = el.id;
-        Shiny.onInputChange(dzId + "_selected", getValues($(el), '.ds-selected'));
-        Shiny.onInputChange(dzId + "_invisible", getValues($(el), '.ds-invisible'));
-        Shiny.onInputChange(dzId + "_locked", getValues($(el), '.ds-locked'));
-
-        // Toggle placeholder status
-        let numItemsTotal = Object.values(data.presets.values).length;
-        if (numItemsTotal === 0) {
-          $(el).children(".ds-placeholder").removeClass("hidden");
-        } else {
-          $(el).children(".ds-placeholder").addClass("hidden");
-        }
-
-        // Add proper class if at maximum input
-        if (numItemsTotal === Number($(el).data('maxInput'))) {
-          $(el).addClass('ds-max-input');
-        } else {
-          $(el).removeClass('ds-max-input');
-        }
+        setValue(el, data.presets);
 
         $(el).trigger("change");
       }
@@ -410,7 +413,7 @@ $.extend(dropZoneBinding, {
   }
 });
 
-Shiny.inputBindings.register(dropZoneBinding);
+Shiny.inputBindings.register(dropZoneBinding, "dndselectr.dropZoneBinding");
 
 // #########################
 // ### Helpful functions ###
