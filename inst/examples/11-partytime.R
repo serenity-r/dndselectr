@@ -1,3 +1,6 @@
+library(shiny)
+library(dndselectr)
+
 `%||%` <- function(a, b) if (is.null(a)) b else a
 
 shinyApp(

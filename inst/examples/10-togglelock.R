@@ -1,3 +1,6 @@
+library(shiny)
+library(dndselectr)
+
 shinyApp(
   ui = fluidPage(
     fluidRow(

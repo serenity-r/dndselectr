@@ -1,3 +1,6 @@
+library(shiny)
+library(dndselectr)
+
 createItem <- function(text) {
   tagList(
     HTML("<style>
