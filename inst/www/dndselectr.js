@@ -3,8 +3,6 @@
 // ###     R <-> JS      ###
 // #########################
 $(function() {
-  initdndselectr();
-
   // #####################
   // ### dropZoneInput ###
   // #####################
@@ -15,6 +13,9 @@ $(function() {
       return $(scope).find(".ds-dropzone");
     },
     initialize: function(el) {
+      if (dndselectr.drake === undefined) {
+        dndselectr.initialize();
+      }
       dndselectr.drake.containers.push(el);
 
       // Set multivalued counter to max instance value
@@ -253,6 +254,76 @@ var dndselectr = {
     revertOnSpill: true, // Always revert to source container on spill
     removeOnSpill: true  // Always remove drag item on spill
   },
+  initialize: function() {
+    this.drake = dragula(this.options);
+
+    this.drake.on("drag", function(el, source) {
+      // Set removeOnSpill from source zone setting
+      let removeOnSpill = $(source).data('remove-on-spill');
+      dndselectr.options.removeOnSpill = (removeOnSpill !== undefined ? removeOnSpill : true);
+    });
+
+    this.drake.on("dragend", function(el) {
+      // Set removeOnSpill back to default
+      dndselectr.options.removeOnSpill = true;
+    });
+
+    this.drake.on("drop", function(el, target, source, sibling) {
+      // Coming in from source - otherwise, do nothing
+      if ($(el).hasClass('ds-dragitem')) {
+        dndselectr.append($(el).data('value'), target, sibling);
+
+        // Always remove element coming from source
+        el.remove();
+      }
+
+      // Raise an event to signal that the value changed
+      $(target).trigger("change");
+    });
+
+    this.drake.on("over", function(el, container, source) {
+      $(container).addClass('gu-dragover');
+
+      // Set direction (timed out due to glitch when over first occurs)
+      setTimeout(function() {
+        let direction = $(container).data('direction');
+        dndselectr.options.direction = (direction !== undefined ? direction : "vertical");
+      });
+      // Change content of item in transit (only if drag -> drop)
+      if ($(el).hasClass('ds-dragitem')) {
+        $(el).html($(container).children(".ds-dropzone-options").children('.ds-dropoption[data-value="' + $(el).data('value') + '"]').html());
+      }
+
+      // Hide placeholder if dropzone not hidden
+      if (!$(container).hasClass("ds-hidden")) {
+        $(container).children(".ds-placeholder").addClass("hidden");
+      }
+    });
+
+    this.drake.on("out", function(el, container, source) {
+      $(container).removeClass('gu-dragover');
+
+      // New entry. Dragula doesn't remove temporary gu-hide class for
+      //   some reason.
+      if (!$(source).data('remove-on-spill')) {
+        $(el).removeClass("gu-hide");
+      }
+
+      // Un-hide placeholder if no more items in non-hidden dropzone
+      if (!$(container).hasClass("ds-hidden") && ($(container).children('.ds-dropoption:not(".gu-transit")').length === 0)) {
+        $(container).children(".ds-placeholder").removeClass("hidden");
+      }
+    });
+
+    // Trigger changes on item removal
+    this.drake.on("remove", function(el, container, source) {
+      dndselectr.detach(el, container);
+
+      if ($(source).hasClass('ds-dropzone')) {
+        $(source).trigger("change");
+      }
+    });
+  },
   append: function(value, target, sibling) {
     // target = dropzone; sibling = dropitem (or null for end)
     // If calling manually, make sure you call $(target).trigger("change");
@@ -339,80 +410,6 @@ var dndselectr = {
     Shiny.onInputChange(container.id + "_selected", null);
   }
 };
-
-// #############################
-// ### Initialize dndselectr ###
-// #############################
-function initdndselectr() {
-  dndselectr.drake = dragula(dndselectr.options);
-
-  dndselectr.drake.on("drag", function(el, source) {
-    // Set removeOnSpill from source zone setting
-    let removeOnSpill = $(source).data('remove-on-spill');
-    dndselectr.options.removeOnSpill = (removeOnSpill !== undefined ? removeOnSpill : true);
-  });
-
-  dndselectr.drake.on("dragend", function(el) {
-    // Set removeOnSpill back to default
-    dndselectr.options.removeOnSpill = true;
-  });
-
-  dndselectr.drake.on("drop", function(el, target, source, sibling) {
-    // Coming in from source - otherwise, do nothing
-    if ($(el).hasClass('ds-dragitem')) {
-      dndselectr.append($(el).data('value'), target, sibling);
-
-      // Always remove element coming from source
-      el.remove();
-    }
-
-    // Raise an event to signal that the value changed
-    $(target).trigger("change");
-  });
-
-  dndselectr.drake.on("over", function(el, container, source) {
-    $(container).addClass('gu-dragover');
-
-    // Set direction (timed out due to glitch when over first occurs)
-    setTimeout(function() {
-      let direction = $(container).data('direction');
-      dndselectr.options.direction = (direction !== undefined ? direction : "vertical");
-    });
-    // Change content of item in transit (only if drag -> drop)
-    if ($(el).hasClass('ds-dragitem')) {
-      $(el).html($(container).children(".ds-dropzone-options").children('.ds-dropoption[data-value="' + $(el).data('value') + '"]').html());
-    }
-
-    // Hide placeholder if dropzone not hidden
-    if (!$(container).hasClass("ds-hidden")) {
-      $(container).children(".ds-placeholder").addClass("hidden");
-    }
-  });
-
-  dndselectr.drake.on("out", function(el, container, source) {
-    $(container).removeClass('gu-dragover');
-
-    // New entry. Dragula doesn't remove temporary gu-hide class for
-    //   some reason.
-    if (!$(source).data('remove-on-spill')) {
-      $(el).removeClass("gu-hide");
-    }
-
-    // Un-hide placeholder if no more items in non-hidden dropzone
-    if (!$(container).hasClass("ds-hidden") && ($(container).children('.ds-dropoption:not(".gu-transit")').length === 0)) {
-      $(container).children(".ds-placeholder").removeClass("hidden");
-    }
-  });
-
-  // Trigger changes on item removal
-  dndselectr.drake.on("remove", function(el, container, source) {
-    dndselectr.detach(el, container);
-
-    if ($(source).hasClass('ds-dropzone')) {
-      $(source).trigger("change");
-    }
-  });
-}
 
 // #########################
 // ### Helpful functions ###
