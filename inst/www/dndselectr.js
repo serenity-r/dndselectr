@@ -2,213 +2,212 @@
 // ### dndselectr events ###
 // ###     R <-> JS      ###
 // #########################
-$(function() {
-  // #####################
-  // ### dropZoneInput ###
-  // #####################
-  var dropZoneBinding = new Shiny.InputBinding();
 
-  $.extend(dropZoneBinding, {
-    find: function(scope) {
-      return $(scope).find(".ds-dropzone");
-    },
-    initialize: function(el) {
-      if (dndselectr.drake === undefined) {
-        dndselectr.initialize();
-      }
-      dndselectr.drake.containers.push(el);
+// #####################
+// ### dropZoneInput ###
+// #####################
+var dropZoneBinding = new Shiny.InputBinding();
 
-      // Set multivalued counter to max instance value
-      $(el).data('counter', Math.max(0, ...$('#' + el.id + ' > .ds-dropoption').map(function() { return this.dataset.instance })));
+$.extend(dropZoneBinding, {
+  find: function(scope) {
+    return $(scope).find(".ds-dropzone");
+  },
+  initialize: function(el) {
+    if (dndselectr.drake === undefined) {
+      dndselectr.initialize();
+    }
+    dndselectr.drake.containers.push(el);
 
-      // Selection is being made on a selectable zone
-      if ($(el).hasClass('ds-selectable')) {
-        $(el).on("click", ".ds-dropoption", function() {
-          let $clicked = $(this);
-          let dzId = $clicked.parent().attr('id');
-          let newValue = optionValue($clicked.get(0));
+    // Set multivalued counter to max instance value
+    $(el).data('counter', Math.max(0, ...$('#' + el.id + ' > .ds-dropoption').map(function() { return this.dataset.instance })));
 
-          // Get currently selected - right now only one allowed
-          let $selected = $clicked.siblings(".ds-selected");
-          let currValue = ($selected.length ? optionValue($selected.get(0)) : null);
+    // Selection is being made on a selectable zone
+    if ($(el).hasClass('ds-selectable')) {
+      $(el).on("click", ".ds-dropoption", function() {
+        let $clicked = $(this);
+        let dzId = $clicked.parent().attr('id');
+        let newValue = optionValue($clicked.get(0));
 
-          $selected.removeClass("ds-selected");
-          $clicked.addClass("ds-selected");
-          Shiny.onInputChange(dzId + "_selected", newValue);
-        });
-      }
+        // Get currently selected - right now only one allowed
+        let $selected = $clicked.siblings(".ds-selected");
+        let currValue = ($selected.length ? optionValue($selected.get(0)) : null);
 
-      // Toggle visibility
-      $(el).on("click", ".ds-dropoption .ds-toggle-visible i", function(ev) {
-        ev.stopPropagation(); // Avoid selecting
-        $(this).toggleClass("fa-eye fa-eye-slash");
-        $(this).closest(".ds-dropoption").toggleClass("ds-invisible");
-        let $dropzone = $(this).closest(".ds-dropzone");
-        Shiny.onInputChange($dropzone.attr('id') + "_invisible", getValues($dropzone, '.ds-invisible'));
+        $selected.removeClass("ds-selected");
+        $clicked.addClass("ds-selected");
+        Shiny.onInputChange(dzId + "_selected", newValue);
       });
+    }
 
-      // Toggle draggability
-      $(el).on("click", ".ds-dropoption > .ds-toggle-lock i", function(ev) {
-        ev.stopPropagation(); // Avoid selecting
-        $(this).toggleClass("fa-lock fa-lock-open");
-        $(this).closest(".ds-dropoption").toggleClass("ds-locked");
-        let $dropzone = $(this).closest(".ds-dropzone");
-        Shiny.onInputChange($dropzone.attr('id') + "_locked", getValues($dropzone, '.ds-locked'));
-      });
+    // Toggle visibility
+    $(el).on("click", ".ds-dropoption .ds-toggle-visible i", function(ev) {
+      ev.stopPropagation(); // Avoid selecting
+      $(this).toggleClass("fa-eye fa-eye-slash");
+      $(this).closest(".ds-dropoption").toggleClass("ds-invisible");
+      let $dropzone = $(this).closest(".ds-dropzone");
+      Shiny.onInputChange($dropzone.attr('id') + "_invisible", getValues($dropzone, '.ds-invisible'));
+    });
 
-      // Initialize secondary inputs (selected, invisible, and locked).
-      //   Need timeout so other binding stuff can happen before we update
-      //   secondary inputs (essentially, without the timeout, no dice...)
-      setTimeout(function() {
-        let dzId = el.id;
-        Shiny.onInputChange(dzId + "_selected", getValues($(el), '.ds-selected'));
-        Shiny.onInputChange(dzId + "_invisible", getValues($(el), '.ds-invisible'));
-        Shiny.onInputChange(dzId + "_locked", getValues($(el), '.ds-locked'));
+    // Toggle draggability
+    $(el).on("click", ".ds-dropoption > .ds-toggle-lock i", function(ev) {
+      ev.stopPropagation(); // Avoid selecting
+      $(this).toggleClass("fa-lock fa-lock-open");
+      $(this).closest(".ds-dropoption").toggleClass("ds-locked");
+      let $dropzone = $(this).closest(".ds-dropzone");
+      Shiny.onInputChange($dropzone.attr('id') + "_locked", getValues($dropzone, '.ds-locked'));
+    });
 
-        // Store settings to allow for server-side checking in updateDropZoneInput
-        Shiny.onInputChange(dzId + "_settings:ds-fix-settings", {
-          choices: $(el).find('.ds-dropzone-options > .ds-dropoption').map(function() { return optionValue(this) }).get(),
-          multivalued: $(el).hasClass('ds-multivalued'),
-          maxInput: $(el).data('max-input')
-        });
-      });
-    },
-    getValue: function(el) {
-      return $('#' + el.id + ' > .ds-dropoption').map(function() { return optionValue(this) }).get();
-    },
-    setValue: function(el, value) {
-      // Remove drop options
-      $(el).children('.ds-dropoption').each(function(index) {
-        dndselectr.detach(this, el);
-      });
-
-      // Add new drop options
-      let i = 0;
-      Object.values(value.values).forEach(function(val) {
-        $(el).data('counter', $(el).data('counter') + 1);
-        let $newItem = $(el).children(".ds-dropzone-options")
-          .children('.ds-dropoption[data-value="' + val + '"]')
-          .clone()
-          .attr("data-instance", $(el).hasClass('ds-multivalued') ? $(el).data('counter') : null)
-          .addClass('locked' in value ? (Array.isArray(value.locked) ? value.locked[i] : value.locked) : null)
-          .addClass('selected' in value ? (Array.isArray(value.selected) ? value.selected[i] : value.selected) : null)
-          .addClass('invisible' in value ? (Array.isArray(value.invisible) ? value.invisible[i] : value.invisible) : null)
-          .appendTo(el);
-
-        // Call server to update UI if appropriate -- duplicate code from append function
-        if ($(el).data('server')) {
-          $newItem.empty();
-          let dzId = $(el).attr('id');
-          Shiny.onInputChange(dzId + "_server",
-            {
-              value: optionValue($newItem[0]),
-              selector: "#" + dzId + " > .ds-dropoption[data-value='" + val + "']" + ($(el).hasClass('ds-multivalued') ? "[data-instance=" + $(el).data('counter') + "]" : ""),
-              nonce: Math.random()
-            });
-        }
-
-        i++;
-      });
-
-      // Update Shiny variables
+    // Initialize secondary inputs (selected, invisible, and locked).
+    //   Need timeout so other binding stuff can happen before we update
+    //   secondary inputs (essentially, without the timeout, no dice...)
+    setTimeout(function() {
       let dzId = el.id;
       Shiny.onInputChange(dzId + "_selected", getValues($(el), '.ds-selected'));
       Shiny.onInputChange(dzId + "_invisible", getValues($(el), '.ds-invisible'));
       Shiny.onInputChange(dzId + "_locked", getValues($(el), '.ds-locked'));
 
-      // Toggle placeholder status
-      let numItemsTotal = Object.values(value.values).length;
-      if (numItemsTotal === 0) {
-        $(el).children(".ds-placeholder").removeClass("hidden");
-      } else {
-        $(el).children(".ds-placeholder").addClass("hidden");
-      }
-
-      // Add proper class if at maximum input
-      if (numItemsTotal === Number($(el).data('maxInput'))) {
-        $(el).addClass('ds-max-input');
-      } else {
-        $(el).removeClass('ds-max-input');
-      }
-    },
-    subscribe: function(el, callback) {
-      $(el).on("change.dropZoneBinding", function(e) {
-        callback();
+      // Store settings to allow for server-side checking in updateDropZoneInput
+      Shiny.onInputChange(dzId + "_settings:ds-fix-settings", {
+        choices: $(el).find('.ds-dropzone-options > .ds-dropoption').map(function() { return optionValue(this) }).get(),
+        multivalued: $(el).hasClass('ds-multivalued'),
+        maxInput: $(el).data('max-input')
       });
-    },
-    unsubscribe: function(el) {
-      $(el).off(".dropZoneBinding");
-    },
-    receiveMessage: function(el, data) {
-      if (data.hasOwnProperty('action')) {
-        if (data.action === "entangle") {
-          // Replace drop options
-          $('#' + el.id).children('.ds-dropoption').remove();
-          $('#' + data.sourceId).children('.ds-dropoption').clone().appendTo('#' + el.id);
+    });
+  },
+  getValue: function(el) {
+    return $('#' + el.id + ' > .ds-dropoption').map(function() { return optionValue(this) }).get();
+  },
+  setValue: function(el, value) {
+    // Remove drop options
+    $(el).children('.ds-dropoption').each(function(index) {
+      dndselectr.detach(this, el);
+    });
 
-          // Copy counter information
-          $('#' + el.id).data('counter', $('#' + data.sourceId).data('counter'));
+    // Add new drop options
+    let i = 0;
+    Object.values(value.values).forEach(function(val) {
+      $(el).data('counter', $(el).data('counter') + 1);
+      let $newItem = $(el).children(".ds-dropzone-options")
+        .children('.ds-dropoption[data-value="' + val + '"]')
+        .clone()
+        .attr("data-instance", $(el).hasClass('ds-multivalued') ? $(el).data('counter') : null)
+        .addClass('locked' in value ? (Array.isArray(value.locked) ? value.locked[i] : value.locked) : null)
+        .addClass('selected' in value ? (Array.isArray(value.selected) ? value.selected[i] : value.selected) : null)
+        .addClass('invisible' in value ? (Array.isArray(value.invisible) ? value.invisible[i] : value.invisible) : null)
+        .appendTo(el);
 
-          $(el).trigger("change");
-        } else
-        if (data.action === "append") {
-          dndselectr.append(data.value, el, null);
-          $(el).trigger("change");
-        } else
-        if (data.action === "select") {
-          dndselectr.unselect(el);
-          let selector = ".ds-dropoption[data-value='" + data.val + "']" + (data.hasOwnProperty('id') ? "[data-instance='" + data.id + "']" : "");
-          $(el).children(selector).trigger("click");
-        } else
-        if (data.action === "unselect") {
-          dndselectr.unselect(el);
-        } else
-        if (data.action === "remove_selected") {
-          dndselectr.detach($(el).children(".ds-selected")[0], el);
-
-          // Possibly show placeholder
-          let numItemsTotal = $(el).children('.ds-dropoption:not(".gu-transit")').length;
-          if (numItemsTotal === 0) {
-            $(el).children(".ds-placeholder").removeClass('hidden');
-          }
-
-          $(el).trigger("change");
-        }
-      } // END: action
-
-      if (data.hasOwnProperty('placeholder')) {
-        $(el).children(".ds-placeholder").html(data.placeholder);
-
-        // Un-hide placeholder if no items in non-hidden dropzone
-        if (!$(el).hasClass("ds-hidden") && ($(el).children('.ds-dropoption:not(".gu-transit")').length === 0)) {
-          $(el).children(".ds-placeholder").removeClass("hidden");
-        }
-      }
-
-      // Only need to update Shiny input storing dropzone settings
-      if (data.hasOwnProperty('choices')) {
-        setTimeout(function() {
-          Shiny.onInputChange(el.id + "_settings:ds-fix-settings", {
-            choices: $(el).find('.ds-dropzone-options > .ds-dropoption').map(function() { return optionValue(this) }).get(),
-            multivalued: $(el).hasClass('ds-multivalued'),
-            maxInput: $(el).data('max-input')
+      // Call server to update UI if appropriate -- duplicate code from append function
+      if ($(el).data('server')) {
+        $newItem.empty();
+        let dzId = $(el).attr('id');
+        Shiny.onInputChange(dzId + "_server",
+          {
+            value: optionValue($newItem[0]),
+            selector: "#" + dzId + " > .ds-dropoption[data-value='" + val + "']" + ($(el).hasClass('ds-multivalued') ? "[data-instance=" + $(el).data('counter') + "]" : ""),
+            nonce: Math.random()
           });
-        });
       }
 
-      if (data.hasOwnProperty('presets')) {
-        // Gonna keep this double if just in case we refactor to include other options (like selected)
-        if (data.presets.hasOwnProperty('values')) {
-          this.setValue(el, data.presets);
+      i++;
+    });
 
-          $(el).trigger("change");
+    // Update Shiny variables
+    let dzId = el.id;
+    Shiny.onInputChange(dzId + "_selected", getValues($(el), '.ds-selected'));
+    Shiny.onInputChange(dzId + "_invisible", getValues($(el), '.ds-invisible'));
+    Shiny.onInputChange(dzId + "_locked", getValues($(el), '.ds-locked'));
+
+    // Toggle placeholder status
+    let numItemsTotal = Object.values(value.values).length;
+    if (numItemsTotal === 0) {
+      $(el).children(".ds-placeholder").removeClass("hidden");
+    } else {
+      $(el).children(".ds-placeholder").addClass("hidden");
+    }
+
+    // Add proper class if at maximum input
+    if (numItemsTotal === Number($(el).data('maxInput'))) {
+      $(el).addClass('ds-max-input');
+    } else {
+      $(el).removeClass('ds-max-input');
+    }
+  },
+  subscribe: function(el, callback) {
+    $(el).on("change.dropZoneBinding", function(e) {
+      callback();
+    });
+  },
+  unsubscribe: function(el) {
+    $(el).off(".dropZoneBinding");
+  },
+  receiveMessage: function(el, data) {
+    if (data.hasOwnProperty('action')) {
+      if (data.action === "entangle") {
+        // Replace drop options
+        $('#' + el.id).children('.ds-dropoption').remove();
+        $('#' + data.sourceId).children('.ds-dropoption').clone().appendTo('#' + el.id);
+
+        // Copy counter information
+        $('#' + el.id).data('counter', $('#' + data.sourceId).data('counter'));
+
+        $(el).trigger("change");
+      } else
+      if (data.action === "append") {
+        dndselectr.append(data.value, el, null);
+        $(el).trigger("change");
+      } else
+      if (data.action === "select") {
+        dndselectr.unselect(el);
+        let selector = ".ds-dropoption[data-value='" + data.val + "']" + (data.hasOwnProperty('id') ? "[data-instance='" + data.id + "']" : "");
+        $(el).children(selector).trigger("click");
+      } else
+      if (data.action === "unselect") {
+        dndselectr.unselect(el);
+      } else
+      if (data.action === "remove_selected") {
+        dndselectr.detach($(el).children(".ds-selected")[0], el);
+
+        // Possibly show placeholder
+        let numItemsTotal = $(el).children('.ds-dropoption:not(".gu-transit")').length;
+        if (numItemsTotal === 0) {
+          $(el).children(".ds-placeholder").removeClass('hidden');
         }
+
+        $(el).trigger("change");
+      }
+    } // END: action
+
+    if (data.hasOwnProperty('placeholder')) {
+      $(el).children(".ds-placeholder").html(data.placeholder);
+
+      // Un-hide placeholder if no items in non-hidden dropzone
+      if (!$(el).hasClass("ds-hidden") && ($(el).children('.ds-dropoption:not(".gu-transit")').length === 0)) {
+        $(el).children(".ds-placeholder").removeClass("hidden");
       }
     }
-  });
 
-  Shiny.inputBindings.register(dropZoneBinding, "dndselectr.dropZoneBinding");
+    // Only need to update Shiny input storing dropzone settings
+    if (data.hasOwnProperty('choices')) {
+      setTimeout(function() {
+        Shiny.onInputChange(el.id + "_settings:ds-fix-settings", {
+          choices: $(el).find('.ds-dropzone-options > .ds-dropoption').map(function() { return optionValue(this) }).get(),
+          multivalued: $(el).hasClass('ds-multivalued'),
+          maxInput: $(el).data('max-input')
+        });
+      });
+    }
+
+    if (data.hasOwnProperty('presets')) {
+      // Gonna keep this double if just in case we refactor to include other options (like selected)
+      if (data.presets.hasOwnProperty('values')) {
+        this.setValue(el, data.presets);
+
+        $(el).trigger("change");
+      }
+    }
+  }
 });
+
+Shiny.inputBindings.register(dropZoneBinding, "dndselectr.dropZoneBinding");
 
 // ##########################
 // ### dndselectr options ###
@@ -255,20 +254,20 @@ var dndselectr = {
     removeOnSpill: true  // Always remove drag item on spill
   },
   initialize: function() {
-    this.drake = dragula(this.options);
+    dndselectr.drake = dragula(this.options);
 
-    this.drake.on("drag", function(el, source) {
+    dndselectr.drake.on("drag", function(el, source) {
       // Set removeOnSpill from source zone setting
       let removeOnSpill = $(source).data('remove-on-spill');
       dndselectr.options.removeOnSpill = (removeOnSpill !== undefined ? removeOnSpill : true);
     });
 
-    this.drake.on("dragend", function(el) {
+    dndselectr.drake.on("dragend", function(el) {
       // Set removeOnSpill back to default
       dndselectr.options.removeOnSpill = true;
     });
 
-    this.drake.on("drop", function(el, target, source, sibling) {
+    dndselectr.drake.on("drop", function(el, target, source, sibling) {
       // Coming in from source - otherwise, do nothing
       if ($(el).hasClass('ds-dragitem')) {
         dndselectr.append($(el).data('value'), target, sibling);
@@ -281,7 +280,7 @@ var dndselectr = {
       $(target).trigger("change");
     });
 
-    this.drake.on("over", function(el, container, source) {
+    dndselectr.drake.on("over", function(el, container, source) {
       $(container).addClass('gu-dragover');
 
       // Set direction (timed out due to glitch when over first occurs)
@@ -300,7 +299,7 @@ var dndselectr = {
       }
     });
 
-    this.drake.on("out", function(el, container, source) {
+    dndselectr.drake.on("out", function(el, container, source) {
       $(container).removeClass('gu-dragover');
 
       // New entry. Dragula doesn't remove temporary gu-hide class for
@@ -316,7 +315,7 @@ var dndselectr = {
     });
 
     // Trigger changes on item removal
-    this.drake.on("remove", function(el, container, source) {
+    dndselectr.drake.on("remove", function(el, container, source) {
       dndselectr.detach(el, container);
 
       if ($(source).hasClass('ds-dropzone')) {
