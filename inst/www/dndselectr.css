@@ -1,8 +1,13 @@
-.ds-dragzone,
-.ds-dropzone {
+.ds-dragzone {
   border-style: solid;
   min-height: 40px;
   position: relative;
+}
+
+.form-control.ds-dropzone {
+  height: unset;
+  min-height: 34px;
+  padding: 0;
 }
 
 .ds-dragitem,
@@ -23,11 +28,6 @@
   margin: 3px 0 3px 3px;
 }
 
-span.ds-placeholder {
-  position: absolute;
-  padding: 6px 4px;
-}
-
 .ds-dropzone.gu-dragover.ds-highlight {
   border-color: red;
 }
@@ -35,6 +35,11 @@ span.ds-placeholder {
 .ds-dragitem,
 .ds-dropzone .ds-dropoption {
   cursor: move;
+}
+
+span.ds-placeholder {
+  position: absolute;
+  padding: 6px;
 }
 
 .ds-dragitem.ds-selected,

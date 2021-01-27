@@ -141,36 +141,39 @@ dropZoneInput <- function(inputId, choices, presets=NULL, hidden=FALSE, placehol
   }
 
   inputTag <- div(
-    id = inputId,
-    class = trimws(paste('ds-dropzone', opts2class(list(hidden = hidden,
-                                                        highlight = highlight,
-                                                        multivalued = multivalued,
-                                                        selectable = selectable,
-                                                        flex = flex,
-                                                        `max-input` = (length(presets$values) == maxInput),
-                                                        `replace-on-drop` = replaceOnDrop))), "right"),
-    "data-select-on-drop" = tolower(selectOnDrop),
-    "data-remove-on-spill" = tolower(removeOnSpill),
-    "data-direction" = tolower(direction),
-    "data-max-input" = ifelse(is.infinite(maxInput), "Infinity", maxInput),
-    "data-server" = tolower(ifelse(!is.null(server), TRUE, FALSE)),
-    insertPlaceholder(placeholder, hidden = is.null(placeholder) || (!hidden && (length(presets$values) > 0))),
+    class = "form-group ds-dropzone-wrap",
     div(
-      class = 'ds-dropzone-options',
-      zoneItems('drop', 'options', choices,
+      id = inputId,
+      class = trimws(paste('form-control ds-dropzone', opts2class(list(hidden = hidden,
+                                                                       highlight = highlight,
+                                                                       multivalued = multivalued,
+                                                                       selectable = selectable,
+                                                                       flex = flex,
+                                                                       `max-input` = (length(presets$values) == maxInput),
+                                                                       `replace-on-drop` = replaceOnDrop))), "right"),
+      "data-select-on-drop" = tolower(selectOnDrop),
+      "data-remove-on-spill" = tolower(removeOnSpill),
+      "data-direction" = tolower(direction),
+      "data-max-input" = ifelse(is.infinite(maxInput), "Infinity", maxInput),
+      "data-server" = tolower(ifelse(!is.null(server), TRUE, FALSE)),
+      insertPlaceholder(placeholder, hidden = is.null(placeholder) || (!hidden && (length(presets$values) > 0))),
+      div(
+        class = 'ds-dropzone-options',
+        zoneItems('drop', 'options', choices,
+                  togglevis = togglevis,
+                  togglelock = togglelock)
+      ),
+      zoneItems('drop', 'presets',
+                items = presets$values,
+                ids = presets$ids,
+                selected = presets$selected,
+                invisible = presets$invisible,
+                locked = presets$locked,
+                freeze = presets$freeze,
                 togglevis = togglevis,
-                togglelock = togglelock)
-    ),
-    zoneItems('drop', 'presets',
-              items = presets$values,
-              ids = presets$ids,
-              selected = presets$selected,
-              invisible = presets$invisible,
-              locked = presets$locked,
-              freeze = presets$freeze,
-              togglevis = togglevis,
-              togglelock = togglelock),
-    ...
+                togglelock = togglelock),
+      ...
+    )
   )
 
   attachDependencies(inputTag)
