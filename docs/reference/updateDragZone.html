@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Entangle two dropzones — entangle • dndselectr</title>
+<title>Change the choices of a dragzone on the client — updateDragZone • dndselectr</title>
 
 
 <!-- jquery -->
@@ -39,9 +39,8 @@
 
 
 
-<meta property="og:title" content="Entangle two dropzones — entangle" />
-<meta property="og:description" content="Create observe events that entangle two Shiny dropzones. Useful for
-hidden dropzones that take drops but display options elsewhere." />
+<meta property="og:title" content="Change the choices of a dragzone on the client — updateDragZone" />
+<meta property="og:description" content="Change the choices of a dragzone on the client" />
 
 
 
@@ -109,38 +108,34 @@ hidden dropzones that take drops but display options elsewhere." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Entangle two dropzones</h1>
+    <h1>Change the choices of a dragzone on the client</h1>
     <small class="dont-index">Source: <a href='https://github.com/serenity-r/dndselectr/blob/master/R/dndselect.R'><code>R/dndselect.R</code></a></small>
-    <div class="hidden name"><code>entangle.Rd</code></div>
+    <div class="hidden name"><code>updateDragZone.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Create observe events that entangle two Shiny dropzones. Useful for
-hidden dropzones that take drops but display options elsewhere.</p>
+    <p>Change the choices of a dragzone on the client</p>
     </div>
 
-    <pre class="usage"><span class='fu'>entangle</span><span class='op'>(</span><span class='va'>session</span>, <span class='va'>dropZoneOneId</span>, <span class='va'>dropZoneTwoId</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>updateDragZone</span><span class='op'>(</span>session <span class='op'>=</span> <span class='fu'>getDefaultReactiveDomain</span><span class='op'>(</span><span class='op'>)</span>, <span class='va'>id</span>, choices <span class='op'>=</span> <span class='cn'>NULL</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>session</th>
-      <td><p>The <code>session</code> object passed to function given to <code>shinyServer</code>.</p></td>
+      <td><p>The session object passed to function given to shinyServer.</p></td>
     </tr>
     <tr>
-      <th>dropZoneOneId</th>
-      <td><p>The <code>id</code> of the first dropzone.</p></td>
+      <th>id</th>
+      <td><p>The container id.</p></td>
     </tr>
     <tr>
-      <th>dropZoneTwoId</th>
-      <td><p>The <code>id</code> of the second dropzone.</p></td>
+      <th>choices</th>
+      <td><p>List of values to select from.</p></td>
     </tr>
     </table>
 
-    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
-
-    <p>Expression including the two observe events.</p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

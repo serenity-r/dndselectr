@@ -535,29 +535,27 @@ dropZoneServer <- function(session, dropZoneId, server) {
 #' @export
 entangle <- function(session, dropZoneOneId, dropZoneTwoId) {
   return({
+    entangled <- FALSE
     observeEvent(session$input[[dropZoneOneId]], {
-      if (!isTRUE(all.equal(session$input[[dropZoneOneId]], session$input[[dropZoneTwoId]]))) {
-        entangleSourceToTarget(session, sourceId = dropZoneOneId, targetId = dropZoneTwoId)
+      if (!entangled &&
+          !isTRUE(all.equal(session$input[[dropZoneOneId]], session$input[[dropZoneTwoId]]))) {
+        entangled <<- TRUE
+        updateDropZoneInput(session, dropZoneTwoId, presets = session$input[[dropZoneOneId]] %||% NA)
+      } else {
+        entangled <<- FALSE
       }
-    }, ignoreNULL = FALSE)
+    }, ignoreNULL = FALSE, ignoreInit = TRUE)
 
     observeEvent(session$input[[dropZoneTwoId]], {
-      if (!isTRUE(all.equal(session$input[[dropZoneOneId]], session$input[[dropZoneTwoId]]))) {
-        entangleSourceToTarget(session, sourceId = dropZoneTwoId, targetId = dropZoneOneId)
+      if (!entangled &&
+          !isTRUE(all.equal(session$input[[dropZoneOneId]], session$input[[dropZoneTwoId]]))) {
+        entangled <<- TRUE
+        updateDropZoneInput(session, dropZoneOneId, presets = session$input[[dropZoneTwoId]] %||% NA)
+      } else {
+        entangled <<- FALSE
       }
-    }, ignoreNULL = FALSE)
+    }, ignoreNULL = FALSE, ignoreInit = TRUE)
   })
-}
-
-#' Update target dropzone entangled with source dropzone
-#'
-#' @param session The \code{session} object passed to function given to \code{shinyServer}.
-#' @param sourceId  The \code{id} of the source dropzone.
-#' @param targetId  The \code{id} of the target dropzone.
-#'
-entangleSourceToTarget <- function(session, sourceId, targetId) {
-  message <- dropNulls(list(action = "entangle", sourceId = session$ns(sourceId)))
-  session$sendInputMessage(targetId, message)
 }
 
 #' Append item to end of specified dropzone

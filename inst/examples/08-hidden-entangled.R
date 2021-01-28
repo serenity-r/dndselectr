@@ -23,15 +23,13 @@ shinyApp(
                            hidden = TRUE,
                            placeholder = "Drop items here!",
                            highlight = TRUE,
-                           presets = list(values = "one",
-                                          locked = "one")),
+                           presets = list(values = "one")),
              h3("Dropzone (Visible Items)"),
              dropZoneInput("dropzone_visible", choices = list(one = "1",
                                                               two = "2",
                                                               three = "3",
                                                               four = "4"),
-                           presets = list(values = "one",
-                                          locked = "one"))
+                           presets = list(values = "one"))
       )
     )
   ),
