@@ -25,5 +25,5 @@ the labels can be arbitrary HTML, as long as they are wrapped in a \code{tagList
 \item{placeholder}{Insert placeholder text.}
 }
 \description{
-Note: Set presets to NA if you want to delete all presets. Will give a warning.
+The set of presets can be cleared by using presets=character(0).
 }

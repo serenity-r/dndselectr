@@ -261,7 +261,7 @@ updateDragZone <- function(session = getDefaultReactiveDomain(), id, choices=NUL
 
 #' Change the values or settings of a dropzone on the client
 #'
-#' Note: Set presets to NA if you want to delete all presets. Will give a warning.
+#' The set of presets can be cleared by using presets=character(0).
 #'
 #' @param session The session object passed to function given to shinyServer.
 #' @inheritParams dropZoneInput
@@ -540,7 +540,7 @@ entangle <- function(session, dropZoneOneId, dropZoneTwoId) {
       if (!entangled &&
           !isTRUE(all.equal(session$input[[dropZoneOneId]], session$input[[dropZoneTwoId]]))) {
         entangled <<- TRUE
-        updateDropZoneInput(session, dropZoneTwoId, presets = session$input[[dropZoneOneId]] %||% NA)
+        updateDropZoneInput(session, dropZoneTwoId, presets = session$input[[dropZoneOneId]] %||% character(0))
       } else {
         entangled <<- FALSE
       }
@@ -550,7 +550,7 @@ entangle <- function(session, dropZoneOneId, dropZoneTwoId) {
       if (!entangled &&
           !isTRUE(all.equal(session$input[[dropZoneOneId]], session$input[[dropZoneTwoId]]))) {
         entangled <<- TRUE
-        updateDropZoneInput(session, dropZoneOneId, presets = session$input[[dropZoneTwoId]] %||% NA)
+        updateDropZoneInput(session, dropZoneOneId, presets = session$input[[dropZoneTwoId]] %||% character(0))
       } else {
         entangled <<- FALSE
       }
