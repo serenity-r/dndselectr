@@ -522,40 +522,40 @@ dropZoneServer <- function(session, dropZoneId, server) {
   })
 }
 
-#' Entangle two dropzones
+#' Entangle inputs
 #'
-#' Create observe events that entangle two Shiny dropzones. Useful for
+#' Create observe events that entangle multiple Shiny inputs. Useful for
 #' hidden dropzones that take drops but display options elsewhere.
 #'
 #' @param session The \code{session} object passed to function given to \code{shinyServer}.
-#' @param dropZoneOneId  The \code{id} of the first dropzone.
-#' @param dropZoneTwoId  The \code{id} of the second dropzone.
+#' @param ...  The \code{ids} of the inputs
 #'
-#' @return Expression including the two observe events.
+#' @return Expressions including the \code{observeEvent}s.
 #' @export
-entangle <- function(session, dropZoneOneId, dropZoneTwoId) {
-  return({
-    entangled <- FALSE
-    observeEvent(session$input[[dropZoneOneId]], {
-      if (!entangled &&
-          !isTRUE(all.equal(session$input[[dropZoneOneId]], session$input[[dropZoneTwoId]]))) {
-        entangled <<- TRUE
-        updateDropZoneInput(session, dropZoneTwoId, presets = session$input[[dropZoneOneId]] %||% character(0))
-      } else {
-        entangled <<- FALSE
-      }
-    }, ignoreNULL = FALSE, ignoreInit = TRUE)
+entangleInputs <- function(session, ...) {
+  session$userData$entangled <- 0 # Temporary variable used for chain updating
 
-    observeEvent(session$input[[dropZoneTwoId]], {
-      if (!entangled &&
-          !isTRUE(all.equal(session$input[[dropZoneOneId]], session$input[[dropZoneTwoId]]))) {
-        entangled <<- TRUE
-        updateDropZoneInput(session, dropZoneOneId, presets = session$input[[dropZoneTwoId]] %||% character(0))
-      } else {
-        entangled <<- FALSE
-      }
-    }, ignoreNULL = FALSE, ignoreInit = TRUE)
-  })
+  id <- as.list(match.call(expand.dots=FALSE))$...
+
+  if (is.null(names(id))) {
+    type <- rep("dropZone", length(id))
+    id <- unlist(id)
+  } else {
+    type <- unlist(id)
+    id <- names(id)
+  }
+
+  # For the love of god learn NSE!
+  for (i in 1:length(id)) {
+    j <- (i %% length(id)) + 1
+    eval(parse(text = paste0(
+      "observeEvent(session$input[[\"", id[i], "\"]], {
+         session$userData$entangled <- (session$userData$entangled + 1) %% ", length(id), "
+         if (session$userData$entangled) {
+           updateDropZoneInput(session, \"", id[j], "\", presets = session$input[[\"", id[i], "\"]] %||% character(0))
+         }
+       }, ignoreNULL = FALSE, ignoreInit = TRUE, label = \"", id[i], "\")")))
+  }
 }
 
 #' Append item to end of specified dropzone

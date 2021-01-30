@@ -1,4 +1,5 @@
 library(shiny)
+library(reactlog)
 library(dndselectr)
 
 shinyApp(
@@ -31,7 +32,8 @@ shinyApp(
                                                               four = "4"),
                            presets = list(values = "one"))
       )
-    )
+    ),
+    reactlog_module_ui()
   ),
   server = function(input, output, session) {
     output$hidden <- renderText({
@@ -40,6 +42,8 @@ shinyApp(
             sep = "\n")
       })
 
-    entangle(session, "dropzone_hidden", "dropzone_visible")
+    entangleInputs(session, "dropzone_visible", "dropzone_hidden")
+
+    reactlog_module_server()
   }
 )
