@@ -12,7 +12,7 @@ shinyApp(
                                                  three = "Three",
                                                  four = "Four")),
              h3("Dropzone Values"),
-             verbatimTextOutput("hidden")
+             verbatimTextOutput("values")
       ),
       column(6,
              h2("Entangled Dropzones"),
@@ -36,7 +36,7 @@ shinyApp(
     reactlog_module_ui()
   ),
   server = function(input, output, session) {
-    output$hidden <- renderText({
+    output$values <- renderText({
       paste(paste("Hidden: ", paste(input$dropzone_hidden, collapse=" ")),
             paste("Visible: ", paste(input$dropzone_visible, collapse=" ")),
             sep = "\n")
