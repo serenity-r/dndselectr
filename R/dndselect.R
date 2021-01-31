@@ -533,12 +533,29 @@ dropZoneServer <- function(session, dropZoneId, server) {
 #' @return Expressions including the \code{observeEvent}s.
 #' @export
 entangleInputs <- function(session, ...) {
-  entangle <- function(from, to, len) {
+  entangle <- function(from, to, len, type) {
+    clear_input <- switch(type,
+                          "DropZone" = rlang::expr(character(0)),
+                          "Picker" = rlang::expr(""))
+    # Refactor: Learn quasiquotation
+    ufunc <- rlang::call2( # Create update function call
+      rlang::parse_expr(
+        paste0(switch(type,
+                      "DropZone" = "dndselectr",
+                      "Picker" = "shinyWidgets"), '::', # namespace
+               "update", type, "Input") # function
+      ),
+      rlang::expr(session),
+      to,
+      rlang::expr(session$input[[!!from]] %||% !!clear_input)
+    )
+    names(ufunc) <- c("", "session", "inputId", switch(type, "DropZone" = "presets", "Picker" = "selected"))
+
     return(rlang::expr(
       observeEvent(session$input[[!!from]], {
         session$userData$entangled <- (session$userData$entangled + 1) %% !!len
         if (session$userData$entangled) {
-          updateDropZoneInput(session, !!to, presets = session$input[[!!from]] %||% character(0))
+          !!ufunc
         }
       }, ignoreNULL = FALSE, ignoreInit = TRUE, label = !!from)
     ))
@@ -558,7 +575,7 @@ entangleInputs <- function(session, ...) {
 
   for (i in 1:length(id)) {
     j <- (i %% length(id)) + 1
-    eval(entangle(id[i], id[j], length(id)))
+    eval(entangle(id[i], id[j], length(id), type[i]))
   }
 }
 
