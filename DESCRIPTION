@@ -8,7 +8,8 @@ Description: Implements a drag-and-drop Shiny select input. This implementation 
 Depends: R (>= 3.4.0)
 Imports:
     shiny (>= 1.1.0),
-    htmltools (>= 0.3.6)
+    htmltools (>= 0.3.6),
+    rlang
 Suggests:
     testthat,
     covr

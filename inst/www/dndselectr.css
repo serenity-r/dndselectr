@@ -1,6 +1,6 @@
 .ds-dragzone {
   border-style: solid;
-  min-height: 40px;
+  min-height: 34px;
   position: relative;
 }
 
@@ -14,8 +14,9 @@
 .ds-dropoption {
   position: relative;
   border-style: solid;
-  margin: 4px;
-  padding: 2px 4px;
+  border: solid 2px;
+  margin: 3px 4px;
+  padding: 1px 4px;
 }
 
 .ds-dropzone[data-direction="horizontal"] > .ds-dropoption,
@@ -25,7 +26,7 @@
   text-align: center;
   width: 30px;
   height: 30px;
-  margin: 3px 0 3px 3px;
+  margin: 2px 0 2px 3px;
 }
 
 .ds-dropzone.gu-dragover.ds-highlight {

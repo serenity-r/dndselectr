@@ -141,39 +141,36 @@ dropZoneInput <- function(inputId, choices, presets=NULL, hidden=FALSE, placehol
   }
 
   inputTag <- div(
-    class = "form-group ds-dropzone-wrap",
+    id = inputId,
+    class = trimws(paste('form-control ds-dropzone', opts2class(list(hidden = hidden,
+                                                                     highlight = highlight,
+                                                                     multivalued = multivalued,
+                                                                     selectable = selectable,
+                                                                     flex = flex,
+                                                                     `max-input` = (length(presets$values) == maxInput),
+                                                                     `replace-on-drop` = replaceOnDrop))), "right"),
+    "data-select-on-drop" = tolower(selectOnDrop),
+    "data-remove-on-spill" = tolower(removeOnSpill),
+    "data-direction" = tolower(direction),
+    "data-max-input" = ifelse(is.infinite(maxInput), "Infinity", maxInput),
+    "data-server" = tolower(ifelse(!is.null(server), TRUE, FALSE)),
+    insertPlaceholder(placeholder, hidden = is.null(placeholder) || (!hidden && (length(presets$values) > 0))),
     div(
-      id = inputId,
-      class = trimws(paste('form-control ds-dropzone', opts2class(list(hidden = hidden,
-                                                                       highlight = highlight,
-                                                                       multivalued = multivalued,
-                                                                       selectable = selectable,
-                                                                       flex = flex,
-                                                                       `max-input` = (length(presets$values) == maxInput),
-                                                                       `replace-on-drop` = replaceOnDrop))), "right"),
-      "data-select-on-drop" = tolower(selectOnDrop),
-      "data-remove-on-spill" = tolower(removeOnSpill),
-      "data-direction" = tolower(direction),
-      "data-max-input" = ifelse(is.infinite(maxInput), "Infinity", maxInput),
-      "data-server" = tolower(ifelse(!is.null(server), TRUE, FALSE)),
-      insertPlaceholder(placeholder, hidden = is.null(placeholder) || (!hidden && (length(presets$values) > 0))),
-      div(
-        class = 'ds-dropzone-options',
-        zoneItems('drop', 'options', choices,
-                  togglevis = togglevis,
-                  togglelock = togglelock)
-      ),
-      zoneItems('drop', 'presets',
-                items = presets$values,
-                ids = presets$ids,
-                selected = presets$selected,
-                invisible = presets$invisible,
-                locked = presets$locked,
-                freeze = presets$freeze,
+      class = 'ds-dropzone-options',
+      zoneItems('drop', 'options', choices,
                 togglevis = togglevis,
-                togglelock = togglelock),
-      ...
-    )
+                togglelock = togglelock)
+    ),
+    zoneItems('drop', 'presets',
+              items = presets$values,
+              ids = presets$ids,
+              selected = presets$selected,
+              invisible = presets$invisible,
+              locked = presets$locked,
+              freeze = presets$freeze,
+              togglevis = togglevis,
+              togglelock = togglelock),
+    ...
   )
 
   attachDependencies(inputTag)
@@ -537,8 +534,12 @@ entangleInputs <- function(session, ...) {
     clear_input <- switch(type,
                           "DropZone" = rlang::expr(character(0)),
                           "Picker" = rlang::expr(""))
+    # Create update function call (couldn't directly implement in returned expr below;
+    #   didn't like !! as argument name in function call).  Thus, creating function
+    #   call expression "manually" and using fact that call type is basically a list.
+    #   See https://adv-r.hadley.nz/expressions.html#calls
     # Refactor: Learn quasiquotation
-    ufunc <- rlang::call2( # Create update function call
+    ufunc <- rlang::call2(
       rlang::parse_expr(
         paste0(switch(type,
                       "DropZone" = "dndselectr",
@@ -553,8 +554,8 @@ entangleInputs <- function(session, ...) {
 
     return(rlang::expr(
       observeEvent(session$input[[!!from]], {
-        session$userData$entangled <- (session$userData$entangled + 1) %% !!len
-        if (session$userData$entangled) {
+        session$userData$entangled <- sign(session$userData$entangled + 1) * ((session$userData$entangled + 1) %% !!len)
+        if (session$userData$entangled > 0) {
           !!ufunc
         }
       }, ignoreNULL = FALSE, ignoreInit = TRUE, label = !!from)
@@ -575,7 +576,7 @@ entangleInputs <- function(session, ...) {
 
   for (i in 1:length(id)) {
     j <- (i %% length(id)) + 1
-    eval(entangle(id[i], id[j], length(id), type[i]))
+    eval(entangle(id[i], id[j], length(id), type[j]))
   }
 }
 
