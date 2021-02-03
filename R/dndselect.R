@@ -522,20 +522,15 @@ dropZoneServer <- function(session, dropZoneId, server) {
 #' Entangle inputs
 #'
 #' Create observe events that entangle multiple Shiny inputs. Useful for
-#'   hidden dropzones that take drops but display options elsewhere. If
-#'   \code{entangleId} is passed as an argument, it will be used as a unique
-#'   identifier for the entangled inputs.  If not, inputId of first specified
-#'   input will be used as the unique identifier.
+#'   hidden dropzones that take drops but display options elsewhere.
 #'
 #' @param session The \code{session} object passed to function given to \code{shinyServer}.
 #' @param ...  The \code{ids} of the inputs
 #'
 #' @return Expressions including the \code{observeEvent}s.
 #' @export
-#'
-#' @seealso \code{\link{disentangleInputs}}
 entangleInputs <- function(session, ...) {
-  entangle <- function(from, to, which, type) {
+  entangle <- function(from, to, type) {
     clear_input <- switch(type,
                           "DropZone" = rlang::expr(character(0)),
                           "Picker" = rlang::expr(""))
@@ -559,20 +554,13 @@ entangleInputs <- function(session, ...) {
 
     return(rlang::expr(
       observeEvent(session$input[[!!from]], {
-        cat(paste("[entangle]: Should I update from", !!from, "?\n"))
-        session$userData$entanglers[[!!which]]$active <-
-          sign(session$userData$entanglers[[!!which]]$active + 1) * ((session$userData$entanglers[[!!which]]$active + 1) %% !!session$userData$entanglers[[which]]$len)
-        if (session$userData$entanglers[[!!which]]$active > 0) {
-          cat(paste("[entangle]: Updating", !!to, "from", !!from, "\n"))
-          !!ufunc
-        }
-      }, ignoreNULL = FALSE, ignoreInit = TRUE, label = !!from)
+        cat(paste("[entangle]: Updating", !!to, "from", !!from, "\n"))
+        !!ufunc
+      }, ignoreNULL = FALSE, ignoreInit = TRUE, label = !!from, priority = 10)
     ))
   }
 
   id <- as.list(match.call(expand.dots=FALSE))$...
-  entangleId <- id$entangleId
-  id$entangleId <- NULL
 
   if (is.null(names(id))) {
     type <- rep("DropZone", length(id))
@@ -581,42 +569,11 @@ entangleInputs <- function(session, ...) {
     type <- unlist(id)
     id <- names(id)
   }
-  entangleId <- entangleId %||% session$ns(id[1])
-
-  # Initialize entangler
-  if (is.null(session$userData$entanglers)) {
-    session$userData$entanglers <- list()
-  }
-  entangler <- list(
-    list(
-      len = length(id),
-      active = 0
-    )
-  )
-  names(entangler) <- entangleId
-  session$userData$entanglers <- c(session$userData$entanglers, entangler)
 
   for (i in 1:length(id)) {
     j <- (i %% length(id)) + 1
-    cat(paste(entangle(id[i], id[j], entangleId, type[j]), "\n"))
-    eval(entangle(id[i], id[j], entangleId, type[j]))
+    eval(entangle(id[i], id[j], type[j]))
   }
-}
-
-#' Temporarily disentangle inputs
-#'
-#' This is useful when you have to manually update all inputs outside of the
-#'   entangling context and want to override the entangling update process.
-#'
-#' @param session The \code{session} object passed to function given to \code{shinyServer}.
-#' @param entangleId Entangle chain id
-#'
-#' @export
-#'
-#' @seealso \code{\link{entangleInputs}}
-disentangleInputs <- function(session, entangleId) {
-  entangleId <- session$ns(entangleId)
-  session$userData$entanglers[[entangleId]]$active <- -1*session$userData$entanglers[[entangleId]]$len
 }
 
 #' Append item to end of specified dropzone
