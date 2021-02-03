@@ -16,5 +16,11 @@ Expressions including the \code{observeEvent}s.
 }
 \description{
 Create observe events that entangle multiple Shiny inputs. Useful for
-hidden dropzones that take drops but display options elsewhere.
+  hidden dropzones that take drops but display options elsewhere. If
+  \code{entangleId} is passed as an argument, it will be used as a unique
+  identifier for the entangled inputs.  If not, inputId of first specified
+  input will be used as the unique identifier.
+}
+\seealso{
+\code{\link{disentangleInputs}}
 }
