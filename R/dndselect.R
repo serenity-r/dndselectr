@@ -554,7 +554,6 @@ entangleInputs <- function(session, ...) {
 
     return(rlang::expr(
       observeEvent(session$input[[!!from]], {
-        cat(paste("[entangle]: Updating", !!to, "from", !!from, "\n"))
         !!ufunc
       }, ignoreNULL = FALSE, ignoreInit = TRUE, label = !!from, priority = 10)
     ))
