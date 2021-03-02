@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Run dndselectr Example Applications — runExample • dndselectr</title>
+<title>Entangle inputs — entangleInputs • dndselectr</title>
 
 
 <!-- jquery -->
@@ -39,8 +39,9 @@
 
 
 
-<meta property="og:title" content="Run dndselectr Example Applications — runExample" />
-<meta property="og:description" content="Launch dndselectr example applications, and optionally, your system's web browser." />
+<meta property="og:title" content="Entangle inputs — entangleInputs" />
+<meta property="og:description" content="Create observe events that entangle multiple Shiny inputs. Useful for
+  hidden dropzones that take drops but display options elsewhere." />
 
 
 
@@ -108,72 +109,35 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Run dndselectr Example Applications</h1>
+    <h1>Entangle inputs</h1>
     <small class="dont-index">Source: <a href='https://github.com/serenity-r/dndselectr/blob/master/R/dndselect.R'><code>R/dndselect.R</code></a></small>
-    <div class="hidden name"><code>runExample.Rd</code></div>
+    <div class="hidden name"><code>entangleInputs.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Launch dndselectr example applications, and optionally, your system's web browser.</p>
+    <p>Create observe events that entangle multiple Shiny inputs. Useful for
+  hidden dropzones that take drops but display options elsewhere.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>runExample</span><span class='op'>(</span>
-  example <span class='op'>=</span> <span class='cn'>NA</span>,
-  port <span class='op'>=</span> <span class='cn'>NULL</span>,
-  launch.browser <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/options.html'>getOption</a></span><span class='op'>(</span><span class='st'>"shiny.launch.browser"</span>, <span class='fu'><a href='https://rdrr.io/r/base/interactive.html'>interactive</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span>,
-  host <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/options.html'>getOption</a></span><span class='op'>(</span><span class='st'>"shiny.host"</span>, <span class='st'>"127.0.0.1"</span><span class='op'>)</span>,
-  display.mode <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"auto"</span>, <span class='st'>"normal"</span>, <span class='st'>"showcase"</span><span class='op'>)</span>
-<span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>entangleInputs</span><span class='op'>(</span><span class='va'>session</span>, <span class='va'>...</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>example</th>
-      <td><p>The name of the example to run, or <code>NA</code> (the default) to
-list the available examples.</p></td>
+      <th>session</th>
+      <td><p>The <code>session</code> object passed to function given to <code>shinyServer</code>.</p></td>
     </tr>
     <tr>
-      <th>port</th>
-      <td><p>The TCP port that the application should listen on. Defaults to
-choosing a random port.</p></td>
-    </tr>
-    <tr>
-      <th>launch.browser</th>
-      <td><p>If true, the system's default web browser will be
-launched automatically after the app is started. Defaults to true in
-interactive sessions only.</p></td>
-    </tr>
-    <tr>
-      <th>host</th>
-      <td><p>The IPv4 address that the application should listen on. Defaults
-to the <code>shiny.host</code> option, if set, or <code>"127.0.0.1"</code> if not.</p></td>
-    </tr>
-    <tr>
-      <th>display.mode</th>
-      <td><p>The mode in which to display the example. Defaults to
-<code>showcase</code>, but may be set to <code>normal</code> to see the example without
-code or commentary.</p></td>
+      <th>...</th>
+      <td><p>The <code>ids</code> of the inputs</p></td>
     </tr>
     </table>
 
-    <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
+    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p><code><a href='https://rdrr.io/pkg/shiny/man/runExample.html'>runExample</a></code></p>
+    <p>Expressions including the <code>observeEvent</code>s.</p>
 
-    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='co'>## Only run this example in interactive R sessions</span>
-<span class='kw'>if</span> <span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/interactive.html'>interactive</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>{</span>
-  <span class='co'># List all available examples</span>
-  <span class='fu'>runExample</span><span class='op'>(</span><span class='op'>)</span>
-
-  <span class='co'># Run one of the examples</span>
-  <span class='fu'>runExample</span><span class='op'>(</span><span class='st'>"01_basic"</span><span class='op'>)</span>
-
-  <span class='co'># Print the directory containing the code for all examples</span>
-  <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span><span class='op'>(</span><span class='st'>"examples"</span>, package<span class='op'>=</span><span class='st'>"dndselectr"</span><span class='op'>)</span>
-<span class='op'>}</span>
-</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
